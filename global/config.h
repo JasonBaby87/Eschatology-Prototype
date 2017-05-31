@@ -2,10 +2,10 @@
 #define CONFIG_H_INCLUDED
 
 
-typedef int millisecond;
+typedef int Millisecond;
 
-extern millisecond globalOffset;
-extern millisecond visualOffset;
+extern Millisecond globalOffset;
+extern Millisecond visualOffset;
 
 
 #endif // CONFIG_H_INCLUDED
