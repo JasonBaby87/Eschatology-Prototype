@@ -5,6 +5,7 @@
 #define MUSICPLAYER_H_INCLUDED
 
 // music file
-extern milli
+
+Millisecond playTime();
 
 #endif // MUSICPLAYER_H_INCLUDED
