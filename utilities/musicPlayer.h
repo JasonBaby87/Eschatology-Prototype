@@ -4,6 +4,7 @@
 #ifndef MUSICPLAYER_H_INCLUDED
 #define MUSICPLAYER_H_INCLUDED
 
+class MusicPlayer
 {
 
 	// music file
