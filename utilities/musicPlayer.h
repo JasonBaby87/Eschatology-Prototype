@@ -6,6 +6,6 @@
 
 // music file
 
-Millisecond playTime();
+Nanosecond playTime();
 
 #endif // MUSICPLAYER_H_INCLUDED
