@@ -1,0 +1,5 @@
+Fantastic: 0.0215
+Excellent: 0.043
+Great: 0.102
+Decent: 0.135
+Way Off: 0.18
