@@ -1,0 +1,6 @@
+#ifndef FRACTION_H_INCLUDED
+#define FRACTION_H_INCLUDED
+
+
+
+#endif // FRACTION_H_INCLUDED
