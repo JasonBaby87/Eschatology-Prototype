@@ -9,6 +9,7 @@
 typedef unsigned int Beat;
 typedef ImproperFraction<int> FractionalBeat;
 
+class Note
 {
 	Beat beat;
 	FractionalBeat beat;
@@ -18,6 +19,7 @@ class ChartPlayer
 {
 private:
 	Milliseconds songOffset;
+	vector<Note> notes;
 
 };
 
