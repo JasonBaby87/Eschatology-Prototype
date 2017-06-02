@@ -1,21 +1,13 @@
 #include <iostream>
 #include <string>
+#include "SDL2/SDL_image.h"
 #include "SDL2/SDL.h"
 using namespace std;
 
-const int SCREEN_WIDTH=960;
-const int SCREEN_HEIGHT=600;
+const int SCREEN_WIDTH=800;
+const int SCREEN_HEIGHT=480;
 SDL_Window *window;
 SDL_Renderer *renderer;
-
-SDL_Texture* LoadImage(string file)
-{
-    SDL_Surface *loadedImage=SDL_LoadBMP(file.c_str());
-    SDL_Texture *texture=SDL_CreateTextureFromSurface(renderer, loadedImage);
-    //SDL2是用Texture來繪製，更快，所以我們把SDL_Surface轉成SDL_Texture
-    SDL_FreeSurface(loadedImage); //用不到了
-    return texture;
-}
 
 void ApplySurface(int x,int y,SDL_Texture *tex)
 {
@@ -39,16 +31,16 @@ int main(int argc,char* args[])
     //SDL_RENDERER_ACCELERATED，使用硬件加速的renderer=利用顯卡的力量
     // SDL_RENDERER_PRESENTVSYNC，使用SDL_RendererPresent這個函數，他會以顯示器的刷新率來更新畫面
 
-    SDL_Texture* bg=LoadImage("img/bg.bmp");
-    SDL_Texture* yellowDot=LoadImage("img/yellowDot.bmp");
+    SDL_Texture* bg=IMG_LoadTexture(renderer,"img/bg.jpg");
+    SDL_Texture* yellowDot=IMG_LoadTexture(renderer,"img/aluren.png");
 
     SDL_RenderClear(renderer); //清屏
 
+    ApplySurface(0,0,bg);
     int iW, iH;
     SDL_QueryTexture(yellowDot, NULL, NULL, &iW, &iH);
     ApplySurface(SCREEN_WIDTH/2-iW/2,SCREEN_HEIGHT/2-iH/2,yellowDot);
     //因為SDL會pin在圖片的左上角，所以要讓圖片放在正中央需要計算一下
-    ApplySurface(0,0,bg);
 
     SDL_RenderPresent(renderer); //更新螢幕畫面
     SDL_Delay(2000); //不等待的話他會立刻退出
