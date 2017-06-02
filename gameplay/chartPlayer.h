@@ -6,8 +6,17 @@
 #include "../global/state.h"
 #include "../utilities/musicPlayer.h"
 
+typedef unsigned int Beat;
+typedef ImproperFraction<int> FractionalBeat;
+
+{
+	Beat beat;
+	FractionalBeat beat;
+};
+
 class ChartPlayer
 {
+private:
 	Milliseconds songOffset;
 
 };
