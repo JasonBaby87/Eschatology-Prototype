@@ -34,17 +34,36 @@ int main(int argc,char* args[])
     SDL_Texture* bg=IMG_LoadTexture(renderer,"img/bg.jpg");
     SDL_Texture* yellowDot=IMG_LoadTexture(renderer,"img/aluren.png");
 
-    SDL_RenderClear(renderer); //清屏
+    SDL_Event e;
+    bool quit = false;
+    while (!quit)
+    {
+        while (SDL_PollEvent(&e))
+        {
+    		if (e.type == SDL_QUIT)
+            {
+    			quit = true;
+    		}
+    		if (e.type == SDL_KEYDOWN)
+            {
+    			quit = true;
+    		}
+    		if (e.type == SDL_MOUSEBUTTONDOWN)
+            {
+    			quit = true;
+    		}
 
-    ApplySurface(0,0,bg);
-    int iW, iH;
-    SDL_QueryTexture(yellowDot, NULL, NULL, &iW, &iH);
-    ApplySurface(SCREEN_WIDTH/2-iW/2,SCREEN_HEIGHT/2-iH/2,yellowDot);
-    //因為SDL會pin在圖片的左上角，所以要讓圖片放在正中央需要計算一下
+            SDL_RenderClear(renderer); //清屏
 
-    SDL_RenderPresent(renderer); //更新螢幕畫面
-    SDL_Delay(2000); //不等待的話他會立刻退出
+            ApplySurface(0,0,bg);
+            int iW, iH;
+            SDL_QueryTexture(yellowDot, NULL, NULL, &iW, &iH);
+            ApplySurface(SCREEN_WIDTH/2-iW/2,SCREEN_HEIGHT/2-iH/2,yellowDot);
+            //因為SDL會pin在圖片的左上角，所以要讓圖片放在正中央需要計算一下
 
+            SDL_RenderPresent(renderer); //更新螢幕畫面
+        }
+    }
 
     SDL_DestroyTexture(bg);
     SDL_DestroyTexture(yellowDot);
