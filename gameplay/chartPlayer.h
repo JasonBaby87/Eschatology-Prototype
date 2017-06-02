@@ -9,7 +9,7 @@
 
 class ChartPlayer
 {
-	Millisecond songOffset;
+	Milliseconds songOffset;
 
 };
 

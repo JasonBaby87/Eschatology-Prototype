@@ -9,7 +9,7 @@ class MusicPlayer
 
 	// music file
 
-	Nanosecond playTime();
+	Nanoseconds playTime();
 };
 
 #endif // MUSICPLAYER_H_INCLUDED
