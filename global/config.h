@@ -6,15 +6,15 @@
 
 using namespace std;
 
-typedef duration<int,milli> Millisecond;
-typedef duration<long long,micro> Microsecond;
-typedef duration<long long,nano> Nanosecond;
+typedef duration<int,milli> Milliseconds;
+typedef duration<long long,micro> Microseconds;
+typedef duration<long long,nano> Nanoseconds;
 
-extern Millisecond globalOffset;
-extern Millisecond visualOffset;
+extern Milliseconds globalOffset;
+extern Milliseconds visualOffset;
 
 /** The judge windows.
 	<p>The smaller the indices the stricter it is. */
-extern vector<Nanosecond> judgeWindows;
+extern vector<Nanoseconds> judgeWindows;
 
 #endif // CONFIG_H_INCLUDED
