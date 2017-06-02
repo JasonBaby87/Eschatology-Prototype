@@ -1,13 +1,32 @@
 #include <iostream>
 #include <string>
-#include "SDL2/SDL_image.h"
 #include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
+#include "SDL2/SDL_ttf.h"
 using namespace std;
 
 const int SCREEN_WIDTH=800;
 const int SCREEN_HEIGHT=480;
 SDL_Window *window;
 SDL_Renderer *renderer;
+
+SDL_Texture* RenderText(string message,string fontFile,SDL_Color color,int fontSize)
+{
+    //color是RGB
+    TTF_Font *font=nullptr;
+    font=TTF_OpenFont(fontFile.c_str(),fontSize);
+    if (font == nullptr)
+        throw runtime_error("Failed to load font: " + fontFile + TTF_GetError());
+
+    //TTF_RenderText用來繪製文本，其中Blended是效率最慢但效果最好的
+    SDL_Surface *surf=TTF_RenderText_Blended(font,message.c_str(),color);
+    SDL_Texture *texture=SDL_CreateTextureFromSurface(renderer,surf);
+
+    SDL_FreeSurface(surf);
+    TTF_CloseFont(font);
+
+    return texture;
+}
 
 //裁切圖片的每一小塊圖片都是一樣長寬而且是有序排列的
 SDL_Rect* clipRect(int iW,int iH,int row,int column) //要裁切的每一份小圖的長寬和小圖們總共幾行幾列
@@ -50,6 +69,8 @@ void ApplySurface(int x,int y,SDL_Texture *tex,SDL_Rect *clip=NULL)
 
 int main(int argc,char* args[])
 {
+    TTF_Init();
+
     window=SDL_CreateWindow("Eschatology",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,SCREEN_WIDTH,SCREEN_HEIGHT,SDL_WINDOW_SHOWN);
     //創立視窗，參數分別是標題、x、y、長、寬，最後的參數是我設定他一執行就彈出
     renderer=SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -59,6 +80,9 @@ int main(int argc,char* args[])
 
     SDL_Texture* bg=IMG_LoadTexture(renderer,"img/bg.jpg");
     SDL_Texture* buttons=IMG_LoadTexture(renderer,"img/buttons.png");
+
+    SDL_Color color={255,255,255};
+    SDL_Texture* title=RenderText("Eschatology","font/freeWing.ttf",color,64);
 
     SDL_Rect* clips=clipRect(245,245,2,2);
     int useClip=0;
@@ -107,6 +131,7 @@ int main(int argc,char* args[])
 
             ApplySurface(SCREEN_WIDTH/2,SCREEN_HEIGHT/2,bg);
             ApplySurface(SCREEN_WIDTH/2,SCREEN_HEIGHT/2,buttons,&clips[useClip]);
+            ApplySurface(SCREEN_WIDTH/2,SCREEN_HEIGHT/2,title);
 
             SDL_RenderPresent(renderer); //更新螢幕畫面
         }
