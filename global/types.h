@@ -5,8 +5,8 @@
 
 using namespace std;
 
-typedef duration<int,milli> Milliseconds;
-typedef duration<long long,micro> Microseconds;
-typedef duration<long long,nano> Nanoseconds;
+typedef chrono::milliseconds Milliseconds;
+typedef chrono::microseconds Microseconds;
+typedef chrono::nanoseconds Nanoseconds;
 
 #endif // TYPES_H_INCLUDED
