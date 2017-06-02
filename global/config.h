@@ -2,7 +2,7 @@
 #define CONFIG_H_INCLUDED
 
 #include <vector>
-#include "types.h"
+#include "type.h"
 
 using namespace std;
 
