@@ -10,15 +10,15 @@ SDL_Window* Window::window;
 SDL_Renderer* Window::renderer;
 SDL_Rect Window::box;
 
-void Window::Init(string title)
+void Window::init(string title)
 {
     SDL_Init(SDL_INIT_EVERYTHING);
     TTF_Init();
 
     box.x=SDL_WINDOWPOS_CENTERED;
     box.y=SDL_WINDOWPOS_CENTERED;
-    box.w=800;
-    box.h=480;
+    box.w=480;
+    box.h=800;
 
     window=SDL_CreateWindow(title.c_str(),box.x,box.y,box.w,box.h,SDL_WINDOW_SHOWN);
     //創立視窗，參數分別是標題、x、y、長、寬，最後的參數是我設定他一執行就彈出
@@ -28,19 +28,19 @@ void Window::Init(string title)
     // SDL_RENDERER_PRESENTVSYNC，使用SDL_RendererPresent這個函數，他會以顯示器的刷新率來更新畫面
 }
 
-SDL_Rect Window::Box()
+SDL_Rect Window::state()
 {
     //更新box讓他隨時是視窗長寬
     SDL_GetWindowSize(window,&box.w,&box.h);
     return box;
 }
 
-SDL_Texture* Window::LoadImage(const string& file)
+SDL_Texture* Window::loadImage(const string& file)
 {
     return IMG_LoadTexture(renderer,file.c_str());
 }
 
-SDL_Texture* Window::RenderText(const string& message,const string& fontFile,SDL_Color color,int fontSize)
+SDL_Texture* Window::loadText(const string& message,const string& fontFile,SDL_Color color,int fontSize)
 {
     TTF_Font* font=TTF_OpenFont(fontFile.c_str(),fontSize);
 
@@ -126,7 +126,7 @@ SDL_Rect* Window::setRect(SDL_Texture* tex,int width,int height,char horizon,cha
     return rect;
 }
 
-void Window::Draw(SDL_Texture* tex,int x,int y,SDL_Rect dstRect,SDL_Rect* clip,float angle,SDL_RendererFlip flip)
+void Window::draw(SDL_Texture* tex,int x,int y,SDL_Rect dstRect,SDL_Rect* clip,float angle,SDL_RendererFlip flip)
 {
     SDL_Point pivot; //SDL_RenderCopyEx要用的點物件，指出旋轉中心
     pivot.x=dstRect.x; //旋轉中心同錨點
@@ -137,17 +137,17 @@ void Window::Draw(SDL_Texture* tex,int x,int y,SDL_Rect dstRect,SDL_Rect* clip,f
     SDL_RenderCopyEx(renderer,tex,clip,&dstRect,angle,&pivot,flip);
 }
 
-void Window::Clear()
+void Window::clear()
 {
     SDL_RenderClear(renderer);
 }
 
-void Window::Present()
+void Window::present()
 {
     SDL_RenderPresent(renderer);
 }
 
-void Window::Quit()
+void Window::quit()
 {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

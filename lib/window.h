@@ -10,15 +10,23 @@ class Window
 {
 public:
     //初始化SDL、TTF，建立視窗和renderer，參數接視窗名子，預設Window
-    static void Init(string title="Window");
+    static void init(string title="Window");
     //返回視窗訊息(位置、長寬)
-    static SDL_Rect Box();
-    //將圖片載為texture指標返回
-    static SDL_Texture* LoadImage(const string& file);
+    static SDL_Rect state();
+    //將圖片載為材質指標返回
+    static SDL_Texture* loadImage(const string& file);
+    /**
+    *   將文字轉成材質指標返回
+    *   @param message:文字內容
+    *   @param fontfile:字體ttf檔案位置
+    *   @param color:RGB{0,0,0}(黑)~{255,255,255}(白)
+    *   @param fontsize:字體大小
+    */
+    static SDL_Texture* loadText(const string& message,const string& fontfile,SDL_Color color,int fontsize);
     /**
     *   設定texture要印出時所需的dstRect和clipRect，回傳一個SDL_Rect陣列
-    *   陣列第一項固定存放dstRect，提供Draw()時「要以錨點在哪畫在視窗座標中並縮放這個材質」的相關矩形物件
-    *   陣列第一項之後存放clipRect們，提供Draw()時「只render選取的clipRect[]的範圍(簡單來說就是裁切)」
+    *   @return 陣列第一項固定存放dstRect，提供Draw()時「要以錨點在哪畫在視窗座標中並縮放這個材質」的相關矩形物件
+    *   @return 陣列第一項之後存放clipRect們，提供Draw()時「只render選取的clipRect[]的範圍(簡單來說就是裁切)」
     *   ---以下參數主要處理dstRect(rect[0])
     *   @param width和height設定dstRect要的寬高，若不設定預設為零，將會在程式實作「直接設定寬高為原材質1:1寬高」，意即不改變材質比例
     *   @param horizan和vertical用來快速設定錨點，預設為垂直水平接置中
@@ -35,21 +43,13 @@ public:
     *   @param angle設定角度，會以錨點為中心旋轉，錨點在dstRect裡就設定好了
     *   @param flip提供水平翻轉或垂直翻轉
     */
-    static void Draw(SDL_Texture* tex,int x,int y,SDL_Rect dstRect,SDL_Rect* clip=NULL,float angle=0.0,SDL_RendererFlip flip=SDL_FLIP_NONE);
-    /**
-    *   將文字轉成texture
-    *   @param message:文字內容
-    *   @param fontfile:字體ttf檔案位置
-    *   @param color:RGB{0,0,0}(黑)~{255,255,255}(白)
-    *   @param fontsize:字體大小
-    */
-    static SDL_Texture* RenderText(const string& message,const string& fontfile,SDL_Color color,int fontsize);
+    static void draw(SDL_Texture* tex,int x,int y,SDL_Rect dstRect,SDL_Rect* clip=NULL,float angle=0.0,SDL_RendererFlip flip=SDL_FLIP_NONE);
     //清除視窗
-    static void Clear();
+    static void clear();
     //更新視窗
-    static void Present();
+    static void present();
     //退出視窗
-    static void Quit();
+    static void quit();
 
 private:
     static SDL_Window* window;
