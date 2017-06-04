@@ -86,7 +86,8 @@ int main(int argc,char* args[])
     		}
             if(e.type==SDL_MOUSEMOTION) //滑鼠移動
             {
-    			angle++;
+
+                angle+=e.motion.xrel+e.motion.yrel;
     		}
         }
         Window::clear();
