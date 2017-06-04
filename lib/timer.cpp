@@ -1,3 +1,4 @@
+#define __USE_MINGW_ANSI_STDIO 0 //在minGW下，stdio.h和libmingwex.a會打架，這行禁用他們的definition
 #include <string>
 #include "SDL2/SDL.h"
 #include "timer.h"
