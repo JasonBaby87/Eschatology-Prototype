@@ -63,7 +63,7 @@ int main(int argc,char* args[])
                 }
                 if(numberKey>0 && temp==numberKey)
                 {
-                    switch (alurensTimer[numberKey-1].state())
+                    switch(alurensTimer[numberKey-1].state())
                     {
                         case -1:
                             alurensTimer[numberKey-1].start();
@@ -86,20 +86,21 @@ int main(int argc,char* args[])
     		}
             if(e.type==SDL_MOUSEMOTION) //滑鼠移動
             {
-
                 angle+=e.motion.xrel+e.motion.yrel;
     		}
         }
         Window::clear();
 
-        alurensTimerText=Window::loadText("Magic "+alurensName[numberKey-1]+" is using for "+ alurensTimer[numberKey-1].clock(),"font/freeWing.ttf",{255,255,255},16);
-        alurensTimerTextRect=Window::setRect(alurensTimerText,0,0,'m','t'); //長寬為原材質長寬，錨點為中上
 
         Window::draw(bg,0,0,bgRect[0]);
         Window::draw(alurens,Window::state().w/2,Window::state().h/2,alurensRect[0],&alurensRect[numberKey],angle); //以錨點繪製在螢幕正中間，只繪製numberKey選取到的clipRect[]，旋轉angle度
         Window::draw(title,Window::state().w/2,Window::state().h/2,titleRect[0]);
         if(numberKey>0)
+        {
+            alurensTimerText=Window::loadText("Magic "+alurensName[numberKey-1]+" is using for "+ alurensTimer[numberKey-1].clock(),"font/freeWing.ttf",{255,255,255},16);
+            alurensTimerTextRect=Window::setRect(alurensTimerText,0,0,'m','t'); //長寬為原材質長寬，錨點為中上
             Window::draw(alurensTimerText,Window::state().w/2,Window::state().h/2+150,alurensTimerTextRect[0]);
+        }
 
         Window::present();
     }
