@@ -10,12 +10,12 @@ int main(int argc,char* args[])
     Window::init("Eschatology");
 
     SDL_Texture* bg=Window::loadImage("img/bg.jpg");
-    SDL_Rect* bgRect=Window::setRect(bg,0,Window::state().h,'l','t'); //讓它填滿螢幕(長填滿，寬依比例縮放)，錨點設為左上
+    SDL_Rect* bgRect=Window::setRect(bg,0,Window::state().h); //讓它填滿螢幕(長填滿，寬依比例縮放)，錨點設為左上
     SDL_Texture* alurens=Window::loadImage("img/alurens.png");
-    SDL_Rect* alurensRect=Window::setRect(alurens,0,0,'m','m',0,0,2,2); //長寬為原材質長寬，錨點為中心，分割成2x2
+    SDL_Rect* alurensRect=Window::setRect(alurens,0,0,Window::setPoint(alurens),2,2); //長寬為原材質長寬，錨點為中心，分割成2x2
 
     SDL_Texture* title=Window::loadText("Eschatology","font/freeWing.ttf",{255,255,255},64);
-    SDL_Rect* titleRect=Window::setRect(title); //長寬為原材質長寬，錨點為中心
+    SDL_Rect* titleRect=Window::setRect(title,0,0,Window::setPoint(title)); //長寬為原材質長寬，錨點為中心
 
     SDL_Texture* alurensTimerText;
     SDL_Rect* alurensTimerTextRect;
@@ -92,7 +92,7 @@ int main(int argc,char* args[])
         if(numKey>0)
         {
             alurensTimerText=Window::loadText("Magic "+alurensName[numKey-1]+" is using for "+ alurensTimer[numKey-1].clock(),"font/freeWing.ttf",{255,255,255},16);
-            alurensTimerTextRect=Window::setRect(alurensTimerText,0,0,'m','t'); //長寬為原材質長寬，錨點為中上
+            alurensTimerTextRect=Window::setRect(alurensTimerText,0,0,Window::setPoint(alurensTimerText,middle,middle)); //長寬為原材質長寬，錨點為中上
             Window::draw(alurensTimerText,Window::state().w/2,Window::state().h/2+150,alurensTimerTextRect[0]);
         }
 

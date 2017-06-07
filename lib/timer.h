@@ -4,6 +4,7 @@ using namespace std;
 #ifndef TIMER_H
 #define TIMER_H
 
+//回傳state時用的enumeration
 enum State{initial,timing,pausing};
 
 class Timer

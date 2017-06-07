@@ -54,7 +54,44 @@ SDL_Texture* Window::loadText(const string& message,const string& fontFile,SDL_C
     return texture;
 }
 
-SDL_Rect* Window::setRect(SDL_Texture* tex,int width,int height,char horizon,char vertical,int x,int y,int column,int row)
+SDL_Point Window::setPoint(SDL_Texture* tex,Position horizon,Position vertical)
+{
+    int w=0,h=0,x=0,y=0; //w、h獲取材質原本長寬；x、y用來回傳point
+    SDL_QueryTexture(tex,NULL,NULL,&w,&h);
+    switch (horizon)
+    {
+        case Position::left:
+            x=0;
+            break;
+        case Position::middle:
+            x=w/2;
+            break;
+        case Position::right:
+            x=w;
+            break;
+        default: //若coder不傳入規範好的enumerator，則預設為0，再此可再新增code用以偵錯
+            x=0;
+            break;
+    }
+    switch (vertical)
+    {
+        case Position::top:
+            y=0;
+            break;
+        case Position::middle:
+            y=h/2;
+            break;
+        case Position::bottom:
+            y=h;
+            break;
+        default:
+            y=0;
+            break;
+    }
+    return {x,y};
+}
+
+SDL_Rect* Window::setRect(SDL_Texture* tex,int width,int height,SDL_Point pivot,int column,int row)
 {
     SDL_Rect* rect=new SDL_Rect[row*column+1]; //第零項目存放dstRect，剩下的存放clipRect[]
 
@@ -87,54 +124,18 @@ SDL_Rect* Window::setRect(SDL_Texture* tex,int width,int height,char horizon,cha
 
     rect[0].w=width;
     rect[0].h=height;
+    rect[0].x=pivot.x/column; //如果他有裁切，則使用者預期的錨點位置應該也被等比例裁切
+    rect[0].y=pivot.y/row; //比如使用者指定中心為錨點，這裡的中心不是原圖中心，是裁切後的圖的中心，因此這裡要除掉行或列
 
-    if(x!=0)
-        rect[0].x=x;
-    else
-    {
-        switch(horizon) //針對char horizon做快速dstRect錨點配置
-        {
-            case 'l': //left
-                rect[0].x=0;
-                break;
-            case 'm': //middle
-                rect[0].x=width/2;
-                break;
-            case 'r': //right
-                rect[0].x=width;
-                break;
-            default: //若輸入其他指令則預設使用，所以若要自定錨點座標，傳入的char參數可以是空白字元
-                rect[0].x=x;
-                break;
-        }
-    }
-    switch(vertical)
-    {
-        case 't':
-            rect[0].y=0;
-            break;
-        case 'm':
-            rect[0].y=height/2;
-            break;
-        case 'b':
-            rect[0].y=height;
-            break;
-        default:
-            rect[0].y=y;
-            break;
-    }
     return rect;
 }
 
-void Window::draw(SDL_Texture* tex,int x,int y,SDL_Rect dstRect,SDL_Rect* clip,float angle,SDL_RendererFlip flip)
+void Window::draw(SDL_Texture* tex,int x,int y,SDL_Rect dstRect,SDL_Rect* clip,float angle,SDL_Point* pivot,SDL_RendererFlip flip)
 {
-    SDL_Point pivot; //SDL_RenderCopyEx要用的點物件，指出旋轉中心
-    pivot.x=dstRect.x; //旋轉中心同錨點
-    pivot.y=dstRect.y;
     dstRect.x=x-dstRect.x; //修正其顯示位置和錨點
     dstRect.y=y-dstRect.y;
 
-    SDL_RenderCopyEx(renderer,tex,clip,&dstRect,angle,&pivot,flip);
+    SDL_RenderCopyEx(renderer,tex,clip,&dstRect,angle,pivot,flip);
 }
 
 void Window::clear()
