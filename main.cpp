@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cctype> //用來判斷字元是否為英文或數字
 #include <string>
 #include "lib/window.h"
 #include "lib/timer.h"
@@ -21,7 +22,7 @@ int main(int argc,char* args[])
     string alurensName[4]={"FIRE","HEAL","POISON","FROZEN"};
     Timer alurensTimer[4];
 
-    int numberKey=-1; //用來紀錄現在的數字鍵值，-1代表按的是數字鍵以外的鍵
+    int numKey=-1; //用來紀錄現在的數字鍵值，-1代表按的是數字鍵以外的鍵
     float angle=0; //用來記錄角度
 
 
@@ -38,41 +39,34 @@ int main(int argc,char* args[])
     		}
     		if(e.type==SDL_KEYDOWN)
             {
-                int temp=numberKey;
+                int preNumKey=numKey;
+
+                //智慧判斷讀進來的KeyName不須再寫一個一個case再判斷和紀錄
+                //SDL_GetKeyName()讀進來的會是char[]
+                if(isdigit(SDL_GetKeyName(e.key.keysym.sym)[0])) //判斷按的鍵回傳的key值第一個字元是不是數字
+                    numKey=atoi(SDL_GetKeyName(e.key.keysym.sym)); //確定按的是數字再進行轉換
+                else //我已經確認過SDL的所有keyName，除了數字以外，其他所有鍵的key值開頭一定是英文
+                    numKey=-1;
+
                 switch(e.key.keysym.sym)
                 {
-                    case SDLK_1:
-                        numberKey=1;
-                        break;
-                    case SDLK_2:
-                        numberKey=2;
-                        break;
-                    case SDLK_3:
-                        numberKey=3;
-                        break;
-                    case SDLK_4:
-                        numberKey=4;
-                        break;
                     //ESC退出
                     case SDLK_ESCAPE:
                         quit=true;
                         break;
-                    default:
-                        numberKey=-1;
-                        break;
                 }
-                if(numberKey>0 && temp==numberKey)
+                if(numKey>0 && preNumKey==numKey)
                 {
-                    switch(alurensTimer[numberKey-1].state())
+                    switch(alurensTimer[numKey-1].state())
                     {
                         case -1:
-                            alurensTimer[numberKey-1].start();
+                            alurensTimer[numKey-1].start();
                             break;
                         case 0:
-                            alurensTimer[numberKey-1].resume();
+                            alurensTimer[numKey-1].resume();
                             break;
                         case 1:
-                            alurensTimer[numberKey-1].pause();
+                            alurensTimer[numKey-1].pause();
                             break;
                         default:
                             break;
@@ -93,11 +87,11 @@ int main(int argc,char* args[])
 
 
         Window::draw(bg,0,0,bgRect[0]);
-        Window::draw(alurens,Window::state().w/2,Window::state().h/2,alurensRect[0],&alurensRect[numberKey],angle); //以錨點繪製在螢幕正中間，只繪製numberKey選取到的clipRect[]，旋轉angle度
+        Window::draw(alurens,Window::state().w/2,Window::state().h/2,alurensRect[0],&alurensRect[numKey],angle); //以錨點繪製在螢幕正中間，只繪製numKey選取到的clipRect[]，旋轉angle度
         Window::draw(title,Window::state().w/2,Window::state().h/2,titleRect[0]);
-        if(numberKey>0)
+        if(numKey>0)
         {
-            alurensTimerText=Window::loadText("Magic "+alurensName[numberKey-1]+" is using for "+ alurensTimer[numberKey-1].clock(),"font/freeWing.ttf",{255,255,255},16);
+            alurensTimerText=Window::loadText("Magic "+alurensName[numKey-1]+" is using for "+ alurensTimer[numKey-1].clock(),"font/freeWing.ttf",{255,255,255},16);
             alurensTimerTextRect=Window::setRect(alurensTimerText,0,0,'m','t'); //長寬為原材質長寬，錨點為中上
             Window::draw(alurensTimerText,Window::state().w/2,Window::state().h/2+150,alurensTimerTextRect[0]);
         }
