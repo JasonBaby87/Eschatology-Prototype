@@ -57,13 +57,13 @@ int Timer::ticks() const
     return 0;
 }
 
-int Timer::state() const
+State Timer::state() const
 {
     if(started && !paused) //開始了而且沒有暫停正在計時
-        return 1;
+        return timing;
     else if(started && paused) //開始了但暫停
-        return 0;
-    return -1; //根本沒開始
+        return pausing;
+    return initial; //根本沒開始
 }
 
 string Timer::clock() const //ticks是毫秒

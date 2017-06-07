@@ -59,13 +59,13 @@ int main(int argc,char* args[])
                 {
                     switch(alurensTimer[numKey-1].state())
                     {
-                        case -1:
+                        case initial:
                             alurensTimer[numKey-1].start();
                             break;
-                        case 0:
+                        case pausing:
                             alurensTimer[numKey-1].resume();
                             break;
-                        case 1:
+                        case timing:
                             alurensTimer[numKey-1].pause();
                             break;
                         default:

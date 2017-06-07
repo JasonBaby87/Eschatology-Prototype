@@ -4,8 +4,13 @@ using namespace std;
 #ifndef TIMER_H
 #define TIMER_H
 
+enum State{initial,timing,pausing};
+
 class Timer
 {
+private:
+    int startTicks,pausedTicks;
+    bool started,paused;
 public:
     Timer();
     void start();
@@ -17,12 +22,8 @@ public:
     //@return 逝去的時間
     int ticks() const;
     ///Check if Timer is started
-    int state() const;
+    State state() const;
     string clock() const;
-
-private:
-    int startTicks,pausedTicks;
-    bool started,paused;
 };
 
 #endif
