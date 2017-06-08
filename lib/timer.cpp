@@ -1,8 +1,6 @@
 #define __USE_MINGW_ANSI_STDIO 0 //在minGW下，stdio.h和libmingwex.a會打架，這行禁用他們的definition
-#include <string>
-#include "SDL2/SDL.h"
+
 #include "timer.h"
-using namespace std;
 
 Timer::Timer():startTicks(0),pausedTicks(0),started(false),paused(false)
 {}
@@ -66,7 +64,7 @@ State Timer::state() const
     return initial; //根本沒開始
 }
 
-string Timer::clock() const //ticks是毫秒
+std::string Timer::clock() const //ticks是毫秒
 {
     int tickNum=ticks();
     if(tickNum>=60*1000) //大於一分鐘的話
@@ -74,7 +72,7 @@ string Timer::clock() const //ticks是毫秒
     if(tickNum>=60*100000) //大於一小時的話，注意這裡不是60*60*1000因為上一步驟已經分鐘的部分轉為十進位
         tickNum=tickNum/(60*100000)*10000000+tickNum%(60*100000);
 
-    string clockStr=to_string(tickNum);
+    std::string clockStr=std::to_string(tickNum);
 
     if(clockStr.size()>3)
         clockStr.insert(clockStr.size()-3,".");

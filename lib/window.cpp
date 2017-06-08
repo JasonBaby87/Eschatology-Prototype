@@ -1,16 +1,10 @@
-#include <iostream>
-#include <string>
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
-#include "SDL2/SDL_ttf.h"
 #include "window.h"
-using namespace std;
 
 SDL_Window* Window::window;
 SDL_Renderer* Window::renderer;
 SDL_Rect Window::box;
 
-void Window::init(string title)
+void Window::initialize(std::string title)
 {
     SDL_Init(SDL_INIT_EVERYTHING);
     TTF_Init();
@@ -35,109 +29,6 @@ SDL_Rect Window::state()
     return box;
 }
 
-SDL_Texture* Window::loadImage(const string& file)
-{
-    return IMG_LoadTexture(renderer,file.c_str());
-}
-
-SDL_Texture* Window::loadText(const string& message,const string& fontFile,SDL_Color color,int fontSize)
-{
-    TTF_Font* font=TTF_OpenFont(fontFile.c_str(),fontSize);
-
-    //TTF_RenderText用來繪製文本，其中Blended是效率最慢但效果最好的
-    SDL_Surface* surf=TTF_RenderText_Blended(font,message.c_str(),color);
-    SDL_Texture* texture=SDL_CreateTextureFromSurface(renderer,surf);
-
-    SDL_FreeSurface(surf);
-    TTF_CloseFont(font);
-
-    return texture;
-}
-
-SDL_Point Window::setPoint(SDL_Texture* tex,Position horizon,Position vertical)
-{
-    int w=0,h=0,x=0,y=0; //w、h獲取材質原本長寬；x、y用來回傳point
-    SDL_QueryTexture(tex,NULL,NULL,&w,&h);
-    switch (horizon)
-    {
-        case Position::left:
-            x=0;
-            break;
-        case Position::middle:
-            x=w/2;
-            break;
-        case Position::right:
-            x=w;
-            break;
-        default: //若coder不傳入規範好的enumerator，則預設為0，再此可再新增code用以偵錯
-            x=0;
-            break;
-    }
-    switch (vertical)
-    {
-        case Position::top:
-            y=0;
-            break;
-        case Position::middle:
-            y=h/2;
-            break;
-        case Position::bottom:
-            y=h;
-            break;
-        default:
-            y=0;
-            break;
-    }
-    return {x,y};
-}
-
-SDL_Rect* Window::setRect(SDL_Texture* tex,int width,int height,SDL_Point pivot,int column,int row)
-{
-    SDL_Rect* rect=new SDL_Rect[row*column+1]; //第零項目存放dstRect，剩下的存放clipRect[]
-
-    int oriW=0,oriH=0; //獲取材質原本長寬
-    SDL_QueryTexture(tex,NULL,NULL,&oriW,&oriH);
-
-    for(int i=0,c=0;i<row*column;i++) //計算clipRect的每項之矩形訊息
-    {
-        if(i!=0 && i%row==0)
-            c++;
-        rect[i+1].x=c*oriW/column; //因為第零項是dstRect，所以都要加一
-        rect[i+1].y=i%row*oriH/row;
-        rect[i+1].w=oriW/column; //記得每個小裁切矩形都是原本寬的1/column倍
-        rect[i+1].h=oriH/row;
-    }
-
-    if(width==0 && height==0) //預設都是零，代表要將dstRect長寬設為材質原長寬，意即1:1不更改比例印出
-    {
-        width=oriW/column;
-        height=oriH/row;
-    }
-    else if(width==0) //如果只有寬是零，長有被設定數字
-    {
-        width=oriW*height/oriH; //依配置的高等比例縮放寬
-    }
-    else if(height==0)
-    {
-        height=oriH*width/oriW;
-    }
-
-    rect[0].w=width;
-    rect[0].h=height;
-    rect[0].x=pivot.x/column; //如果他有裁切，則使用者預期的錨點位置應該也被等比例裁切
-    rect[0].y=pivot.y/row; //比如使用者指定中心為錨點，這裡的中心不是原圖中心，是裁切後的圖的中心，因此這裡要除掉行或列
-
-    return rect;
-}
-
-void Window::draw(SDL_Texture* tex,int x,int y,SDL_Rect dstRect,SDL_Rect* clip,float angle,SDL_Point* pivot,SDL_RendererFlip flip)
-{
-    dstRect.x=x-dstRect.x; //修正其顯示位置和錨點
-    dstRect.y=y-dstRect.y;
-
-    SDL_RenderCopyEx(renderer,tex,clip,&dstRect,angle,pivot,flip);
-}
-
 void Window::clear()
 {
     SDL_RenderClear(renderer);
@@ -154,4 +45,134 @@ void Window::quit()
     SDL_DestroyWindow(window);
     TTF_Quit();
     SDL_Quit();
+}
+
+Texture::Texture(const string& file)
+{
+    tex=IMG_LoadTexture(Window::renderer,file.c_str());
+    initialize();
+}
+
+Texture::Texture(const string& message,const string& fontFile,SDL_Color color,int fontSize)
+{
+    /**
+    *   SDL_CreateTextureFromSurface:把surface轉成Texture
+    *   @param  renderer*
+    *   @param  surface*:TTF_RenderText_Blended(,,)會回傳
+
+    *   TTF_RenderText:用來繪製文本(其中Blended是效率最慢但效果最好的)
+    *   @return surface*
+    *   @param TTF_Font*:TTF_OpenFont(,)會回傳
+    *   @param char[]
+    *   @param SDL_Color
+
+    *   TTF_OpenFont
+    *   @return TTF_Font*
+    *   @param char[]:字體包檔案路徑
+    *   @param int:字體大小
+    */
+    tex=SDL_CreateTextureFromSurface(Window::renderer,TTF_RenderText_Blended(TTF_OpenFont(fontFile.c_str(),fontSize),message.c_str(),color));
+    initialize();
+}
+
+Texture::~Texture()
+{
+    SDL_DestroyTexture(tex);
+}
+
+void Texture::initialize()
+{
+    SDL_QueryTexture(tex,NULL,NULL,&width,&height); //獲取材質原本長寬並寫入到width和height裡面
+    dstRect.x=0;
+    dstRect.y=0;
+    dstRect.w=width;
+    dstRect.h=height;
+    clipRect=NULL;
+}
+
+SDL_Point Texture::setPoint(Position horizon,Position vertical)
+{
+    int x=0,y=0; //x、y用來回傳point
+    switch (horizon)
+    {
+        case Position::left:
+            x=0;
+            break;
+        case Position::middle:
+            x=width/2;
+            break;
+        case Position::right:
+            x=width;
+            break;
+        default:
+            x=0;
+            break;
+    }
+    switch (vertical)
+    {
+        case Position::top:
+            y=0;
+            break;
+        case Position::middle:
+            y=height/2;
+            break;
+        case Position::bottom:
+            y=height;
+            break;
+        default:
+            y=0;
+            break;
+    }
+    return {x,y};
+}
+
+void Texture::setDstRect(unsigned  int width,unsigned int height,SDL_Point pivot)
+{
+    if(width!=0 && height!=0) //如果都是零，代表要將dstRect長寬設為材質原長寬
+    {
+        if(width==0) //如果寬是0，長有被設定數字
+        {
+            width=this->width*height/this->height; //依配置的高等比例縮放寬(不讓照片變形)
+        }
+        else if(height==0)
+        {
+            height=this->height*width/this->width;
+        }
+
+        dstRect.w=width;
+        dstRect.h=height;
+    }
+    dstRect.x=pivot.x; //設定錨點
+    dstRect.y=pivot.y;
+}
+void Texture::setClipRect(unsigned int column,unsigned int row)
+{
+    if(column>0 && row>0) //以防coder亂設
+    {
+        clipRect=new SDL_Rect[row*column];
+
+        for(unsigned int i=0,c=0;i<row*column;i++) //計算clipRect的每項之矩形訊息
+        {
+            if(i!=0 && i%row==0)
+                c++;
+            clipRect[i].x=c*this->width/column;
+            clipRect[i].y=i%row*this->height/row;
+            clipRect[i].w=this->width/column; //記得每個小裁切矩形都是原本寬的1/column倍
+            clipRect[i].h=this->height/row;
+        }
+
+        dstRect.w/=column; //如果他有裁切，則使用者預期的dstRect錨點位置和長寬應該也被裁切成小小塊
+        dstRect.h/=row;
+        dstRect.x/=column; //比如使用者指定「中心」為錨點，這裡的中心不是原大圖的中心，是每個裁切子圖的中心
+        dstRect.y/=row;
+    }
+}
+
+void Texture::draw(int x,int y,unsigned int clip,float angle,SDL_Point* pivot,SDL_RendererFlip flip)
+{
+    SDL_Rect tempRect=dstRect; //建立一個為了修正顯示位置和dstRect錨點的暫時矩形
+    tempRect.x=x-dstRect.x; //修正其顯示位置和錨點
+    tempRect.y=y-dstRect.y;
+
+    SDL_RenderCopyEx(Window::renderer,tex,&clipRect[clip],&tempRect,angle,pivot,flip);
 }

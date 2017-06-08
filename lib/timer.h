@@ -1,8 +1,8 @@
-#include <string>
-using namespace std;
-
 #ifndef TIMER_H
 #define TIMER_H
+
+#include <string>
+#include "SDL2/SDL.h"
 
 //回傳state時用的enumeration
 enum State{initial,timing,pausing};
@@ -24,7 +24,7 @@ public:
     int ticks() const;
     ///Check if Timer is started
     State state() const;
-    string clock() const;
+    std::string clock() const;
 };
 
 #endif

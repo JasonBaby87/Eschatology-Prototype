@@ -1,24 +1,21 @@
 #include <iostream>
 #include <cctype> //用來判斷字元是否為英文或數字
-#include <string>
 #include "lib/window.h"
 #include "lib/timer.h"
-using namespace std;
 
 int main(int argc,char* args[])
 {
-    Window::init("Eschatology");
+    Window::initialize("Eschatology");
 
-    SDL_Texture* bg=Window::loadImage("img/bg.jpg");
-    SDL_Rect* bgRect=Window::setRect(bg,0,Window::state().h); //讓它填滿螢幕(長填滿，寬依比例縮放)，錨點設為左上
-    SDL_Texture* alurens=Window::loadImage("img/alurens.png");
-    SDL_Rect* alurensRect=Window::setRect(alurens,0,0,Window::setPoint(alurens),2,2); //長寬為原材質長寬，錨點為中心，分割成2x2
+    Texture bg("img/bg.jpg");
+    bg.setDstRect(0,Window::state().h); //讓它填滿螢幕(長填滿，寬依比例縮放)，錨點設為左上
+    Texture alurens("img/alurens.png");
+    alurens.setDstRect(0,0,alurens.setPoint()); //長寬為原材質長寬，錨點為中心
+    alurens.setClipRect(2,2);   //分割成2x2
 
-    SDL_Texture* title=Window::loadText("Eschatology","font/freeWing.ttf",{255,255,255},64);
-    SDL_Rect* titleRect=Window::setRect(title,0,0,Window::setPoint(title)); //長寬為原材質長寬，錨點為中心
+    Texture title("Eschatology","font/freeWing.ttf",{255,255,255},64);
+    title.setDstRect(0,0,title.setPoint()); //長寬為原材質長寬，錨點為中心
 
-    SDL_Texture* alurensTimerText;
-    SDL_Rect* alurensTimerTextRect;
     string alurensName[4]={"FIRE","HEAL","POISON","FROZEN"};
     Timer alurensTimer[4];
 
@@ -86,21 +83,20 @@ int main(int argc,char* args[])
         Window::clear();
 
 
-        Window::draw(bg,0,0,bgRect[0]);
-        Window::draw(alurens,Window::state().w/2,Window::state().h/2,alurensRect[0],&alurensRect[numKey],angle); //以錨點繪製在螢幕正中間，只繪製numKey選取到的clipRect[]，旋轉angle度
-        Window::draw(title,Window::state().w/2,Window::state().h/2,titleRect[0]);
+        bg.draw(0,0);
+
         if(numKey>0)
         {
-            alurensTimerText=Window::loadText("Magic "+alurensName[numKey-1]+" is using for "+ alurensTimer[numKey-1].clock(),"font/freeWing.ttf",{255,255,255},16);
-            alurensTimerTextRect=Window::setRect(alurensTimerText,0,0,Window::setPoint(alurensTimerText,middle,middle)); //長寬為原材質長寬，錨點為中上
-            Window::draw(alurensTimerText,Window::state().w/2,Window::state().h/2+150,alurensTimerTextRect[0]);
+            Texture alurensTimerText("Magic "+alurensName[numKey-1]+" is using for "+ alurensTimer[numKey-1].clock(),"font/freeWing.ttf",{255,255,255},16);
+            alurensTimerText.setDstRect(0,0,alurensTimerText.setPoint(middle,top)); //長寬為原材質長寬，錨點為中上
+            alurensTimerText.draw(Window::state().w/2,Window::state().h/2+150);
+            alurens.draw(Window::state().w/2,Window::state().h/2,numKey-1,angle); //繪製在螢幕正中間，切換到相對應的子圖，旋轉angle度
         }
+
+        title.draw(Window::state().w/2,Window::state().h/2);
 
         Window::present();
     }
-
-    SDL_DestroyTexture(bg);
-    SDL_DestroyTexture(alurens);
 
     Window::quit();
     return 0;
