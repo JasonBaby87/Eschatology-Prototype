@@ -37,13 +37,13 @@ void Timer::resume()
     }
 }
 
-int Timer::restart()
+Uint32 Timer::restart()
 {
     start();
     return ticks();
 }
 
-int Timer::ticks() const
+Uint32 Timer::ticks() const
 {
     if (started)
     {

@@ -71,7 +71,12 @@ Texture::Texture(const string& message,const string& fontFile,SDL_Color color,in
     *   @param char[]:字體包檔案路徑
     *   @param int:字體大小
     */
-    tex=SDL_CreateTextureFromSurface(Window::renderer,TTF_RenderText_Blended(TTF_OpenFont(fontFile.c_str(),fontSize),message.c_str(),color));
+    TTF_Font* font=TTF_OpenFont(fontFile.c_str(),fontSize);
+    SDL_Surface* surf=TTF_RenderText_Blended(font,message.c_str(),color);
+    tex=SDL_CreateTextureFromSurface(Window::renderer,surf);
+    SDL_FreeSurface(surf); //不做清除到時候重複建立超多文本材質時會爆掉
+    TTF_CloseFont(font);
+
     initialize();
 }
 
@@ -168,6 +173,16 @@ void Texture::setClipRect(unsigned int column,unsigned int row)
     }
 }
 
+void Texture::setColor(SDL_Color color)
+{
+    SDL_SetTextureColorMod(tex,color.r,color.g,color.b);
+}
+
+void Texture::setAlpha(Uint8 a)
+{
+    SDL_SetTextureAlphaMod(tex,a);
+}
+
 void Texture::draw(int x,int y,unsigned int clip,float angle,SDL_Point* pivot,SDL_RendererFlip flip)
 {
     SDL_Rect tempRect=dstRect; //建立一個為了修正顯示位置和dstRect錨點的暫時矩形
@@ -175,4 +190,14 @@ void Texture::draw(int x,int y,unsigned int clip,float angle,SDL_Point* pivot,SD
     tempRect.y=y-dstRect.y;
 
     SDL_RenderCopyEx(Window::renderer,tex,&clipRect[clip],&tempRect,angle,pivot,flip);
+}
+
+SDL_Color rgb(Uint8 r,Uint8 g,Uint8 b)
+{
+    return SDL_Color{r,g,b};
+}
+
+SDL_Color rgba(Uint8 r,Uint8 g,Uint8 b,Uint8 a)
+{
+    return SDL_Color{r,g,b,a};
 }

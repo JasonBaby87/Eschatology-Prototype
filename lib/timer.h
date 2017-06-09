@@ -10,7 +10,7 @@ enum State{initial,timing,pausing};
 class Timer
 {
 private:
-    int startTicks,pausedTicks;
+    Uint32 startTicks,pausedTicks;
     bool started,paused;
 public:
     Timer();
@@ -19,9 +19,9 @@ public:
     void pause();
     void resume();
     //@return 逝去的時間
-    int restart();
+    Uint32 restart();
     //@return 逝去的時間
-    int ticks() const;
+    Uint32 ticks() const;
     ///Check if Timer is started
     State state() const;
     std::string clock() const;

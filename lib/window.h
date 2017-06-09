@@ -9,6 +9,9 @@ using namespace std;
 
 //位置列舉，讓與SDL_Point相關的參數傳接更可視化
 enum Position{left,right,top,bottom,middle};
+//我承認是我editor可以認識rgb()然後顯示顏色我才特別弄這些函式的YA
+SDL_Color rgb(Uint8 r,Uint8 g,Uint8 b);
+SDL_Color rgba(Uint8 r,Uint8 g,Uint8 b,Uint8 a);
 
 class Window
 {
@@ -64,6 +67,10 @@ public:
     *   在呼叫此函式前要先注意有沒有先setDstRect()過，因為此函式會直接變更dstRect的長寬及錨點位置(除以column和row)，以符合裁切後結果，如果一直重複呼叫此函式而未先set好dstRect，可能會讓dstRect長成非預期的樣子(dstRect用之前clip後的樣子繼續除而不是用原本的樣子只除這一次)
     */
     void setClipRect(unsigned int column,unsigned int row);
+    //調整材質的色調
+    void setColor(SDL_Color);
+    //設定透明度
+    void setAlpha(Uint8 a);
     /**
     *   讓texture render到螢幕上
     *   @param x和y設定texture要在螢幕的哪裡(座標)
