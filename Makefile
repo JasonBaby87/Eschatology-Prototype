@@ -1,15 +1,15 @@
 SOURCE=main.cpp lib/window.cpp lib/timer.cpp
-MYPROGRAM=Eschatology
-MYINCLUDES=
-MYFLAGS=-std=c++14
-MYLIBRARIES=-lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
+PROGRAM=Eschatology
+INCLUDES=
+FLAGS=-std=c++14
+LINKER=-lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 CC=g++
 
-all: $(MYPROGRAM)
+all: $(PROGRAM)
 
-$(MYPROGRAM): $(SOURCE)
-	$(CC) $(MYINCLUDES) $(MYFLAGS) $(SOURCE) -o$(MYPROGRAM) $(MYLIBRARIES)
+$(PROGRAM): $(SOURCE)
+	$(CC) $(INCLUDES) $(FLAGS) $(SOURCE) -o$(PROGRAM) $(LINKER)
 clean:
-	rm -f $(MYPROGRAM)
+	rm -f $(PROGRAM)
 run:
-	$(MYPROGRAM)
+	$(PROGRAM)

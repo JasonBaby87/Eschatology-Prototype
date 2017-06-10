@@ -7,7 +7,9 @@ SDL_Rect Window::box;
 void Window::initialize(std::string title)
 {
     SDL_Init(SDL_INIT_EVERYTHING);
+    IMG_Init(IMG_INIT_PNG);
     TTF_Init();
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048 );
 
     box.x=SDL_WINDOWPOS_CENTERED;
     box.y=SDL_WINDOWPOS_CENTERED;
@@ -44,6 +46,7 @@ void Window::quit()
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     TTF_Quit();
+    IMG_Quit();
     SDL_Quit();
 }
 

@@ -36,9 +36,9 @@ int main(int argc,char* args[])
 
     string alurensName[4]={"FIRE","LIGHT","DARK","ICE"};
     SDL_Color alurensColor[4]={rgb(255, 128, 128),rgb(255, 255, 128),rgb(211, 128, 255),rgb(176, 255, 255)};
-    int alurensColorTransLow[4]={128,128,164,176};
-    int alurensColorTransUp[4]={160,240,211,240};
     Timer alurensTimer[4];
+
+    Mix_Music* mainBGM=Mix_LoadMUS("sounds/main.mp3");
 
     int numKey=-1; //用來紀錄現在的數字鍵值，-1代表按的是數字鍵以外的鍵
     float theta1=0,theta2=0,theta3=0; //用來記錄角度
@@ -91,11 +91,29 @@ int main(int argc,char* args[])
                     }
                 }
     		}
-    		if(e.type==SDL_MOUSEBUTTONDOWN)
+            if(e.type==SDL_MOUSEBUTTONDOWN)
             {
-                quit=true;
-                break;
-    		}
+                if(e.button.button==SDL_BUTTON_RIGHT)
+                {
+                    if(Mix_PlayingMusic()) //還沒沒播會回傳0、否則回傳1
+                        Mix_HaltMusic(); //如果已經開始播了，按右鍵就halt(stop)音樂
+                }
+                if(e.button.button==SDL_BUTTON_LEFT)
+                {
+                    if(!Mix_PlayingMusic())
+                        Mix_PlayMusic( mainBGM, -1 ); //-1是loop次數，在此是loop到halt(stop)為止
+                    else
+                    {
+                        if(!Mix_PausedMusic()) //如果正在暫停會回傳0、否則回傳1
+                            Mix_PauseMusic(); //在此是如果音樂沒有暫停，又按左鍵的話就暫停音樂
+                    }
+                }
+            }
+    		if(e.type==SDL_MOUSEBUTTONUP)
+            {
+                if(Mix_PausedMusic() && Mix_PlayingMusic())
+                    Mix_ResumeMusic(); //如果音樂已經開始播而且正在暫停，鬆開滑鼠就恢復播放
+            }
             if(e.type==SDL_MOUSEMOTION) //滑鼠移動
             {
                 theta1+=e.motion.xrel+e.motion.yrel;
@@ -114,17 +132,17 @@ int main(int argc,char* args[])
             switch(numKey)
             {
                 case 1:
-                    alurensColor[numKey-1].g=rhs(theta3,alurensColorTransLow[numKey-1],alurensColorTransUp[numKey-1],0.05);
-                    alurensColor[numKey-1].b=rhs(theta3,alurensColorTransLow[numKey-1],255-alurensColorTransUp[numKey-1],0.05);
+                    alurensColor[numKey-1].g=rhs(theta3,128,160,0.05);
+                    alurensColor[numKey-1].b=rhs(theta3,128,96,0.05);
                     break;
                 case 2:
-                    alurensColor[numKey-1].b=rhs(theta3,alurensColorTransLow[numKey-1],alurensColorTransUp[numKey-1],0.1);
+                    alurensColor[numKey-1].b=rhs(theta3,128,240,0.1);
                     break;
                 case 3:
-                    alurensColor[numKey-1].r=rhs(theta3,alurensColorTransLow[numKey-1],alurensColorTransUp[numKey-1],0.1);
+                    alurensColor[numKey-1].r=rhs(theta3,164,211,0.1);
                     break;
                 case 4:
-                    alurensColor[numKey-1].r=rhs(theta3,alurensColorTransLow[numKey-1],alurensColorTransUp[numKey-1],0.1);
+                    alurensColor[numKey-1].r=rhs(theta3,176,240,0.1);
                     break;
             }
             alurens.setColor(alurensColor[numKey-1]);

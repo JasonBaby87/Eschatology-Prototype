@@ -5,6 +5,7 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_ttf.h"
+#include "SDL2/SDL_mixer.h"
 using namespace std;
 
 //位置列舉，讓與SDL_Point相關的參數傳接更可視化
