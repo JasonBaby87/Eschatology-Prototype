@@ -1,3 +1,4 @@
+#define __USE_MINGW_ANSI_STDIO 0
 #include <iostream>
 #include <cctype> //用來判斷字元是否為英文或數字
 #include <math.h> //簡協運動的三角函數
@@ -40,6 +41,9 @@ int main(int argc,char* args[])
 
     Mix_Music* mainBGM=Mix_LoadMUS("sounds/main.mp3");
 
+    Timer fps;
+    float avgFPS=0.0;
+
     int numKey=-1; //用來紀錄現在的數字鍵值，-1代表按的是數字鍵以外的鍵
     float theta1=0,theta2=0,theta3=0; //用來記錄角度
     //theta1用來
@@ -47,7 +51,7 @@ int main(int argc,char* args[])
     SDL_Event e;
     bool quit=false;
 
-    while(!quit)
+    for(Uint32 frame=0;!quit;frame++) //frame用來計算現在是第幾次刷新
     {
         while(SDL_PollEvent(&e))
         {
@@ -126,7 +130,7 @@ int main(int argc,char* args[])
         if(numKey>0)
         {
             Texture alurensTimerText("Magic "+alurensName[numKey-1]+" is using for "+ alurensTimer[numKey-1].clock(),"font/freeWing.ttf",rgb(255,255,255),16);
-            alurensTimerText.setDstRect(0,0,alurensTimerText.setPoint(middle,top)); //長寬為原材質長寬，錨點為中上
+            alurensTimerText.setDstRect(0,0,alurensTimerText.setPoint(Position::middle,Position::top)); //長寬為原材質長寬，錨點為中上
             alurensTimerText.draw(Window::state().w/2,Window::state().h/2+150);
 
             switch(numKey)
@@ -150,6 +154,13 @@ int main(int argc,char* args[])
         }
         title.setAlpha(rhs(theta2,0,255,0.02)); //透明度的簡諧運動
         title.draw(Window::state().w/2,100);
+
+        if(frame>0) //因為第零個frame，Timer fps還沒開始，這樣除fps.ticks()=0會無限大
+            avgFPS=(avgFPS*frame+1000/fps.ticks())/(frame+1);
+        Texture fpsText("fps:"+to_string(avgFPS),"font/freeWing.ttf",rgb(255,255,255),12);
+        fpsText.setDstRect(0,0,fpsText.setPoint(Position::right,Position::top)); //原材質大小，錨點為右上
+        fpsText.draw(Window::state().w,0);
+        fps.start();
 
         Window::present();
     }
