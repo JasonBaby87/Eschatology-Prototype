@@ -5,14 +5,17 @@
 #include "../global/config.h"
 #include "../global/state.h"
 #include "../utilities/musicPlayer.h"
+#include <iostream>
 
-typedef unsigned int Beat;
-typedef ImproperFraction<int> FractionalBeat;
+typedef unsigned int Beat; // Time point
+typedef ImproperFraction<int> FractionalBeat; // Time point
+typedef double BeatDuration; // Duration
+typedef Fraction<int,int> BPM;
 
 class Note
 {
 	Beat beat;
-	FractionalBeat beat;
+	FractionalBeat division;
 };
 
 class ChartPlayer
@@ -20,7 +23,11 @@ class ChartPlayer
 private:
 	Milliseconds songOffset;
 	vector<Note> notes;
-
+	MusicPlayer* music;
+	BPM bpm;
+public:
+	ChartPlayer(MusicPlayer&, istream&);
+	vector<pair<BeatDuration,Note>>& getNotePositions(BeatDuration);
 };
 
 #endif // CHARTPLAYER_H_INCLUDED

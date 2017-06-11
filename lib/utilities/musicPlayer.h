@@ -13,6 +13,8 @@ public:
 	void stop();
 	bool isPlaying();
 	Nanoseconds playTime();
+
+	MusicPlayer(); // TODO figure out SDL
 };
 
 #endif // MUSICPLAYER_H_INCLUDED
