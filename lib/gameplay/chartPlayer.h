@@ -8,8 +8,7 @@
 #include <vector>
 #include <list>
 
-typedef unsigned int Beat; // Time point
-typedef ImproperFraction<int> FractionalBeat; // Time point
+typedef Fraction<int,int> Beat; // Time point
 typedef double BeatDuration; // Duration
 typedef Fraction<int,int> BPM;
 
@@ -18,7 +17,6 @@ class Note
 {
 public:
 	const Beat beat;
-	const FractionalBeat division;
 	bool alive;
 	Note(Beat, FractionalBeat);
 };
