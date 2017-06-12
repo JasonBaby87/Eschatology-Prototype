@@ -1,13 +1,8 @@
-/**
-	Author:			Kuo, Tai-Yuan
-	Student ID#:	B05705031
-	Date:			[insert date]
-	File Name:		[insert file name]
-	Description:	[insert description]
-*/
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+#include "lib/math/fraction.h"
+#include "lib/math/fraction.cpp"
 
 using namespace std;
 
@@ -34,7 +29,9 @@ void eOP();
 
 int main()
 {
-	// TODO insert your program here
+	ImproperFraction<int> a(2, 4);
+
+	cout << a;
 
 	eOP();
 }

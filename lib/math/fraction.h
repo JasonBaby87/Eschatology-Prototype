@@ -1,26 +1,34 @@
 #ifndef FRACTION_H_INCLUDED
 #define FRACTION_H_INCLUDED
 
+#include <ostream>
+#include "algorithm.h"
+
+template <typename N>
 class ImproperFraction;
+template <typename N1, typename N2>
 class Fraction;
 
 template <typename N>
 class ImproperFraction
 {
 private:
-	friend class Fraction;
-    friend N numerator;
-    friend N denominator;
-	friend ImproperFraction& reduce();
+	friend class Fraction<N,N>;
+    N numerator;
+    N denominator;
+	ImproperFraction<N>& reduce();
 public:
-    ImproperFraction(N = 0, N = 1);
+    ImproperFraction<N>(N = 0, N = 1);
 	N getInteger() const;
 	N getNumerator() const;
 	N getDenominator() const;
 	// Operator overloading when needed
 };
 
-template <typename N1, N2>
+template <typename N>
+istream& operator<<(ostream& os, const ImproperFraction<N>& f);
+
+template <typename N1, typename N2>
 class Fraction
 {
 private:
@@ -34,5 +42,10 @@ public:
 	N2 getDenominator() const;
 	// Operator overloading when needed
 };
+
+template <typename N1, typename N2>
+istream& operator<<(ostream& os, const Fraction<N1,N2>& f);
+
+#include "fraction.cpp"
 
 #endif // FRACTION_H_INCLUDED
