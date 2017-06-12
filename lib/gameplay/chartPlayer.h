@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <chrono>
 
 typedef Fraction<int,int> Beat; // Time point
 typedef double BeatDuration; // Duration
@@ -17,21 +18,22 @@ class Note
 {
 public:
 	const Beat beat;
-	bool alive;
+	// speed (is currently just 1)
 	Note(Beat);
 };
 
 class ChartPlayer
 {
 private:
-	Milliseconds songOffset;
-	list<Note*> notes;
 	MusicPlayer* music;
+	Milliseconds songOffset;
 	BPM bpm;
+	list<Note*> notes;
 	vector<Judgement> judgements;
+	void registerMisses();
 public:
 	ChartPlayer(MusicPlayer&, istream& data);
-	vector<pair<BeatDuration,Note*>>& getNotePositions(BeatDuration);
+	vector<pair<BeatDuration,Note*>>& getNotePositions(BeatDuration = 8) const;
 	void hit();
 	vector<Judgement>& getJudgements() const;
 };

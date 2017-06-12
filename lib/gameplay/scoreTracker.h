@@ -4,13 +4,14 @@
 #include "chartPlayer.h"
 
 typedef long long Score;
+typedef int Combo;
 
 class ScoreTracker
 {
 private:
 	ChartPlayer* chart;
 	Score score;
-	int tracked;
+	Combo combo;
 public:
 	ScoreTracker(ChartPlayer&);
 	Score getScore();
