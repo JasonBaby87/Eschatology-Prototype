@@ -21,10 +21,8 @@ ImproperFraction<N>& ImproperFraction<N>::reduce()
 }
 
 template <typename N>
-ImproperFraction<N>::ImproperFraction(N n, N d)
+ImproperFraction<N>::ImproperFraction(N n, N d): numerator(n), denominator(d)
 {
-	numerator = n;
-	denominator = d;
 	reduce();
 }
 
@@ -178,9 +176,8 @@ Fraction<N1,N2>& Fraction<N1,N2>::reduce()
 }
 
 template <typename N1, typename N2>
-Fraction<N1,N2>::Fraction(N1 i, N2 n, N2 d)
+Fraction<N1,N2>::Fraction(N1 i, N2 n, N2 d): integer(i)
 {
-	integer = i;
 	fraction = ImproperFraction<N2>(n, d);
 	reduce();
 }
