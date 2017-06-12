@@ -8,7 +8,12 @@ using namespace std;
 typedef chrono::milliseconds Milliseconds;
 typedef chrono::microseconds Microseconds;
 typedef chrono::nanoseconds Nanoseconds;
-/** It is an unsigned integral type. The lower the value, the better. */
-typedef unsigned short Judgement;
+
+// Judgements
+/** It is an integral type. The lower the value, the better.
+	<p>Negative values are for misses and some others.</p>*/
+typedef short Judgement;
+extern const Judgement MISS = -1;
+extern const Judgement WRONG = -2;
 
 #endif // TYPE_H_INCLUDED
