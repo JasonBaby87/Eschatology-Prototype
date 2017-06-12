@@ -18,7 +18,7 @@ class Note
 public:
 	const Beat beat;
 	bool alive;
-	Note(Beat, FractionalBeat);
+	Note(Beat);
 };
 
 class ChartPlayer
