@@ -1,14 +1,17 @@
 #ifndef FRACTION_H_INCLUDED
 #define FRACTION_H_INCLUDED
 
+class ImproperFraction;
+class Fraction;
+
 template <typename N>
 class ImproperFraction
 {
 private:
-    N numerator;
-    N denominator;
-protected:
-    ImproperFraction& reduce();
+	friend class Fraction;
+    friend N numerator;
+    friend N denominator;
+	friend ImproperFraction& reduce();
 public:
     ImproperFraction(N = 0, N = 1);
 	N getInteger() const;
