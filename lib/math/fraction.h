@@ -23,7 +23,22 @@ public:
 	N getNumerator() const;
 	N getDenominator() const;
 	// Operator overloading when needed
+	const ImproperFraction<N> operator+(const ImproperFraction<N>& n) const;
+	const ImproperFraction<N> operator-(const ImproperFraction<N>& n) const;
+	ImproperFraction<N>& operator+=(const ImproperFraction<N>& n);
+	ImproperFraction<N>& operator+=(N n);
+	ImproperFraction<N>& operator-=(const ImproperFraction<N>& n);
+	ImproperFraction<N>& operator-=(N n);
+	bool operator<(N n) const;
+	bool operator<(const ImproperFraction<N>& n) const;
+	bool operator>(N n) const;
+	bool operator>(const ImproperFraction<N>& n) const;
+	ImproperFraction<N> operator++(int);
+	ImproperFraction<N> operator--(int);
+	operator N() const;
+	operator double() const;
 };
+
 
 template <typename N>
 istream& operator<<(ostream& os, const ImproperFraction<N>& f);

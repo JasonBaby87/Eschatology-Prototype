@@ -6,26 +6,11 @@
 using namespace std;
 
 template <typename N>
-N gcd(N a, N b)
-{
-	if (a == 0)
-	{
-		return b;
-	}
-	if (b == 0)
-	{
-		return a;
-	}
-	while (a != 0)
-	{
-        b %= a;
-        swap(a, b);
-	}
-	return b;
-}
+N gcd(N a, N b);
 
 template <typename N>
 N lcm(N a, N b);
 
+#include "algorithm.cpp"
 
 #endif // ALGORITHM_H_INCLUDED

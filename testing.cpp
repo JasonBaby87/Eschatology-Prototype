@@ -29,7 +29,7 @@ void eOP();
 
 int main()
 {
-	ImproperFraction<int> a(2, 4);
+	Fraction<int,int> a(2, 4, 2);
 
 	cout << a;
 

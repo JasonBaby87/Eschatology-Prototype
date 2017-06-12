@@ -48,6 +48,110 @@ N ImproperFraction<N>::getDenominator() const
 
 // Operator overloading when needed
 template <typename N>
+const ImproperFraction<N> ImproperFraction<N>::operator+(const ImproperFraction<N>& f) const
+{
+    int n, d;
+    d = lcm(denominator, f.denominator);
+
+	n = numerator * (d / denominator);
+	n += f.numerator * (d / f.denominator);
+
+    return ImproperFraction<N>(n, d);
+}
+
+template <typename N>
+const ImproperFraction<N> ImproperFraction<N>::operator-(const ImproperFraction<N>& f) const
+{
+    int n, d;
+    d = lcm(denominator, f.denominator);
+
+	n = numerator * (d / denominator);
+	n -= f.numerator * (d / f.denominator);
+
+    return ImproperFraction<N>(n, d);
+}
+
+template <typename N>
+ImproperFraction<N>& ImproperFraction<N>::operator+=(const ImproperFraction<N>& n)
+{
+	*this = *this + ImproperFraction<N>(n);
+	return *this;
+}
+
+template <typename N>
+ImproperFraction<N>& ImproperFraction<N>::operator+=(N n)
+{
+	*this += ImproperFraction<N>(n);
+	return *this;
+}
+
+template <typename N>
+ImproperFraction<N>& ImproperFraction<N>::operator-=(const ImproperFraction<N>& n)
+{
+	*this = *this - ImproperFraction<N>(n);
+	return *this;
+}
+
+template <typename N>
+ImproperFraction<N>& ImproperFraction<N>::operator-=(N n)
+{
+	*this -= ImproperFraction<N>(n);
+	return *this;
+}
+
+template <typename N>
+bool ImproperFraction<N>::operator<(const ImproperFraction<N>& f) const
+{
+    return static_cast<double>(*this) < static_cast<double>(f);
+}
+
+template <typename N>
+bool ImproperFraction<N>::operator<(N n) const
+{
+	return *this < ImproperFraction<N>(n);
+}
+
+template <typename N>
+bool ImproperFraction<N>::operator>(const ImproperFraction<N>& f) const
+{
+    return static_cast<double>(*this) > static_cast<double>(f);
+}
+
+template <typename N>
+bool ImproperFraction<N>::operator>(N n) const
+{
+	return *this > ImproperFraction<N>(n);
+}
+
+template <typename N>
+ImproperFraction<N> ImproperFraction<N>::operator++(int)
+{
+	ImproperFraction<N> result = *this;
+	*this += 1;
+    return result;
+}
+
+template <typename N>
+ImproperFraction<N> ImproperFraction<N>::operator--(int)
+{
+	ImproperFraction<N> result = *this;
+	*this -= 1;
+    return result;
+}
+
+template <typename N>
+ImproperFraction<N>::operator N() const
+{
+	return static_cast<N>(numerator / denominator);
+}
+
+template <typename N>
+ImproperFraction<N>::operator double() const
+{
+	return static_cast<double>(numerator) / denominator;
+}
+
+template <typename N>
 istream& operator<<(ostream& is, const ImproperFraction<N>& f)
 {
     is << f.getNumerator() << "/" << f.getDenominator();
@@ -57,31 +161,46 @@ istream& operator<<(ostream& is, const ImproperFraction<N>& f)
 template <typename N1, typename N2>
 Fraction<N1,N2>& Fraction<N1,N2>::reduce()
 {
+	int temp = fraction.getInteger();
+	integer += temp;
+	fraction -= temp;
 
+	if (integer > 0 && fraction < 0)
+	{
+        integer--;
+        fraction++;
+	}
+	else if (integer < 0 && fraction > 0)
+	{
+		integer++;
+		fraction--;
+	}
 }
 
 template <typename N1, typename N2>
-Fraction<N1,N2>::Fraction(N1 a, N2 b, N2 c)
+Fraction<N1,N2>::Fraction(N1 i, N2 n, N2 d)
 {
-
+	integer = i;
+	fraction = ImproperFraction<N2>(n, d);
+	reduce();
 }
 
 template <typename N1, typename N2>
 N1 Fraction<N1,N2>::getInteger() const
 {
-
+	return integer;
 }
 
 template <typename N1, typename N2>
 N2 Fraction<N1,N2>::getNumerator() const
 {
-
+	return fraction.getNumerator();
 }
 
 template <typename N1, typename N2>
 N2 Fraction<N1,N2>::getDenominator() const
 {
-
+	return fraction.getDenominator();
 }
 
 template <typename N1, typename N2>

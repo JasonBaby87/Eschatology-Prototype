@@ -1,5 +1,7 @@
+#ifndef ALGORITHM_CPP_INCLUDED
+#define ALGORITHM_CPP_INCLUDED
 
-/*template <typename N>
+template <typename N>
 N gcd(N a, N b)
 {
 	if (a == 0)
@@ -16,10 +18,12 @@ N gcd(N a, N b)
         swap(a, b);
 	}
 	return b;
-}*/
+}
 
 template <typename N>
 N lcm(N a, N b)
 {
     return a / gcd(a, b) * b;
 }
+
+#endif // ALGORITHM_CPP_INCLUDED
