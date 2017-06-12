@@ -5,9 +5,9 @@
 #include <vector>
 #include "chartPlayer.h"
 
-Note::Note(Beat b)
+Note::Note(Beat b): beat(b)
 {
-
+	alive = false;
 }
 
 ChartPlayer::ChartPlayer(MusicPlayer&, istream& data)
