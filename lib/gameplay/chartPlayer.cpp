@@ -32,7 +32,7 @@ ChartPlayer::ChartPlayer(MusicPlayer& music, istream& data): music(&music)
     sort(notes.begin(), notes.end(), earlierThan);
 }
 
-vector<pair<BeatDuration,Note*>>&
+const vector<pair<BeatDuration,Note*>>&
 	ChartPlayer::getNotePositions(BeatDuration visibleWindow)
 {
 	registerMisses();
