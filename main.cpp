@@ -5,6 +5,8 @@
 #include "lib/window.h"
 #include "lib/timer.h"
 
+const int FPS=60;
+
 /**
 *   簡諧運動
 *   @return cos(傳入theta2後成長一個omega的角度)作為比例，回傳上下限中的該比例對應的值
@@ -53,6 +55,8 @@ int main(int argc,char* args[])
 
     for(Uint32 frame=0;!quit;frame++) //frame用來計算現在是第幾次刷新
     {
+        fps.start();
+
         while(SDL_PollEvent(&e))
         {
             if(e.type==SDL_QUIT) //單擊右上角的X
@@ -155,12 +159,12 @@ int main(int argc,char* args[])
         title.setAlpha(rhs(theta2,0,255,0.02)); //透明度的簡諧運動
         title.draw(Window::state().w/2,100);
 
-        if(frame>0) //因為第零個frame，Timer fps還沒開始，這樣除fps.ticks()=0會無限大
-            avgFPS=(avgFPS*frame+1000/fps.ticks())/(frame+1);
+        if( fps.ticks()*FPS<1000)
+            SDL_Delay((1000/FPS)- fps.ticks());
+        avgFPS=(avgFPS*frame+1000/fps.ticks())/(frame+1);
         Texture fpsText("fps:"+to_string(avgFPS),"font/freeWing.ttf",rgb(255,255,255),12);
         fpsText.setDstRect(0,0,fpsText.setPoint(Position::right,Position::top)); //原材質大小，錨點為右上
         fpsText.draw(Window::state().w,0);
-        fps.start();
 
         Window::present();
     }
