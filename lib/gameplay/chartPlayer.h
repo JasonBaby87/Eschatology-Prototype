@@ -4,6 +4,7 @@
 #include "../global/config.h"
 #include "../global/state.h"
 #include "../utilities/musicPlayer.h"
+#include "../math/fraction.h"
 #include <iostream>
 #include <vector>
 #include <list>

@@ -38,7 +38,8 @@ vector<pair<BeatDuration,Note*>>& ChartPlayer::getNotePositions(BeatDuration)
 	vector<pair<BeatDuration,Note*>> result;
 
 	Nanoseconds currentTime = music.playTime() - songOffset - visualOffset;
-	BeatDuration currentBeat = duration_cast<double>(currentTime) * bpm;
+	BeatDuration currentBeat = static_cast<BeatDuration>(currentTime.count()) /
+		60000000000l * bpm;
 
 	for (auto it = notes.begin(); it != notes.end(); it++)
 	{
