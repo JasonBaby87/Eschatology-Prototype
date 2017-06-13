@@ -18,7 +18,7 @@ class Note
 {
 public:
 	const Beat beat;
-	// speed (is currently just 1)
+	// speed (is currently just constant)
 	Note(Beat);
 };
 
@@ -26,6 +26,7 @@ class ChartPlayer
 {
 private:
 	MusicPlayer* music;
+	/** Indicates when the first beat goes in the song */
 	Milliseconds songOffset;
 	BPM bpm;
 	list<Note*> notes;
