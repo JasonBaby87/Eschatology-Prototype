@@ -4,6 +4,7 @@
 #include <istream>
 #include <list>
 #include <vector>
+#include <chrono>
 #include "chartPlayer.h"
 #include "../global/exception.h"
 
@@ -35,6 +36,9 @@ vector<pair<BeatDuration,Note*>>& ChartPlayer::getNotePositions(BeatDuration)
 	registerMisses();
 
 	vector<pair<BeatDuration,Note*>> result;
+
+	Nanoseconds currentTime = music.playTime() - songOffset - visualOffset;
+	BeatDuration currentBeat = duration_cast<double>(currentTime) * bpm;
 
 	for (auto it = notes.begin(); it != notes.end(); it++)
 	{
