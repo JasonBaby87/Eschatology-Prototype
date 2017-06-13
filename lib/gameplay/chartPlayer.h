@@ -38,7 +38,7 @@ public:
 	ChartPlayer(MusicPlayer&, istream& data);
 	vector<pair<BeatDuration,Note*>>& getNotePositions(BeatDuration = 8);
 	void hit();
-	vector<Judgement>& getJudgements();
+	const vector<Judgement>& getJudgements();
 };
 
 #endif // CHARTPLAYER_H_INCLUDED

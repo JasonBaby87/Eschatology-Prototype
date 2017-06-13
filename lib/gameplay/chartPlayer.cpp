@@ -119,9 +119,11 @@ void ChartPlayer::hit()
     notes.erase(noteHit);
 }
 
-vector<Judgement>& ChartPlayer::getJudgements()
+const vector<Judgement>& ChartPlayer::getJudgements()
 {
-	throw NotImplementedException();
+	registerMisses();
+
+	return judgements;
 }
 
 #endif // CHARTPLAYER_CPP_INCLUDED
