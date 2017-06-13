@@ -18,7 +18,7 @@ void ChartPlayer::registerMisses()
 	throw NotImplementedException();
 }
 
-ChartPlayer::ChartPlayer(MusicPlayer& music, istream& data): music(music)
+ChartPlayer::ChartPlayer(MusicPlayer& music, istream& data): music(&music)
 {
 	data >> songOffset >> bpm;
     Beat beat;
@@ -31,22 +31,27 @@ ChartPlayer::ChartPlayer(MusicPlayer& music, istream& data): music(music)
     sort(notes.begin(), notes.end(), earlierThan);
 }
 
-vector<pair<BeatDuration,Note*>>& ChartPlayer::getNotePositions(BeatDuration)
+vector<pair<BeatDuration,Note*>>&
+	ChartPlayer::getNotePositions(BeatDuration visibleWindow)
 {
 	registerMisses();
 
 	vector<pair<BeatDuration,Note*>> result;
 
-	Nanoseconds currentTime = music.playTime() - songOffset - visualOffset;
+	Nanoseconds currentTime = music->playTime() - songOffset - visualOffset;
 	BeatDuration currentBeat = static_cast<BeatDuration>(currentTime.count()) /
 		60000000000l * bpm;
 
 	for (auto it = notes.begin(); it != notes.end(); it++)
 	{
-		// TODO more thing D: need to calculate how far away each notes are
-		result.push_back(*it);
-		// TODO check stuff
-		throw NotImplementedException("Beat Duration not checked.");
+		BeatDuration noteBeat = static_cast<double>((*it)->beat);
+		BeatDuration beatDiff = noteBeat - currentBeat;
+		if (beatDiff > visibleWindow)
+		{
+			break;
+		}
+
+		result.push_back(make_pair(beatDiff, *it));
 	}
 
 	return result;
