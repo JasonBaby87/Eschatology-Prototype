@@ -9,7 +9,7 @@ class MusicPlayer
 	// music file
 public:
 	void play();
-	void pause();
+	void pause(); // Won't be used for actual game play (in demo)
 	void stop();
 	bool isPlaying();
 	Nanoseconds playTime();

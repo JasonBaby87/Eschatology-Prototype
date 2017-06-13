@@ -5,6 +5,7 @@
 #include <list>
 #include <vector>
 #include <chrono>
+#include <algorithm>
 #include "chartPlayer.h"
 #include "../global/exception.h"
 
@@ -59,7 +60,63 @@ vector<pair<BeatDuration,Note*>>&
 
 void ChartPlayer::hit()
 {
-	throw NotImplementedException();
+	registerMisses();
+
+	Time currentTime = chrono::duration_cast<chrono::nanoseconds>
+		(music->playTime() - songOffset - globalOffset).count() * 1e9;
+
+	if (notes.size() == 0)
+	{
+		judgements.push_back(WRONG);
+		return;
+	}
+
+    auto earlier = notes.begin();
+    auto later = earlier;
+
+    for (; later != notes.end(); later++)
+	{
+        earlier = later;
+		Time noteTime = static_cast<Time>((*later)->beat) / bpm * 6e10;
+
+		if (noteTime > currentTime)
+		{
+			break;
+		}
+	}
+
+	if (later == notes.end())
+	{
+		later--;
+	}
+
+	Time earlierTime = static_cast<Time>((*earlier)->beat) / bpm * 6e10;
+	Time laterTime = static_cast<Time>((*later)->beat) / bpm * 6e10;
+
+	auto noteHit = earlier;
+	Time hitTime = earlierTime;
+
+    if (abs(laterTime - currentTime) < abs(earlierTime - currentTime))
+	{
+		noteHit = later;
+		hitTime = laterTime;
+	}
+
+	Time timeDifference = abs(hitTime - currentTime);
+
+	Judgement judgement =
+		lower_bound(judgeWindows.begin(), judgeWindows.end(), timeDifference)
+		- judgeWindows.begin();
+
+	if (judgement == judgeWindows.size())
+	{
+		judgements.push_back(WRONG);
+		return;
+	}
+
+    judgements.push_back(judgement);
+    delete *noteHit;
+    notes.erase(noteHit);
 }
 
 vector<Judgement>& ChartPlayer::getJudgements() const
