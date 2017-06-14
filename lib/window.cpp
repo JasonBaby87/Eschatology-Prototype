@@ -96,7 +96,7 @@ Texture::Texture(const string& message,const string& fontFile,SDL_Color color,in
     *   @param int:字體大小
     */
     TTF_Font* font=TTF_OpenFont(fontFile.c_str(),fontSize);
-    SDL_Surface* surf=TTF_RenderText_Blended(font,message.c_str(),color);
+    SDL_Surface* surf=TTF_RenderUTF8_Solid(font,message.c_str(),color);
     tex=SDL_CreateTextureFromSurface(Window::renderer,surf);
     SDL_FreeSurface(surf); //不做清除到時候重複建立超多文本材質時會爆掉
     TTF_CloseFont(font);
