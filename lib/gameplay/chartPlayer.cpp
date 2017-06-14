@@ -16,7 +16,24 @@ Note::Note(Beat b): beat(b)
 
 void ChartPlayer::registerMisses()
 {
-	throw NotImplementedException();
+	while(!notes.empty())
+	{
+		Time currentTime = chrono::duration_cast<chrono::nanoseconds>
+			(music->playTime() - songOffset - globalOffset).count() * 1e9;
+
+		Note* note = notes.front();
+		Time noteTime = static_cast<Time>(note->beat) / bpm * 6e10;
+		Time timeDifference = noteTime - currentTime;
+
+		if (timeDifference < -judgeWindows.back())
+		{
+			break;
+		}
+
+        judgements.push_back(MISS);
+        delete note;
+		notes.pop_front();
+	}
 }
 
 ChartPlayer::ChartPlayer(MusicPlayer& music, istream& data): music(&music)
