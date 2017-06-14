@@ -1,5 +1,6 @@
 #define __USE_MINGW_ANSI_STDIO 0
 #include <iostream>
+#include <cstdlib>
 #include <cctype> //用來判斷字元是否為英文或數字
 #include <math.h> //簡協運動的三角函數
 #include "lib/window.h"
@@ -28,6 +29,7 @@ int main(int argc,char* args[])
     Window::initialize("Eschatology");
 
     Texture bg("img/bg.jpg");
+    Texture black("img/black.png"); //國防布
 
     bg.setDstRect(0,Window::state().h); //讓它填滿螢幕(長填滿，寬依比例縮放)，錨點設為左上
     Texture alurens("img/alurens.png");
@@ -35,16 +37,16 @@ int main(int argc,char* args[])
     alurens.setClipRect(2,2);   //分割成2x2
 
     Texture title("Eschatology","font/freeWing.ttf",rgb(255, 255, 255),64);
+    Texture title2("pre-demo","font/freeWing.ttf",rgb(255, 255, 255),32);
     title.setDstRect(0,0,title.setPoint()); //長寬為原材質長寬，錨點為中心
+    title2.setDstRect(0,0,title2.setPoint());
 
-    string alurensName[4]={"FIRE","LIGHT","DARK","ICE"};
     SDL_Color alurensColor[4]={rgb(255, 128, 128),rgb(255, 255, 128),rgb(211, 128, 255),rgb(176, 255, 255)};
-    Timer alurensTimer[4];
 
-    Mix_Music* mainBGM=Mix_LoadMUS("sounds/main.mp3");
+    Mix_Music* mainBGM=Mix_LoadMUS("sounds/main.ogg");
+    Mix_Chunk *rain_drop=Mix_LoadWAV("sounds/rain_drop.wav");
 
     Timer fps;
-    float avgFPS=0.0;
 
     int numKey=-1; //用來紀錄現在的數字鍵值，-1代表按的是數字鍵以外的鍵
     float theta1=0,theta2=0,theta3=0; //用來記錄角度
@@ -53,10 +55,152 @@ int main(int argc,char* args[])
     SDL_Event e;
     bool quit=false;
 
-    for(Uint32 frame=0;!quit;frame++) //frame用來計算現在是第幾次刷新
+    bool slide = false;
+	int slide_down = 0;
+    int fade_out = 0;
+    Mix_PlayMusic( mainBGM, -1 ); //-1是loop次數，在此是loop到halt(stop)為止
+    ////////////////////////////////////////////////////////////////////迴圈開始
+    while (!quit)
     {
         fps.start();
+		if (slide_down < 180)
+			slide_down++;
+        if (slide_down == 179)
+            numKey = 2;
 
+        while(SDL_PollEvent(&e) && !slide)
+        {
+            if(e.type==SDL_QUIT) //單擊右上角的X
+            {
+    			quit=true;
+    		}
+    		if(e.type==SDL_KEYDOWN && slide_down==180)
+            {
+                switch(e.key.keysym.sym)
+                {
+                    //ESC退出
+                    case SDLK_ESCAPE:
+                        quit=true;
+                        break;
+                }
+    		}
+    		if(e.type==SDL_MOUSEBUTTONUP && slide_down==180 )
+            {
+                Mix_PauseMusic();
+                slide = true;
+            }
+            if(e.type==SDL_MOUSEMOTION && slide_down==180 ) //滑鼠移動
+                theta1+=e.motion.xrel+e.motion.yrel;
+    	}
+
+        Window::clear();
+
+        bg.draw(-120,-360+slide_down);
+        alurensColor[numKey-1].b=rhs(theta3,128,240,0.1);
+        alurens.setColor(alurensColor[numKey-1]);
+        if (slide_down == 180)
+            alurens.draw(Window::state().w/2,Window::state().h/2+80,numKey-1,theta1); //繪製在螢幕正中間，切換到相對應的子圖，旋轉theta1度
+        title.setAlpha(rhs(theta2,0,255,0.01)); //透明度的簡諧運動
+        title2.setAlpha(rhs(theta2,0,255,0.01));
+        alurens.setAlpha(rhs(theta2,255,80,0.01));
+        title.draw(Window::state().w/2,180);
+        title2.draw(Window::state().w/2,244);
+
+        if(fps.ticks()*FPS<1000)
+            SDL_Delay((1000/FPS)- fps.ticks());
+
+        if (slide)
+        {
+            fade_out++;
+            black.setAlpha(fade_out*3);
+            black.draw(0,0);
+            if (fade_out == 1)
+                Mix_PlayChannel(-1,rain_drop,0);
+            else if (fade_out == 85)
+            {
+                fade_out = 0;
+				SDL_Delay(3000);
+                break;
+            }
+        }
+
+        Window::present();
+    }
+    Window::quit();
+    if (quit)
+        exit(0);
+    ///////////////////////////////////////////////切換橫視窗
+    slide = false;
+    Window::initialize_wide("Eschatology");
+
+    Texture bg1("img/bg1.png");
+    Texture bg2("img/bg2.png");
+    Texture bg3("img/bg3.png");
+    Texture chat("img/chat.png");
+    Texture bg4("img/bg4.png");
+    Texture bg5("img/bg5.png");
+    Texture bg_flare("img/bg_flare.png");
+    Texture minion("img/minion.png");
+    Texture boss("img/boss.png");
+    Texture flash1("img/flash1.png");
+    Texture flash2("img/flash2.png");
+    Texture flash3("img/flash3.png");
+
+    mainBGM = Mix_LoadMUS("sounds/starting.ogg");
+	Mix_Chunk *blow = Mix_LoadWAV("sounds/blow.wav");
+    Mix_PlayMusic(mainBGM,-1);
+	
+	string talking[37];
+	talking[0] = "報告，已經確認黑盒子反應";
+	talking[1] = "目標，奪取黑盒子並消滅目擊相關人士";
+	talking[2] = "進行最後確認";
+	talking[3] = "北方";
+	talking[4] = "無異狀";
+	talking[5] = "南方";
+	talking[6] = "無異狀";
+	talking[7] = "東方";
+	talking[8] = "無異狀";
+	talking[9] = "西方";
+	talking[10] = "無異狀";
+	talking[11] = "確認完畢，倒數10秒";
+	talking[12] = "10！";
+	talking[13] = "！！！";
+	talking[14] = "居然不知不覺睡著了......";
+	talking[15] = "已經很晚了啊，不知道爸睡了沒？";
+	talking[16] = "去樓下看看好了";
+	talking[17] = "......！";
+	talking[18] = "周圍魔力的流動很詭異，發生了什麼事？";
+	talking[19] = "爸！你還醒著嗎？";
+	talking[20] = "羅雷，快趴下！";
+	talking[21] = "１！";
+	talking[22] = "發動，地獄業火！";
+	talking[23] = "";
+	talking[24] = "這種程度的攻擊性魔法....敵人究竟有多少？";
+	talking[25] = "沒時間管那麼多了，羅雷，帶著黑盒子快跑！";
+	talking[26] = "跑？去哪裡？那你呢？";
+	talking[27] = "往南邊跑！米亞姊會去接應你的。我留下來拖延他們的腳步";
+	talking[28] = "別開玩笑了！我怎麼可能眼睜睜看著你....";
+	talking[29] = "我們沒有選擇！";
+	talking[30] = "敵人的目標是黑盒子，這是我們的使命";
+	talking[31] = "我......";
+	talking[32] = "動作快！";
+	talking[33] = "......";
+	talking[34] = "可惡！";
+	talking[35] = "我打開藏著黑盒子的暗門，帶著黑盒子從後門跑出去，身後敵人源源不絕的湧上來";
+	talking[36] = "黑盒子在那個少年身上，別讓他跑了！";
+	cout << talking[17];
+	int word_count[37] = {12,17,6,2,3,2,3,2,3,2,3,9,2,3,12,15,7,4,18,8,7,2,8,0,20,20,10,26,19,7,17,4,4,3,3,36,17};
+
+	int talk = 0;
+	int display = 0;
+	bool display_end = false;
+	int shake = 0;
+	int direction = -1;
+    while (!quit)
+    {
+        fps.start();
+		
+		display++;
         while(SDL_PollEvent(&e))
         {
             if(e.type==SDL_QUIT) //單擊右上角的X
@@ -65,15 +209,6 @@ int main(int argc,char* args[])
     		}
     		if(e.type==SDL_KEYDOWN)
             {
-                int preNumKey=numKey;
-
-                //智慧判斷讀進來的KeyName不須再寫一個一個case再判斷和紀錄
-                //SDL_GetKeyName()讀進來的會是char[]
-                if(isdigit(SDL_GetKeyName(e.key.keysym.sym)[0])) //判斷按的鍵回傳的key值第一個字元是不是數字
-                    numKey=atoi(SDL_GetKeyName(e.key.keysym.sym)); //確定按的是數字再進行轉換
-                else //我已經確認過SDL的所有keyName，除了數字以外，其他所有鍵的key值開頭一定是英文
-                    numKey=-1;
-
                 switch(e.key.keysym.sym)
                 {
                     //ESC退出
@@ -81,94 +216,56 @@ int main(int argc,char* args[])
                         quit=true;
                         break;
                 }
-                if(numKey>0 && preNumKey==numKey)
-                {
-                    switch(alurensTimer[numKey-1].state())
-                    {
-                        case initial:
-                            alurensTimer[numKey-1].start();
-                            break;
-                        case pausing:
-                            alurensTimer[numKey-1].resume();
-                            break;
-                        case timing:
-                            alurensTimer[numKey-1].pause();
-                            break;
-                        default:
-                            break;
-                    }
-                }
     		}
-            if(e.type==SDL_MOUSEBUTTONDOWN)
-            {
-                if(e.button.button==SDL_BUTTON_RIGHT)
-                {
-                    if(Mix_PlayingMusic()) //還沒沒播會回傳0、否則回傳1
-                        Mix_HaltMusic(); //如果已經開始播了，按右鍵就halt(stop)音樂
-                }
-                if(e.button.button==SDL_BUTTON_LEFT)
-                {
-                    if(!Mix_PlayingMusic())
-                        Mix_PlayMusic( mainBGM, -1 ); //-1是loop次數，在此是loop到halt(stop)為止
-                    else
-                    {
-                        if(!Mix_PausedMusic()) //如果正在暫停會回傳0、否則回傳1
-                            Mix_PauseMusic(); //在此是如果音樂沒有暫停，又按左鍵的話就暫停音樂
-                    }
-                }
-            }
-    		if(e.type==SDL_MOUSEBUTTONUP)
-            {
-                if(Mix_PausedMusic() && Mix_PlayingMusic())
-                    Mix_ResumeMusic(); //如果音樂已經開始播而且正在暫停，鬆開滑鼠就恢復播放
-            }
-            if(e.type==SDL_MOUSEMOTION) //滑鼠移動
-            {
-                theta1+=e.motion.xrel+e.motion.yrel;
-    		}
-        }
+    		if(e.type==SDL_MOUSEBUTTONUP && talk != 23)
+			{
+				if (!display_end)
+				{
+					display = word_count[talk] * 3;
+					display_end = true;
+				}
+				else
+				{
+					talk++;
+					display = 0;
+				}
+			}
+    	}
+		if (talk == 37)
+			break;
         Window::clear();
+		if (talk >= 13 && talk <= 20)
+			bg1.draw(0,0);
+		else if (talk == 23)
+		{
+			shake += direction * 3;
+			if (shake == -1 && direction == -1)
+				Mix_PlayChannel(-1,blow,0);
+			if (shake == -30)
+				direction = 1;
+			if (shake == 30)
+				direction = -1;
+			if (shake == 1 && direction == -1)
+				talk = 24;
+			bg_flare.draw(shake,0);
+		}
+		else if (talk >= 24 && talk <= 34)
+			bg2.draw(shake,0);
+		else if (talk >= 35)
+			bg3.draw(0,0);
+		
+		Texture* temp = new Texture(talking[talk]/*.substr(0,(display/3)*2)*/,"font/freeWing.ttf",rgb(255, 255, 255),16);
+		temp->setDstRect(0,0,temp->setPoint());
+		temp->draw(Window::state().w/2,400);
+		delete temp;
 
-        bg.draw(0,0);
-
-        if(numKey>0)
-        {
-            Texture alurensTimerText("Magic "+alurensName[numKey-1]+" is using for "+ alurensTimer[numKey-1].clock(),"font/freeWing.ttf",rgb(255,255,255),16);
-            alurensTimerText.setDstRect(0,0,alurensTimerText.setPoint(Position::middle,Position::top)); //長寬為原材質長寬，錨點為中上
-            alurensTimerText.draw(Window::state().w/2,Window::state().h/2+150);
-
-            switch(numKey)
-            {
-                case 1:
-                    alurensColor[numKey-1].g=rhs(theta3,128,160,0.05);
-                    alurensColor[numKey-1].b=rhs(theta3,128,96,0.05);
-                    break;
-                case 2:
-                    alurensColor[numKey-1].b=rhs(theta3,128,240,0.1);
-                    break;
-                case 3:
-                    alurensColor[numKey-1].r=rhs(theta3,164,211,0.1);
-                    break;
-                case 4:
-                    alurensColor[numKey-1].r=rhs(theta3,176,240,0.1);
-                    break;
-            }
-            alurens.setColor(alurensColor[numKey-1]);
-            alurens.draw(Window::state().w/2,Window::state().h/2,numKey-1,theta1); //繪製在螢幕正中間，切換到相對應的子圖，旋轉theta1度
-        }
-        title.setAlpha(rhs(theta2,0,255,0.02)); //透明度的簡諧運動
-        title.draw(Window::state().w/2,100);
-
-        if( fps.ticks()*FPS<1000)
+        if (fps.ticks()*FPS<1000)
             SDL_Delay((1000/FPS)- fps.ticks());
-        avgFPS=(avgFPS*frame+1000/fps.ticks())/(frame+1);
-        Texture fpsText("fps:"+to_string(avgFPS),"font/freeWing.ttf",rgb(255,255,255),12);
-        fpsText.setDstRect(0,0,fpsText.setPoint(Position::right,Position::top)); //原材質大小，錨點為右上
-        fpsText.draw(Window::state().w,0);
-
         Window::present();
     }
-
     Window::quit();
+	if (quit)
+		exit(0);
+	///////////////////////////////////////////////切換戰鬥畫面
     return 0;
 }

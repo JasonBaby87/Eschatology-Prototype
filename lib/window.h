@@ -22,6 +22,7 @@ class Window
 public:
     //初始化SDL、TTF，建立視窗和renderer，參數接視窗名子，預設Window
     static void initialize(std::string title="Window");
+    static void initialize_wide(std::string title="Window");
     //返回視窗訊息(位置、長寬)
     static SDL_Rect state();
     //清除視窗
@@ -82,11 +83,12 @@ public:
     */
     void draw(int x,int y,unsigned int clip=0,float angle=0.0,SDL_Point* pivot=NULL,SDL_RendererFlip flip=SDL_FLIP_NONE);
 
+    int width,height; //原材質長寬
 private:
     SDL_Texture* tex;
     SDL_Rect dstRect;
     SDL_Rect* clipRect;
-    int width,height; //原材質長寬
+
 };
 
 #endif
