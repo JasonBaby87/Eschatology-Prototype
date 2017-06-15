@@ -62,6 +62,7 @@ public:
     *   @param width和height設定dstRect要的寬高，為非負整數
     *   @param pivot設定矩形位置錨點，預設為左上角(0,0)
     */
+	int getWidth();
     void setDstRect(unsigned int width,unsigned int height,SDL_Point pivot={0,0});
     /**
     *   設定texture要印出時所需的clipRect

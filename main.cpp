@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cctype> //用來判斷字元是否為英文或數字
 #include <math.h> //簡協運動的三角函數
+#include <sstream>
 #include "lib/window.h"
 #include "lib/timer.h"
 
@@ -139,7 +140,7 @@ int main(int argc,char* args[])
     Texture bg2("img/bg2.png");
     Texture bg3("img/bg3.png");
     Texture* black_w = new Texture("img/black_w.png");
-    Texture chat("img/chat.png");
+    Texture* chat = new Texture("img/chat.png");
     Texture face1("img/face1.png");
     Texture face1_2("img/face1_2.png");
     Texture face2("img/face2.png");
@@ -293,7 +294,7 @@ int main(int argc,char* args[])
 			bg3.draw(0,0);
 		
 		if (talk >= 13 && talk != 21 && talk != 22 && talk != 23 && talk != 24)
-			chat.draw(0,320);
+			chat->draw(0,320);
 		////////////////////////////////////////表情
 		if ((talk >= 13 && talk <= 16) || talk == 26 || talk == 28 || talk == 33 || talk == 35)
 			face1.draw(0,320);
@@ -360,15 +361,31 @@ int main(int argc,char* args[])
 	black = new Texture("img/black.png");
     Texture minion("img/minion.png");
     Texture character1("img/character1.png");
+    Texture hp_ground("img/hp_ground.png");
+    Texture hp_layer("img/hp_layer.png");
+    Texture hp2_ground("img/hp2_ground.png");
+    Texture hp2_layer("img/hp2_layer.png");
+	Texture aluren("img/aluren.png");
     Texture boss("img/boss.png");
     Texture flash1("img/flash1.png");
     Texture flash2("img/flash2.png");
     Texture flash3("img/flash3.png");
+	Texture full_hp("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+	Texture full_hp2("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
 	
 	Mix_Chunk *transition_r = Mix_LoadWAV("sounds/transition_r.wav");
+	Mix_Chunk *battle_pre = Mix_LoadWAV("sounds/battle_pre.ogg");
+	mainBGM = Mix_LoadMUS("sounds/battle1.ogg");
 	SDL_Delay(500);
 	Mix_PlayChannel(-1,transition_r,0);
 	
+	display = 0;
+	cls_pos = 0;
+	string battle_text = "一些士兵擋住了去路";
+	string battle_text2 = "抓準魔力的流動";
+	string battle_text3 = "組成各種元素進行攻擊";
+	int hp1 = 100;
+	int hp2 = 100;
 	while (!quit)
 	{
 		fps.start();
@@ -397,10 +414,112 @@ int main(int argc,char* args[])
         Window::clear();
 		minion.draw(0,0);
 		character1.draw(0,0);
+		if (display <= 27)
+		{
+			Texture* temp = new Texture(battle_text.substr(0,(display/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+			temp->setDstRect(0,0,temp->setPoint());
+			temp->draw(240,300);
+			delete temp;
+		}
+		else if (display <= 48)
+		{
+			Texture* temp = new Texture(battle_text,"font/freeWing.ttf",rgb(255, 255, 255),24);
+			Texture* temp2 = new Texture(battle_text2.substr(0,((display-27)/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+			temp->setDstRect(0,0,temp->setPoint());
+			temp2->setDstRect(0,0,temp2->setPoint());
+			temp->draw(240,300);
+			temp2->draw(240,336);
+			delete temp;
+			delete temp2;
+		}
+		else if (display <= 78)
+		{
+			Texture* temp = new Texture(battle_text,"font/freeWing.ttf",rgb(255, 255, 255),24);
+			Texture* temp2 = new Texture(battle_text2,"font/freeWing.ttf",rgb(255, 255, 255),24);
+			Texture* temp3 = new Texture(battle_text3.substr(0,((display-48)/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+			temp->setDstRect(0,0,temp->setPoint());
+			temp2->setDstRect(0,0,temp2->setPoint());
+			temp3->setDstRect(0,0,temp3->setPoint());
+			temp->draw(240,300);
+			temp2->draw(240,336);
+			temp3->draw(240,372);
+			delete temp;
+			delete temp2;
+			delete temp3;
+		}
+		else if (display > 78 && display < 510)
+		{
+			Texture* temp = new Texture(battle_text,"font/freeWing.ttf",rgb(255, 255, 255),24);
+			Texture* temp2 = new Texture(battle_text2,"font/freeWing.ttf",rgb(255, 255, 255),24);
+			Texture* temp3 = new Texture(battle_text3,"font/freeWing.ttf",rgb(255, 255, 255),24);
+			temp->setDstRect(0,0,temp->setPoint());
+			temp2->setDstRect(0,0,temp2->setPoint());
+			temp3->setDstRect(0,0,temp3->setPoint());
+			if (display > 660)
+			{
+				temp->setAlpha(240-(display-480)*8);
+				temp2->setAlpha(240-(display-480)*8);
+				temp3->setAlpha(240-(display-480)*8);
+			}
+			temp->draw(240,300);
+			temp2->draw(240,336);
+			temp3->draw(240,372);
+			delete temp;
+			delete temp2;
+			delete temp3;
+		}
+		
+		if (display < 540 && cls_pos == 800)
+		{
+			display++;
+			if (display == 343)
+				Mix_PlayMusic(mainBGM,-1);
+			else if (display > 480 && display <= 510)
+			{
+				hp_layer.draw((display-480)*8-240,180);
+				hp2_layer.draw(480-(display-480)*8,180);
+				full_hp.setAlpha((display-480)*8+15);
+				full_hp2.setAlpha((display-480)*8+15);
+				full_hp.draw(30,210);
+				full_hp2.draw(450-full_hp2.getWidth(),210);
+			}
+			else if (display > 510)
+			{
+				hp_layer.draw(0,180);
+				hp2_layer.draw(240,180);
+				full_hp.draw(30,210);
+				full_hp2.draw(450-full_hp2.getWidth(),210);
+				aluren.setAlpha((display-510)*8+15);
+				aluren.draw(90,270);
+			}
+		}
+		if (display == 540)
+		{
+			hp_ground.draw(0,180);
+			hp2_ground.draw(240,180);
+			hp_layer.draw(hp1*240/100-240,180);
+			hp2_layer.draw(480-hp2*240/100,180);
+			stringstream ss;
+			string temp_hp;
+			ss << hp1;
+			ss >> temp_hp;
+			Texture* hp1_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+			ss << hp2;
+			ss >> temp_hp;
+			Texture* hp2_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+			hp1_t->draw(30,210);
+			hp2_t->draw(450-hp2_t->getWidth(),210);
+			aluren.draw(90,270);
+		}
+		
+		
+		
 		if (cls_pos < 800)
 		{
 			black->draw(0,cls_pos);
 			cls_pos += 20;
+			if (cls_pos == 800)
+				Mix_PlayChannel(-1,battle_pre,0);
 		}
 		
 		Window::present();

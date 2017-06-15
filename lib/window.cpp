@@ -119,6 +119,11 @@ void Texture::initialize()
     clipRect=NULL;
 }
 
+int Texture::getWidth()
+{
+	return dstRect.w;
+}
+
 SDL_Point Texture::setPoint(Position horizon,Position vertical)
 {
     int x=0,y=0; //x、y用來回傳point
