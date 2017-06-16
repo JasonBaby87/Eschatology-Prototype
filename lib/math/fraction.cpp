@@ -1,7 +1,7 @@
 #ifndef FRACTION_CPP_INCLUDED
 #define FRACTION_CPP_INCLUDED
 
-#include <ostream>
+#include <iostream>
 #include "fraction.h"
 #include "algorithm.h"
 
@@ -189,6 +189,12 @@ N1 Fraction<N1,N2>::getInteger() const
 }
 
 template <typename N1, typename N2>
+const ImproperFraction<N2>& Fraction<N1,N2>::getFraction() const
+{
+	return fraction;
+}
+
+template <typename N1, typename N2>
 N2 Fraction<N1,N2>::getNumerator() const
 {
 	return fraction.getNumerator();
@@ -209,11 +215,22 @@ Fraction<N1, N2>::operator double() const
 template <typename N1, typename N2>
 istream& operator<<(ostream& is, const Fraction<N1,N2>& f)
 {
+	// TODO
     is << f.getInteger() << " "
 		<< f.getNumerator() << "/" << f.getDenominator();
 }
 
 template <typename N1, typename N2>
+<<<<<<< HEAD
+=======
+istream& operator>>(istream& is, Fraction<N1,N2>& f)
+{
+	// TODO
+    is >> integer >> fraction;
+}
+
+template <typename N1, typename N2>
+>>>>>>> refs/remotes/origin/Math
 const double operator*(double l, const Fraction<N1,N2>& r)
 {
 	return l * static_cast<double>(r);
