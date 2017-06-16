@@ -201,10 +201,22 @@ N2 Fraction<N1,N2>::getDenominator() const
 }
 
 template <typename N1, typename N2>
+Fraction<N1, N2>::operator double() const
+{
+	return integer + static_cast<double>(fraction);
+}
+
+template <typename N1, typename N2>
 istream& operator<<(ostream& is, const Fraction<N1,N2>& f)
 {
     is << f.getInteger() << " "
 		<< f.getNumerator() << "/" << f.getDenominator();
+}
+
+template <typename N1, typename N2>
+const double operator*(double l, const Fraction<N1,N2>& r)
+{
+	return l * static_cast<double>(r);
 }
 
 #endif // FRACTION_CPP_INCLUDED

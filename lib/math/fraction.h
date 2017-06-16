@@ -56,10 +56,14 @@ public:
 	N2 getNumerator() const;
 	N2 getDenominator() const;
 	// Operator overloading when needed
+	operator double() const;
 };
 
 template <typename N1, typename N2>
 istream& operator<<(ostream& os, const Fraction<N1,N2>& f);
+
+template <typename N1, typename N2>
+const double operator*(double l, const Fraction<N1,N2>& r);
 
 #include "fraction.cpp"
 
