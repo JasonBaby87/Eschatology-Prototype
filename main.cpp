@@ -787,10 +787,54 @@ int main(int argc,char* args[])
     Mix_PlayMusic(mainBGM,-1);
 	
 	string talking2[9];
+	talking2[0] = "前面就是森林了，應該可以甩掉他們！";
+	talking2[1] = "";
+	talking2[2] = "！！！";
+	talking2[3] = "哎呀哎呀，想不到你們還挺有兩下子";
+	talking2[4] = "四大魔導．紅蓮的赫里厄斯......";
+	talking2[5] = "呀，原來我這麼出名嗎？";
+	talking2[6] = "嘛，總之請你把黑盒子交給我吧，不然我會很困擾的";
+	talking2[7] = "......要是在這裡交給你的話，過去人們的努力不就白費了";
+	talking2[8] = "哎呀...看來只能用強硬的方式讓你交給我呢";
+	int word_count2[9] = {17,0,3,16,14,11,23,25,19};
 	
 	talk = 0;
-	
-	Window::quit();
+	display = 0;
+	display_end = false;
+	while (!quit)
+	{
+		fps.start();
+		
+		while(SDL_PollEvent(&e))
+		{
+			if(e.type==SDL_QUIT) //單擊右上角的X
+            {
+    			quit=true;
+    		}
+    		if(e.type==SDL_KEYDOWN)
+            {
+                switch(e.key.keysym.sym)
+                {
+                    //ESC退出
+                    case SDLK_ESCAPE:
+                        quit=true;
+                        break;
+                }
+    		}
+			if(e.type==SDL_MOUSEBUTTONUP)
+			{
+				if (talk != 1)
+				{
+					
+				}
+			}
+		}
+		
+        if (fps.ticks()*FPS<1000)
+            SDL_Delay((1000/FPS)- fps.ticks());
+        Window::present();
+    }
+    Window::quit();
 	if (quit)
 		exit(0);
     return 0;
