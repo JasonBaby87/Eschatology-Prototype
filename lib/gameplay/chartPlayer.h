@@ -10,6 +10,8 @@
 #include <list>
 #include <chrono>
 
+using namespace std;
+
 typedef Fraction<int,int> Beat; // Time point
 typedef double Time;
 typedef double BeatDuration; // Duration
@@ -27,7 +29,8 @@ public:
 class ChartPlayer
 {
 private:
-	MusicPlayer* music;
+	// MusicPlayer* music;
+	chrono::high_resolution_clock::time_point startTime;
 	/** Indicates when the first beat goes in the song */
 	Milliseconds songOffset;
 	BPM bpm;
@@ -35,7 +38,9 @@ private:
 	vector<Judgement> judgements;
 	void registerMisses();
 public:
-	ChartPlayer(MusicPlayer&, istream& data);
+	// ChartPlayer(MusicPlayer&, istream& data);
+	 ChartPlayer(istream& data);
+	void start();
 	const vector<pair<BeatDuration,Note*>>& getNotePositions(BeatDuration = 8);
 	void hit();
 	const vector<Judgement>& getJudgements();

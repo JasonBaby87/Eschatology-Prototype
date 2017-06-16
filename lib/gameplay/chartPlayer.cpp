@@ -19,7 +19,7 @@ void ChartPlayer::registerMisses()
 	while(!notes.empty())
 	{
 		Time currentTime = chrono::duration_cast<chrono::nanoseconds>
-			(music->playTime() - songOffset - globalOffset).count() * 1e9;
+			(chrono::high_resolution_clock::now() - startTime - songOffset - globalOffset).count() * 1e9;
 
 		Note* note = notes.front();
 		Time noteTime = static_cast<Time>(note->beat) / bpm * 6e10;
@@ -36,7 +36,12 @@ void ChartPlayer::registerMisses()
 	}
 }
 
-ChartPlayer::ChartPlayer(MusicPlayer& music, istream& data): music(&music)
+void ChartPlayer::start()
+{
+    startTime = chrono::high_resolution_clock::now();
+}
+
+ChartPlayer::ChartPlayer(istream& data)
 {
 	data >> songOffset >> bpm;
     Beat beat;
@@ -56,9 +61,9 @@ const vector<pair<BeatDuration,Note*>>&
 
 	vector<pair<BeatDuration,Note*>> result;
 
-	Nanoseconds currentTime = music->playTime() - songOffset - visualOffset;
+	Nanoseconds currentTime = chrono::high_resolution_clock::now() - startTime - songOffset - visualOffset;
 	BeatDuration currentBeat = static_cast<BeatDuration>(currentTime.count()) /
-		60000000000l * bpm;
+		60000000000ll * bpm;
 
 	for (auto it = notes.begin(); it != notes.end(); it++)
 	{
@@ -80,7 +85,7 @@ void ChartPlayer::hit()
 	registerMisses();
 
 	Time currentTime = chrono::duration_cast<chrono::nanoseconds>
-		(music->playTime() - songOffset - globalOffset).count() * 1e9;
+		(chrono::high_resolution_clock::now() - startTime - songOffset - globalOffset).count() * 1e9;
 
 	if (notes.size() == 0)
 	{
