@@ -64,12 +64,9 @@ template <typename N1, typename N2>
 istream& operator<<(ostream& os, const Fraction<N1,N2>& f);
 
 template <typename N1, typename N2>
-<<<<<<< HEAD
-=======
 istream& operator>>(istream& is, Fraction<N1,N2>& f);
 
 template <typename N1, typename N2>
->>>>>>> refs/remotes/origin/Math
 const double operator*(double l, const Fraction<N1,N2>& r);
 
 #include "fraction.cpp"
