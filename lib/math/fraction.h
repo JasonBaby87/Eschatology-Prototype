@@ -1,7 +1,7 @@
 #ifndef FRACTION_H_INCLUDED
 #define FRACTION_H_INCLUDED
 
-#include <ostream>
+#include <iostream>
 #include "algorithm.h"
 
 template <typename N>
@@ -53,6 +53,7 @@ private:
 public:
 	Fraction(N1 = 0, N2 = 0, N2 = 1);
 	N1 getInteger() const;
+	const ImproperFraction<N2>& getFraction() const;
 	N2 getNumerator() const;
 	N2 getDenominator() const;
 	// Operator overloading when needed
@@ -61,6 +62,9 @@ public:
 
 template <typename N1, typename N2>
 istream& operator<<(ostream& os, const Fraction<N1,N2>& f);
+
+template <typename N1, typename N2>
+istream& operator>>(istream& is, Fraction<N1,N2>& f);
 
 template <typename N1, typename N2>
 const double operator*(double l, const Fraction<N1,N2>& r);
