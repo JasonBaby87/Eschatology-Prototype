@@ -800,11 +800,21 @@ int main(int argc,char* args[])
 	
 	talk = 0;
 	display = 0;
-	display_end = false;
+	cls_pos = 0;
 	while (!quit)
 	{
 		fps.start();
 		
+		if (talk < 9)
+		{
+			display_end = false;
+			display++;
+			if (display > word_count2[talk] * 3)
+			{
+				display = word_count2[talk] * 3;
+				display_end = true;
+			}
+		}
 		while(SDL_PollEvent(&e))
 		{
 			if(e.type==SDL_QUIT) //單擊右上角的X
@@ -821,11 +831,25 @@ int main(int argc,char* args[])
                         break;
                 }
     		}
-			if(e.type==SDL_MOUSEBUTTONUP)
+			if(e.type==SDL_MOUSEBUTTONUP && talk != 1)
 			{
-				if (talk != 1)
+				if (!display_end)
 				{
-					
+					display = word_count2[talk] * 3;
+					display_end = true;
+				}
+				else
+				{
+					if (talk < 9)
+						talk++;
+					if (talk == 25)
+						Mix_PlayChannel(-1,blow,0);
+					else if (talk == 9 && cls_pos == 0)
+					{
+						Mix_PlayChannel(-1,transition,0);
+						Mix_FadeOutMusic(600);
+					}
+					display = 0;
 				}
 			}
 		}
