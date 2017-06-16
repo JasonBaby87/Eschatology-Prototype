@@ -24,6 +24,26 @@ void Window::initialize(std::string title)
     // SDL_RENDERER_PRESENTVSYNC，使用SDL_RendererPresent這個函數，他會以顯示器的刷新率來更新畫面
 }
 
+void Window::initialize_wide(std::string title)
+{
+    SDL_Init(SDL_INIT_EVERYTHING);
+    IMG_Init(IMG_INIT_PNG);
+    TTF_Init();
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048 );
+
+    box.x=SDL_WINDOWPOS_CENTERED;
+    box.y=SDL_WINDOWPOS_CENTERED;
+    box.w=800;
+    box.h=480;
+
+    window=SDL_CreateWindow(title.c_str(),box.x,box.y,box.w,box.h,SDL_WINDOW_SHOWN);
+    //創立視窗，參數分別是標題、x、y、長、寬，最後的參數是我設定他一執行就彈出
+    renderer=SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
+    //渲染器，參數-1代表讓SDL自動幫你選最適合的(後面我指定選項)的驅動
+    //SDL_RENDERER_ACCELERATED，使用硬件加速的renderer=利用顯卡的力量
+    // SDL_RENDERER_PRESENTVSYNC，使用SDL_RendererPresent這個函數，他會以顯示器的刷新率來更新畫面
+}
+
 SDL_Rect Window::state()
 {
     //更新box讓他隨時是視窗長寬
@@ -48,6 +68,7 @@ void Window::quit()
     TTF_Quit();
     IMG_Quit();
     SDL_Quit();
+    Mix_CloseAudio();
 }
 
 Texture::Texture(const string& file)
@@ -75,7 +96,7 @@ Texture::Texture(const string& message,const string& fontFile,SDL_Color color,in
     *   @param int:字體大小
     */
     TTF_Font* font=TTF_OpenFont(fontFile.c_str(),fontSize);
-    SDL_Surface* surf=TTF_RenderText_Blended(font,message.c_str(),color);
+    SDL_Surface* surf=TTF_RenderUTF8_Solid(font,message.c_str(),color);
     tex=SDL_CreateTextureFromSurface(Window::renderer,surf);
     SDL_FreeSurface(surf); //不做清除到時候重複建立超多文本材質時會爆掉
     TTF_CloseFont(font);
@@ -96,6 +117,11 @@ void Texture::initialize()
     dstRect.w=width;
     dstRect.h=height;
     clipRect=NULL;
+}
+
+int Texture::getWidth()
+{
+	return dstRect.w;
 }
 
 SDL_Point Texture::setPoint(Position horizon,Position vertical)
