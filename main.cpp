@@ -359,14 +359,14 @@ int main(int argc,char* args[])
 	
 	black = new Texture("img/black.png");
     Texture minion("img/minion.png");
-    Texture character1("img/character1.png");
+    Texture* character1 = new Texture("img/character1.png");
 	Texture soldier("img/soldier.png");
 	Texture soldier2("img/soldier2.png");
-    Texture hp_ground("img/hp_ground.png");
-    Texture hp_layer("img/hp_layer.png");
-    Texture hp2_ground("img/hp2_ground.png");
-    Texture hp2_layer("img/hp2_layer.png");
-	Texture aluren("img/aluren.png");
+    Texture* hp_ground = new Texture("img/hp_ground.png");
+    Texture* hp_layer = new Texture("img/hp_layer.png");
+    Texture* hp2_ground = new Texture("img/hp2_ground.png");
+    Texture* hp2_layer = new Texture("img/hp2_layer.png");
+	Texture* aluren = new Texture("img/aluren.png");
 	Texture full_hp("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
 	Texture full_hp2("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
 	Texture** flame = new Texture* [6];
@@ -404,7 +404,6 @@ int main(int argc,char* args[])
 	string battle_text5 = "依序組合［火冰火光暗］施展雷槍";
 	int hp1 = 100;
 	int hp2 = 100;
-	int hp3 = 40;
 	vector<int> flame_anime;
 	vector<int> ice_anime;
 	vector<int> light_anime;
@@ -446,7 +445,7 @@ int main(int argc,char* args[])
 			fps.restart();
 			Window::clear();
 			minion.draw(0,0);
-			character1.draw(0,0);
+			character1->draw(0,0);
 			if (stage == 0)
 			{
 				soldier.draw(280,0);
@@ -512,29 +511,29 @@ int main(int argc,char* args[])
 						Mix_PlayMusic(mainBGM,-1);
 					else if (display > 480 && display <= 510)
 					{
-						hp_layer.draw((display-480)*8-240,180);
-						hp2_layer.draw(480-(display-480)*8,180);
+						hp_layer->draw((display-480)*8-240,180);
+						hp2_layer->draw(480-(display-480)*8,180);
 						full_hp.setAlpha((display-480)*8+15);
 						full_hp2.setAlpha((display-480)*8+15);
-						full_hp.draw(30,210);
-						full_hp2.draw(450-full_hp2.getWidth(),210);
+						full_hp.draw(15,195);
+						full_hp2.draw(465-full_hp2.getWidth(),195);
 					}
 					else if (display > 510)
 					{
-						hp_layer.draw(0,180);
-						hp2_layer.draw(240,180);
-						full_hp.draw(30,210);
-						full_hp2.draw(450-full_hp2.getWidth(),210);
-						aluren.setAlpha((display-510)*8+15);
-						aluren.draw(90,270);
+						hp_layer->draw(0,180);
+						hp2_layer->draw(240,180);
+						full_hp.draw(15,195);
+						full_hp2.draw(465-full_hp2.getWidth(),195);
+						aluren->setAlpha((display-510)*8+15);
+						aluren->draw(90,270);
 					}
 				}
 				if (display == 540)
 				{
-					hp_ground.draw(0,180);
-					hp2_ground.draw(240,180);
-					hp_layer.draw(hp1*240/100-240,180);
-					hp2_layer.draw(480-hp2*240/100,180);
+					hp_ground->draw(0,180);
+					hp2_ground->draw(240,180);
+					hp_layer->draw(hp1*240/100-240,180);
+					hp2_layer->draw(480-hp2*240/100,180);
 					stringstream ss;
 					string temp_hp;
 					ss << hp1;
@@ -543,42 +542,42 @@ int main(int argc,char* args[])
 					ss << hp2;
 					ss >> temp_hp;
 					Texture* hp2_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
-					hp1_t->draw(30,210);
-					hp2_t->draw(450-hp2_t->getWidth(),210);
-					aluren.draw(90,270);
+					hp1_t->draw(15,195);
+					hp2_t->draw(465-hp2_t->getWidth(),195);
+					aluren->draw(90,270);
 				}
 			}
 			else if (stage == 1)
 			{
-				if (display < 390)
+				if (display < 510)
 				{
 					display++;
 					if (display < 30)
 					{
 						soldier.setAlpha(240-display*8);
 						soldier.draw(280,0);
-						aluren.setAlpha(240-display*8);
-						aluren.draw(90,270);
-						hp_ground.draw(0,180);
-						hp2_ground.draw(240,180);
-						hp_layer.draw(hp1*240/100-240,180);
+						aluren->setAlpha(240-display*8);
+						aluren->draw(90,270);
+						hp_ground->draw(0,180);
+						hp2_ground->draw(240,180);
+						hp_layer->draw(hp1*240/100-240,180);
 						stringstream ss;
 						string temp_hp;
 						ss << hp1;
 						ss >> temp_hp;
 						Texture* hp1_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
 						Texture* hp2_t = new Texture("0/100","font/freeWing.ttf",rgb(255, 255, 255),16);
-						hp1_t->draw(30,210);
-						hp2_t->draw(450-hp2_t->getWidth(),210);
+						hp1_t->draw(15,195);
+						hp2_t->draw(465-hp2_t->getWidth(),195);
 					}
 					else if (display < 90)
 					{
 						hp2++;
 						soldier2.draw(460-(display-30)*3,0);
-						hp_ground.draw(0,180);
-						hp2_ground.draw(240,180);
-						hp_layer.draw(hp1*240/100-240,180);
-						hp2_layer.draw(480-(display-30)*4,180);
+						hp_ground->draw(0,180);
+						hp2_ground->draw(240,180);
+						hp_layer->draw(hp1*240/100-240,180);
+						hp2_layer->draw(480-(display-30)*4,180);
 						stringstream ss;
 						string temp_hp;
 						ss << hp1;
@@ -587,9 +586,92 @@ int main(int argc,char* args[])
 						ss << hp2;
 						ss >> temp_hp;
 						Texture* hp2_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
-						hp1_t->draw(30,210);
-						hp2_t->draw(450-hp2_t->getWidth(),210);
+						hp1_t->draw(15,195);
+						hp2_t->draw(465-hp2_t->getWidth(),195);
+						if (display <= 51)
+						{
+							Texture* temp = new Texture(battle_text.substr(0,((display-30)/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+							temp->setDstRect(0,0,temp->setPoint());
+							temp->draw(240,300);
+							delete temp;
+						}
+						else if (display < 90)
+						{
+							Texture* temp = new Texture(battle_text4.substr(0,21),"font/freeWing.ttf",rgb(255, 255, 255),24);
+							temp->setDstRect(0,0,temp->setPoint());
+							temp->draw(240,300);
+							Texture* temp2 = new Texture(battle_text5.substr(0,((display-51)/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+							temp2->setDstRect(0,0,temp2->setPoint());
+							temp2->draw(240,336);
+							delete temp;
+							delete temp2;
+						}
 					}
+					else if (display >= 90)
+					{
+						soldier2.draw(280,0);
+						hp_ground->draw(0,180);
+						hp2_ground->draw(240,180);
+						hp_layer->draw(hp1*240/100-240,180);
+						hp2_layer->draw(240,180);
+						stringstream ss;
+						string temp_hp;
+						ss << hp1;
+						ss >> temp_hp;
+						Texture* hp1_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+						Texture* hp2_t = new Texture("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+						hp1_t->draw(15,195);
+						hp2_t->draw(465-hp2_t->getWidth(),195);
+						if (display < 480)
+						{
+							Texture* temp = new Texture(battle_text4.substr(0,21),"font/freeWing.ttf",rgb(255, 255, 255),24);
+							temp->setDstRect(0,0,temp->setPoint());
+							if (display > 450)
+								temp->setAlpha(240-(display-450)*8);
+							temp->draw(240,336);
+							delete temp;
+							if (display < 96)
+							{
+								Texture* temp2 = new Texture(battle_text5.substr(0,((display-51)/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+								temp2->setDstRect(0,0,temp2->setPoint());
+								temp2->draw(240,336);
+								delete temp2;
+							}
+							else
+							{
+								Texture* temp2 = new Texture(battle_text5.substr(0,45),"font/freeWing.ttf",rgb(255, 255, 255),24);
+								temp2->setDstRect(0,0,temp2->setPoint());
+								if (display > 450)
+									temp2->setAlpha(240-(display-450)*8);
+								temp2->draw(240,336);
+								delete temp2;
+							}
+						}
+						else
+						{
+							aluren->setAlpha(15+(display-480)*8);
+							aluren->draw(90,270);
+						}
+					}
+				}
+				else if (display == 510)
+				{
+					soldier2.draw(280,0);
+					hp_ground->draw(0,180);
+					hp2_ground->draw(240,180);
+					hp_layer->draw(hp1*240/100-240,180);
+					hp2_layer->draw(480-hp2*240/100,180);
+					stringstream ss;
+					string temp_hp;
+					ss << hp1;
+					ss >> temp_hp;
+					Texture* hp1_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+					ss << hp2;
+					ss >> temp_hp;
+					Texture* hp2_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+					hp1_t->draw(15,195);
+					hp2_t->draw(465-hp2_t->getWidth(),195);
+					aluren->draw(90,270);
 				}
 			}
 			////////////////////////////////////////////////////////動畫表現
@@ -641,10 +723,28 @@ int main(int argc,char* args[])
 				quit = true;
 				break;
 			}
-			if (hp2 <= 0 && stage == 0)
+			if (hp2 <= 0)
 			{
-				stage = 1;
-				display = 0;
+				stage++;
+				if (stage == 1)
+				{
+					display = 0;
+					cls_pos = 0;
+					hp2 = 40;
+				}
+				else
+				{
+					black->setAlpha(cls_pos);
+					black->draw(0,0);
+					cls_pos += 15;
+					if (cls_pos == 15)
+						Mix_FadeOutMusic(500);
+					else if (cls_pos == 270)
+					{
+						SDL_Delay(500);
+						break;
+					}
+				}
 			}
 			
 			Window::present();
@@ -659,12 +759,18 @@ int main(int argc,char* args[])
 		delete dark[i];
 		delete spear[i];
 	}
-	delete flame;
-	delete ice;
-	delete light;
-	delete dark;
-	delete spear;
+	delete [] flame;
+	delete [] ice;
+	delete [] light;
+	delete [] dark;
+	delete [] spear;
 	delete black;
+	delete aluren;
+	delete character1;
+	delete hp_ground;
+	delete hp_layer;
+	delete hp2_ground;
+	delete hp2_layer;
 	if (quit)
 		exit(0);
 	///////////////////////////////////////////////////////////////切回動畫畫面
@@ -676,5 +782,16 @@ int main(int argc,char* args[])
     Texture flash1("img/flash1.png");
     Texture flash2("img/flash2.png");
     Texture flash3("img/flash3.png");
+	
+    mainBGM = Mix_LoadMUS("sounds/herius.ogg");
+    Mix_PlayMusic(mainBGM,-1);
+	
+	string talking2[9];
+	
+	talk = 0;
+	
+	Window::quit();
+	if (quit)
+		exit(0);
     return 0;
 }
