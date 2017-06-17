@@ -443,6 +443,8 @@ int main(int argc,char* args[])
 	vector<int> spear_anime;
 	int skill = 0;
 	int stage = 0;
+	int click_effect = 0;
+	bool in_battle = false;
 	ifstream song("charts/battle1/battle1-e.jc",ifstream::in);
 	ChartPlayer chart(song);
 	auto notes = chart.getNotePositions(BEAT_DURATION);
@@ -472,17 +474,33 @@ int main(int argc,char* args[])
                         quit=true;
                         break;
 					case SDLK_f:
-						chart.hit();
-						flame_anime.push_back(0);
+						if (in_battle)
+						{
+							chart.hit();
+							click_effect = 1;
+							flame_anime.push_back(0);
+						}
 					case SDLK_e:
-						chart.hit();
-						ice_anime.push_back(0);
+						if (in_battle)
+						{
+							chart.hit();
+							click_effect = 1;
+							ice_anime.push_back(0);
+						}
 					case SDLK_j:
-						chart.hit();
-						dark_anime.push_back(0);
+						if (in_battle)
+						{
+							chart.hit();
+							click_effect = 1;
+							dark_anime.push_back(0);
+						}
 					case SDLK_i:
-						chart.hit();
-						light_anime.push_back(0);
+						if (in_battle)
+						{
+							chart.hit();
+							click_effect = 1;
+							light_anime.push_back(0);
+						}
                 }
     		}
     	}
@@ -577,6 +595,8 @@ int main(int argc,char* args[])
 						aluren->setAlpha((display-510)*8+15);
 						aluren->draw(90,270);
 					}
+					if (display == 540)
+						in_battle = true;
 				}
 				if (display == 540)
 				{
@@ -703,6 +723,8 @@ int main(int argc,char* args[])
 							aluren->draw(90,270);
 						}
 					}
+					if (display == 510)
+						in_battle = true;
 				}
 				else if (display == 510)
 				{
@@ -724,10 +746,14 @@ int main(int argc,char* args[])
 					aluren->draw(90,270);
 				}
 			}
-			for (int i = 0; i < notes.size(); i++)
+			////////////////////////////////////////////////////////譜面顯示
+			for (int i = 0; i < notes.size() && in_battle; i++)
 			{
 				Texture temp_circle("img/circle.png");
-				temp_circle.setDstRect()
+				int temp_r = 300*(BEAT_DURATION-notes[0].first)/BEAT_DURATION;
+				temp_circle.setDstRect(temp_r,temp_r);
+				temp_circle.setPoint();
+				temp_circle.draw(240,400);
 			}
 			////////////////////////////////////////////////////////動畫表現
 			for (int i = 0; i < flame_anime.size(); i++)
@@ -781,6 +807,7 @@ int main(int argc,char* args[])
 			if (hp2 <= 0)
 			{
 				stage++;
+				in_battle = false;
 				if (stage == 1)
 				{
 					display = 0;
