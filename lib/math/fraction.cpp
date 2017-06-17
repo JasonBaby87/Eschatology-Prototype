@@ -124,7 +124,7 @@ bool ImproperFraction<N>::operator>(N n) const
 }
 
 template <typename N>
-ImproperFraction<N> ImproperFraction<N>::operator++(int)
+const ImproperFraction<N> ImproperFraction<N>::operator++(int)
 {
 	ImproperFraction<N> result = *this;
 	*this += 1;
@@ -132,7 +132,7 @@ ImproperFraction<N> ImproperFraction<N>::operator++(int)
 }
 
 template <typename N>
-ImproperFraction<N> ImproperFraction<N>::operator--(int)
+const ImproperFraction<N> ImproperFraction<N>::operator--(int)
 {
 	ImproperFraction<N> result = *this;
 	*this -= 1;
