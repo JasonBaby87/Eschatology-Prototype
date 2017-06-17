@@ -215,16 +215,19 @@ Fraction<N1, N2>::operator double() const
 template <typename N1, typename N2>
 istream& operator<<(ostream& is, const Fraction<N1,N2>& f)
 {
-	// TODO
     is << f.getInteger() << " "
-		<< f.getNumerator() << "/" << f.getDenominator();
+		<< f.getFraction();
 }
 
 template <typename N1, typename N2>
 istream& operator>>(istream& is, Fraction<N1,N2>& f)
 {
-	// TODO
+	N1 integer;
+	ImproperFraction<N2> fraction;
+
     is >> integer >> fraction;
+    f = Fraction<N1,N2>(integer,
+		fraction.getNumerator(), fraction.getDenominator());
 }
 
 template <typename N1, typename N2>
