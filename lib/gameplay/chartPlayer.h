@@ -48,4 +48,6 @@ public:
 	const vector<Judgement>& getJudgements();
 };
 
+#include "chartPlayer.cpp"
+
 #endif // CHARTPLAYER_H_INCLUDED
