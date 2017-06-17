@@ -41,7 +41,10 @@ public:
 
 
 template <typename N>
-istream& operator<<(ostream& os, const ImproperFraction<N>& f);
+ostream& operator<<(ostream& os, const ImproperFraction<N>& f);
+
+template <typename N>
+istream& operator>>(istream& is, ImproperFraction<N>& f);
 
 template <typename N1, typename N2>
 class Fraction
