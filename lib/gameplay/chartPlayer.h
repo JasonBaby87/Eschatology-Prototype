@@ -26,6 +26,8 @@ public:
 	Note(Beat);
 };
 
+bool earlierThan(const Note*,const Note*);
+
 class ChartPlayer
 {
 private:

@@ -15,6 +15,11 @@ Note::Note(Beat b): beat(b)
 
 }
 
+bool earlierThan(const Note* a,const Note* b)
+{
+	return a->beat < b->beat;
+}
+
 void ChartPlayer::registerMisses()
 {
 	while(!notes.empty())
