@@ -61,10 +61,10 @@ ChartPlayer::ChartPlayer(istream& data)
         notes.push_back(note);
 	}
 
-    sort(notes.begin(), notes.end(), earlierThan);
+    notes.sort(earlierThan);
 }
 
-const vector<pair<BeatDuration,Note*>>&
+const vector<pair<BeatDuration,Note*>>
 	ChartPlayer::getNotePositions(BeatDuration visibleWindow)
 {
 	registerMisses();
@@ -137,7 +137,7 @@ void ChartPlayer::hit()
 	Time timeDifference = abs(hitTime - currentTime);
 
 	Judgement judgement =
-		lower_bound(judgeWindows.begin(), judgeWindows.end(), timeDifference)
+		lower_bound(judgeWindows.begin(), judgeWindows.end(), Nanoseconds(llround(timeDifference * 1e9)))
 		- judgeWindows.begin();
 
 	if (judgement == judgeWindows.size())
