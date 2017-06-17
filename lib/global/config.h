@@ -7,12 +7,12 @@
 using namespace std;
 
 /** Shifts all the notes later */
-extern Milliseconds globalOffset;
+extern Milliseconds globalOffset();
 /** Shifts all the visual later */
-extern Milliseconds visualOffset;
+extern Milliseconds visualOffset();
 
 /** The judge windows.
 	<p>The smaller the indices the stricter it is. */
-extern vector<Nanoseconds> judgeWindows;
+extern vector<Nanoseconds> judgeWindows();
 
 #endif // CONFIG_H_INCLUDED
