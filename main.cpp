@@ -19,11 +19,18 @@
 #include <math.h> //簡協運動的三角函數
 #include <sstream>
 #include <vector>
+#include <fstream>
 #include "lib/window.h"
 #include "lib/timer.h"
+#include "lib/gameplay/chartPlayer.h"
+
+bool replay = false;
+void replayBGM()
+{
+	replay = true;
+}
 
 const int FPS=60;
-
 /**
 *   簡諧運動
 *   @return cos(傳入theta2後成長一個omega的角度)作為比例，回傳上下限中的該比例對應的值
@@ -408,10 +415,17 @@ int main(int argc,char* args[])
 		spear[i] = new Texture(temp_name);
 	}
 	Mix_Chunk *transition_r = Mix_LoadWAV("sounds/transition_r.wav");
+	Mix_Chunk *flame_s = Mix_LoadWAV("sounds/flame.wav");
+	Mix_Chunk *ice_s = Mix_LoadWAV("sounds/ice.wav");
+	Mix_Chunk *light_s = Mix_LoadWAV("sounds/light.wav");
+	Mix_Chunk *dark_s = Mix_LoadWAV("sounds/dark.wav");
+	Mix_Chunk *spear_s = Mix_LoadWAV("sounds/spear.wav");
 	Mix_Chunk *battle_pre = Mix_LoadWAV("sounds/battle_pre.ogg");
 	mainBGM = Mix_LoadMUS("sounds/battle1.ogg");
 	SDL_Delay(500);
 	Mix_PlayChannel(-1,transition_r,0);
+	
+	const double BEAT_DURATION = 4;
 	
 	display = 0;
 	cls_pos = 0;
@@ -429,10 +443,20 @@ int main(int argc,char* args[])
 	vector<int> spear_anime;
 	int skill = 0;
 	int stage = 0;
+	ifstream song("charts/battle1/battle1-e.jc",ifstream::in);
+	ChartPlayer chart(song);
+	auto notes = chart.getNotePositions(BEAT_DURATION);
 	
 	fps.start();
 	while (!quit)
 	{
+		if (replay)
+		{
+			Mix_PlayMusic(mainBGM,0);
+			chart.start();
+			replay = false;
+		}
+		
 		while(SDL_PollEvent(&e))
         {
             if(e.type==SDL_QUIT) //單擊右上角的X
@@ -448,12 +472,16 @@ int main(int argc,char* args[])
                         quit=true;
                         break;
 					case SDLK_f:
+						chart.hit();
 						flame_anime.push_back(0);
 					case SDLK_e:
+						chart.hit();
 						ice_anime.push_back(0);
 					case SDLK_j:
+						chart.hit();
 						dark_anime.push_back(0);
 					case SDLK_i:
+						chart.hit();
 						light_anime.push_back(0);
                 }
     		}
@@ -526,7 +554,11 @@ int main(int argc,char* args[])
 				{
 					display++;
 					if (display == 343)
-						Mix_PlayMusic(mainBGM,-1);
+					{
+						Mix_PlayMusic(mainBGM,0);
+						Mix_HookMusicFinished(replayBGM);
+						chart.start();
+					}
 					else if (display > 480 && display <= 510)
 					{
 						hp_layer->draw((display-480)*8-240,180);
@@ -769,6 +801,7 @@ int main(int argc,char* args[])
 		}
 	}
     Window::quit();
+	song.close();
 	for (int i = 0; i < 6; i++)
 	{
 		delete flame[i];
@@ -972,5 +1005,44 @@ int main(int argc,char* args[])
     Texture flash1("img/flash1.png");
     Texture flash2("img/flash2.png");
     Texture flash3("img/flash3.png");
+    character1 = new Texture("img/character1.png");
+    hp_ground = new Texture("img/hp_ground.png");
+    hp_layer = new Texture("img/hp_layer.png");
+    hp2_ground = new Texture("img/hp2_ground.png");
+    hp2_layer = new Texture("img/hp2_layer.png");
+	aluren = new Texture("img/aluren.png");
+	flame = new Texture* [6];
+	ice = new Texture* [6];
+	light = new Texture* [6];
+	dark = new Texture* [6];
+	spear = new Texture* [6];
+	for (int i = 0; i < 6; i++)
+	{
+		string temp_name;
+		temp_name = "img/anime/flame"+anime_frame[i];
+		flame[i] = new Texture(temp_name);
+		temp_name = "img/anime/ice"+anime_frame[i];
+		ice[i] = new Texture(temp_name);
+		temp_name = "img/anime/light"+anime_frame[i];
+		light[i] = new Texture(temp_name);
+		temp_name = "img/anime/dark"+anime_frame[i];
+		dark[i] = new Texture(temp_name);
+		temp_name = "img/anime/spear"+anime_frame[i];
+		spear[i] = new Texture(temp_name);
+	}
+	
+	transition_r = Mix_LoadWAV("sounds/transition_r.wav");
+	flame_s = Mix_LoadWAV("sounds/flame.wav");
+	ice_s = Mix_LoadWAV("sounds/ice.wav");
+	light_s = Mix_LoadWAV("sounds/light.wav");
+	dark_s = Mix_LoadWAV("sounds/dark.wav");
+	spear_s = Mix_LoadWAV("sounds/spear.wav");
+	mainBGM = Mix_LoadMUS("sounds/battle2.ogg");
+	SDL_Delay(500);
+	Mix_PlayChannel(-1,transition_r,0);
+	
+	cls_pos = 0;
+	hp1 = 100;
+	hp2 = 200;
     return 0;
 }
