@@ -536,7 +536,7 @@ int main(int argc,char* args[])
 					temp->setDstRect(0,0,temp->setPoint());
 					temp2->setDstRect(0,0,temp2->setPoint());
 					temp3->setDstRect(0,0,temp3->setPoint());
-					if (display > 660)
+					if (display > 480)
 					{
 						temp->setAlpha(240-(display-480)*8);
 						temp2->setAlpha(240-(display-480)*8);
@@ -553,7 +553,7 @@ int main(int argc,char* args[])
 				if (display < 540 && cls_pos == 800)
 				{
 					display++;
-					if (display == 343)
+					if (display == 344)
 					{
 						Mix_PlayMusic(mainBGM,0);
 						Mix_HookMusicFinished(replayBGM);
@@ -723,6 +723,11 @@ int main(int argc,char* args[])
 					hp2_t->draw(465-hp2_t->getWidth(),195);
 					aluren->draw(90,270);
 				}
+			}
+			for (int i = 0; i < notes.size(); i++)
+			{
+				Texture temp_circle("img/circle.png");
+				temp_circle.setDstRect()
 			}
 			////////////////////////////////////////////////////////動畫表現
 			for (int i = 0; i < flame_anime.size(); i++)
