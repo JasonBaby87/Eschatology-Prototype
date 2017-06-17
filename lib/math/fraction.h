@@ -33,8 +33,8 @@ public:
 	bool operator<(const ImproperFraction<N>& n) const;
 	bool operator>(N n) const;
 	bool operator>(const ImproperFraction<N>& n) const;
-	ImproperFraction<N> operator++(int);
-	ImproperFraction<N> operator--(int);
+	const ImproperFraction<N> operator++(int);
+	const ImproperFraction<N> operator--(int);
 	operator N() const;
 	operator double() const;
 };
@@ -61,7 +61,7 @@ public:
 };
 
 template <typename N1, typename N2>
-istream& operator<<(ostream& os, const Fraction<N1,N2>& f);
+ostream& operator<<(ostream& os, const Fraction<N1,N2>& f);
 
 template <typename N1, typename N2>
 istream& operator>>(istream& is, Fraction<N1,N2>& f);
