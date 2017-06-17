@@ -18,6 +18,8 @@ ImproperFraction<N>& ImproperFraction<N>::reduce()
         numerator = -numerator;
         denominator = -denominator;
 	}
+
+	return *this;
 }
 
 template <typename N>
@@ -150,9 +152,11 @@ ImproperFraction<N>::operator double() const
 }
 
 template <typename N>
-istream& operator<<(ostream& is, const ImproperFraction<N>& f)
+ostream& operator<<(ostream& os, const ImproperFraction<N>& f)
 {
-    is << f.getNumerator() << "/" << f.getDenominator();
+    os << f.getNumerator() << "/" << f.getDenominator();
+
+    return os;
 }
 
 // Fraction
@@ -173,6 +177,8 @@ Fraction<N1,N2>& Fraction<N1,N2>::reduce()
 		integer++;
 		fraction--;
 	}
+
+	return *this;
 }
 
 template <typename N1, typename N2>
@@ -213,10 +219,12 @@ Fraction<N1, N2>::operator double() const
 }
 
 template <typename N1, typename N2>
-istream& operator<<(ostream& is, const Fraction<N1,N2>& f)
+ostream& operator<<(ostream& os, const Fraction<N1,N2>& f)
 {
-    is << f.getInteger() << " "
+    os << f.getInteger() << " "
 		<< f.getFraction();
+
+	return os;
 }
 
 template <typename N1, typename N2>
@@ -228,6 +236,8 @@ istream& operator>>(istream& is, Fraction<N1,N2>& f)
     is >> integer >> fraction;
     f = Fraction<N1,N2>(integer,
 		fraction.getNumerator(), fraction.getDenominator());
+
+	return is;
 }
 
 template <typename N1, typename N2>
