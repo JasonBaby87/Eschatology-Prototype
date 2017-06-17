@@ -2,6 +2,7 @@
 #define FRACTION_CPP_INCLUDED
 
 #include <iostream>
+#include <sstream>
 #include "fraction.h"
 #include "algorithm.h"
 
@@ -157,6 +158,26 @@ ostream& operator<<(ostream& os, const ImproperFraction<N>& f)
     os << f.getNumerator() << "/" << f.getDenominator();
 
     return os;
+}
+
+template <typename N>
+istream& operator>>(istream& is, ImproperFraction<N>& f)
+{
+	string token;
+	stringstream input;
+
+	for (int i = 0; i < 2; i++)
+	{
+		getline(is, token, '/');
+		input << token;
+	}
+
+	N numerator, denominator;
+    input >> numerator >> denominator;
+
+	f = ImproperFraction<N>(numerator, denominator);
+
+	return is;
 }
 
 // Fraction
