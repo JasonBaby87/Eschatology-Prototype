@@ -392,6 +392,7 @@ int main(int argc,char* args[])
     Texture* hp2_ground = new Texture("img/hp2_ground.png");
     Texture* hp2_layer = new Texture("img/hp2_layer.png");
 	Texture* aluren = new Texture("img/aluren.png");
+	Texture* aluren_click = new Texture("img/aluren_click.png");
 	Texture full_hp("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
 	Texture full_hp2("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
 	Texture** flame = new Texture* [6];
@@ -746,6 +747,14 @@ int main(int argc,char* args[])
 					aluren->draw(90,270);
 				}
 			}
+			if (click_effect > 0)
+			{
+				aluren_click->setAlpha(255-17*click_effect);
+				aluren_click->draw(235,395);
+				click_effect++;
+				if (click_effect == 15)
+					click_effect = 0;
+			}
 			////////////////////////////////////////////////////////譜面顯示
 			for (int i = 0; i < notes.size() && in_battle; i++)
 			{
@@ -849,6 +858,7 @@ int main(int argc,char* args[])
 	delete [] spear;
 	delete black;
 	delete aluren;
+	delete aluren_click;
 	delete character1;
 	delete hp_ground;
 	delete hp_layer;
@@ -1043,6 +1053,7 @@ int main(int argc,char* args[])
     hp2_ground = new Texture("img/hp2_ground.png");
     hp2_layer = new Texture("img/hp2_layer.png");
 	aluren = new Texture("img/aluren.png");
+	aluren_click = new Texture("img/aluren_click.png");
 	flame = new Texture* [6];
 	ice = new Texture* [6];
 	light = new Texture* [6];
