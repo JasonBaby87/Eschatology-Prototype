@@ -6,11 +6,11 @@
 
 using namespace std;
 
-extern Milliseconds globalOffset;
-extern Milliseconds visualOffset;
+extern Milliseconds globalOffset();
+extern Milliseconds visualOffset();
 
 /** The judge windows.
 	<p>The smaller the indices the stricter it is. */
-extern vector<Nanoseconds> judgeWindows;
+extern vector<Nanoseconds> judgeWindows();
 
 #endif // CONFIG_H_INCLUDED
