@@ -39,7 +39,7 @@ private:
 	void registerMisses();
 public:
 	// ChartPlayer(MusicPlayer&, istream& data);
-	 ChartPlayer(istream& data);
+	ChartPlayer(istream& data);
 	void start();
 	const vector<pair<BeatDuration,Note*>>& getNotePositions(BeatDuration = 8);
 	void hit();

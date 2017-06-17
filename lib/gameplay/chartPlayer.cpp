@@ -6,6 +6,7 @@
 #include <vector>
 #include <chrono>
 #include <algorithm>
+#include <cmath>
 #include "chartPlayer.h"
 #include "../global/exception.h"
 
@@ -43,7 +44,11 @@ void ChartPlayer::start()
 
 ChartPlayer::ChartPlayer(istream& data)
 {
-	data >> songOffset >> bpm;
+	double offsetTime;
+	data >> offsetTime >> bpm;
+	int offsetMilli = lround(offsetTime * 1000);
+	songOffset = static_cast<Milliseconds>(offsetMilli);
+
     Beat beat;
     while (data >> beat)
 	{
