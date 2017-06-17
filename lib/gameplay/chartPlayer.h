@@ -26,6 +26,8 @@ public:
 	Note(Beat);
 };
 
+bool earlierThan(const Note*,const Note*);
+
 class ChartPlayer
 {
 private:
@@ -39,9 +41,9 @@ private:
 	void registerMisses();
 public:
 	// ChartPlayer(MusicPlayer&, istream& data);
-	 ChartPlayer(istream& data);
+	ChartPlayer(istream& data);
 	void start();
-	const vector<pair<BeatDuration,Note*>>& getNotePositions(BeatDuration = 8);
+	const vector<pair<BeatDuration,Note*>> getNotePositions(BeatDuration = 8);
 	void hit();
 	const vector<Judgement>& getJudgements();
 };

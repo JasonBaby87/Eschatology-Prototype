@@ -37,13 +37,14 @@ public:
 	const ImproperFraction<N> operator--(int);
 	operator N() const;
 	operator double() const;
-
-	friend istream& operator<<(ostream& os, const ImproperFraction<N>& f);
 };
 
 
 template <typename N>
-istream& operator<<(ostream& os, const ImproperFraction<N>& f);
+ostream& operator<<(ostream& os, const ImproperFraction<N>& f);
+
+template <typename N>
+istream& operator>>(istream& is, ImproperFraction<N>& f);
 
 template <typename N1, typename N2>
 class Fraction
@@ -60,10 +61,6 @@ public:
 	N2 getDenominator() const;
 	// Operator overloading when needed
 	operator double() const;
-
-	friend ostream& operator<<(ostream& os, const Fraction<N1,N2>& f);
-	friend istream& operator>>(istream& is, Fraction<N1,N2>& f);
-	friend const double operator*(double l, const Fraction<N1,N2>& r);
 };
 
 template <typename N1, typename N2>

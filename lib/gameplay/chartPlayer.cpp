@@ -6,12 +6,18 @@
 #include <vector>
 #include <chrono>
 #include <algorithm>
+#include <cmath>
 #include "chartPlayer.h"
 #include "../global/exception.h"
 
 Note::Note(Beat b): beat(b)
 {
 
+}
+
+bool earlierThan(const Note* a,const Note* b)
+{
+	return a->beat < b->beat;
 }
 
 void ChartPlayer::registerMisses()
@@ -43,7 +49,11 @@ void ChartPlayer::start()
 
 ChartPlayer::ChartPlayer(istream& data)
 {
-	data >> songOffset >> bpm;
+	double offsetTime;
+	data >> offsetTime >> bpm;
+	int offsetMilli = lround(offsetTime * 1000);
+	songOffset = static_cast<Milliseconds>(offsetMilli);
+
     Beat beat;
     while (data >> beat)
 	{
@@ -51,10 +61,10 @@ ChartPlayer::ChartPlayer(istream& data)
         notes.push_back(note);
 	}
 
-    sort(notes.begin(), notes.end(), earlierThan);
+    notes.sort(earlierThan);
 }
 
-const vector<pair<BeatDuration,Note*>>&
+const vector<pair<BeatDuration,Note*>>
 	ChartPlayer::getNotePositions(BeatDuration visibleWindow)
 {
 	registerMisses();
@@ -127,7 +137,7 @@ void ChartPlayer::hit()
 	Time timeDifference = abs(hitTime - currentTime);
 
 	Judgement judgement =
-		lower_bound(judgeWindows.begin(), judgeWindows.end(), timeDifference)
+		lower_bound(judgeWindows.begin(), judgeWindows.end(), Nanoseconds(llround(timeDifference * 1e9)))
 		- judgeWindows.begin();
 
 	if (judgement == judgeWindows.size())

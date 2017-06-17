@@ -8,7 +8,7 @@ class NotImplementedException: public std::logic_error
 private:
 	const char* message;
 public:
-	NotImplementedException (char* = "Function not implemented.");
+	NotImplementedException (const char* = "Function not implemented.");
 };
 
 #endif // EXCEPTION_H_INCLUDED
