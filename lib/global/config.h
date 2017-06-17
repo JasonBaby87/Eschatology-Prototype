@@ -6,7 +6,9 @@
 
 using namespace std;
 
+/** Shifts all the notes later */
 extern Milliseconds globalOffset();
+/** Shifts all the visual later */
 extern Milliseconds visualOffset();
 
 /** The judge windows.
