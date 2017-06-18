@@ -8,6 +8,7 @@ using namespace std;
 typedef chrono::milliseconds Milliseconds;
 typedef chrono::microseconds Microseconds;
 typedef chrono::nanoseconds Nanoseconds;
+typedef double Time;
 
 // Judgements
 /** It is an integral type. The lower the value, the better.

@@ -25,13 +25,13 @@ void ChartPlayer::registerMisses()
 	while(!notes.empty())
 	{
 		Time currentTime = chrono::duration_cast<chrono::nanoseconds>
-			(chrono::high_resolution_clock::now() - startTime - songOffset - globalOffset).count() * 1e9;
+			(chrono::high_resolution_clock::now() - startTime - songOffset - globalOffset).count() / 1e9;
 
 		Note* note = notes.front();
-		Time noteTime = static_cast<Time>(note->beat) / bpm * 6e10;
+		Time noteTime = static_cast<Time>(note->beat) / bpm * 60;
 		Time timeDifference = noteTime - currentTime;
 
-		if (timeDifference < chrono::duration_cast<chrono::duration<Time>>(-judgeWindows.back()).count())
+		if (timeDifference >= chrono::duration_cast<chrono::duration<Time>>(-judgeWindows.back()).count())
 		{
 			break;
 		}
