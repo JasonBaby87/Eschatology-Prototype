@@ -2,6 +2,7 @@
 #define CONFIG_H_INCLUDED
 
 #include <vector>
+#include <istream>
 #include "type.h"
 
 using namespace std;
@@ -14,5 +15,7 @@ extern Milliseconds visualOffset = Milliseconds();
 /** The judge windows.
 	<p>The smaller the indices the stricter it is. */
 extern vector<Nanoseconds> judgeWindows = vector<Nanoseconds>();
+
+void loadConfigurations(istream& is);
 
 #endif // CONFIG_H_INCLUDED
