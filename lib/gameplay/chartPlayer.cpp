@@ -31,7 +31,7 @@ void ChartPlayer::registerMisses()
 		Time noteTime = static_cast<Time>(note->beat) / bpm * 60;
 		Time timeDifference = noteTime - currentTime;
 
-		if (timeDifference < chrono::duration_cast<chrono::duration<Time>>(-judgeWindows.back()).count())
+		if (timeDifference >= chrono::duration_cast<chrono::duration<Time>>(-judgeWindows.back()).count())
 		{
 			break;
 		}
