@@ -13,7 +13,6 @@
 using namespace std;
 
 typedef Fraction<int,int> Beat; // Time point
-typedef double Time;
 typedef double BeatDuration; // Duration
 typedef Fraction<int,int> BPM;
 
