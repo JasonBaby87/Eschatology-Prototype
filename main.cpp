@@ -456,7 +456,7 @@ int main(int argc,char* args[])
 	string battle_text3 = "組成各種元素進行攻擊";
 	string battle_text4 = "...是魔法護甲！";
 	string battle_text5 = "依序組合［火冰火光暗］施展雷槍";
-	int hp1 = 100;
+	int hp1 = 4;
 	int hp2 = 100;
 	vector<int> flame_anime;
 	vector<int> ice_anime;
@@ -788,7 +788,10 @@ int main(int argc,char* args[])
 						aluren->draw(90,270);
 					}
 					if (display == 540)
+					{
 						in_battle = true;
+						cls_pos = 0;
+					}
 				}
 				if (display == 540)
 				{
@@ -1010,17 +1013,26 @@ int main(int argc,char* args[])
 					bad_click_anime.erase(bad_click_anime.begin()+i);
 			}
 			/////////////////////////////////////////////////////////////////
-			if (cls_pos < 800)
+			if (cls_pos < 800 && display == 0)
 			{
 				black->draw(0,cls_pos);
 				cls_pos += 20;
 				if (cls_pos == 800)
 					Mix_PlayChannel(-1,battle_pre,0);
 			}
-			if (hp1 == 0)
+			if (hp1 <= 0)
 			{
-				quit = true;
-				break;
+				in_battle = false;
+				black->setAlpha(cls_pos);
+				black->draw(0,0);
+				cls_pos += 15;
+				if (cls_pos == 15)
+					Mix_FadeOutMusic(500);
+				else if (cls_pos == 270)
+				{
+					quit = true;
+					break;
+				}
 			}
 			if (hp2 <= 0)
 			{
