@@ -8,6 +8,13 @@
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+<<<<<<< HEAD
+=======
+#include <fstream>
+#include <vector>
+#include "lib/math/fraction.h"
+#include "lib/gameplay/chartPlayer.h"
+>>>>>>> refs/remotes/origin/Music
 
 using namespace std;
 
@@ -34,7 +41,38 @@ void eOP();
 
 int main()
 {
+<<<<<<< HEAD
 	// TODO insert your program here
+=======
+	{
+		ifstream config("data/config");
+		loadConfigurations(config);
+	}
+
+	ifstream chart("charts/battle2/battle2-E.jc", ifstream::in);
+	ChartPlayer cp = ChartPlayer(chart);
+
+	string s;
+	getline(cin, s);
+	cp.start();
+
+	cout << cp.getJudgements().size() << endl;
+
+	for (int i = 0; i < 10; i++)
+	{
+		getline(cin, s);
+		cp.hit();
+	}
+
+	const vector<Judgement> notes = cp.getJudgements();
+
+	cout << notes.size() << endl;
+
+	for (int i = 0; i < notes.size(); i++)
+	{
+		cout << notes[i] << endl;
+	}
+>>>>>>> refs/remotes/origin/Music
 
 	eOP();
 }
