@@ -27,7 +27,7 @@ void loadConfigurations(istream& is)
 	for (Judgement i = 0; i < numOfJudgements; i++)
 	{
 		is >> doubleTime;
-		judgeWindow = Nanoseconds(lround(doubleTime * 1e9));
+		judgeWindow = Nanoseconds(llround(doubleTime * 1e9));
         judgeWindows.push_back(judgeWindow);
 	}
 }
