@@ -400,6 +400,8 @@ int main(int argc,char* args[])
 	Texture** light = new Texture* [6];
 	Texture** dark = new Texture* [6];
 	Texture** spear = new Texture* [6];
+	Texture** slash = new Texture* [6];
+	Texture** bad_click = new Texture* [6];
 	string anime_frame[6] = {"1.png","2.png","3.png","4.png","5.png","6.png"};
 	for (int i = 0; i < 6; i++)
 	{
@@ -414,6 +416,10 @@ int main(int argc,char* args[])
 		dark[i] = new Texture(temp_name);
 		temp_name = "img/anime/spear"+anime_frame[i];
 		spear[i] = new Texture(temp_name);
+		temp_name = "img/anime/slash"+anime_frame[i];
+		slash[i] = new Texture(temp_name);
+		temp_name = "img/anime/bad_click"+anime_frame[i];
+		bad_click[i] = new Texture(temp_name);
 	}
 	Mix_Chunk *transition_r = Mix_LoadWAV("sounds/transition_r.wav");
 	Mix_Chunk *flame_s = Mix_LoadWAV("sounds/flame.wav");
@@ -421,6 +427,7 @@ int main(int argc,char* args[])
 	Mix_Chunk *light_s = Mix_LoadWAV("sounds/light.wav");
 	Mix_Chunk *dark_s = Mix_LoadWAV("sounds/dark.wav");
 	Mix_Chunk *spear_s = Mix_LoadWAV("sounds/spear.wav");
+	Mix_Chunk *slash_s = Mix_LoadWAV("sounds/slash.wav");
 	Mix_Chunk *battle_pre = Mix_LoadWAV("sounds/battle_pre.ogg");
 	mainBGM = Mix_LoadMUS("sounds/battle1.ogg");
 	SDL_Delay(500);
@@ -442,22 +449,47 @@ int main(int argc,char* args[])
 	vector<int> light_anime;
 	vector<int> dark_anime;
 	vector<int> spear_anime;
+	vector<int> slash_anime;
+	vector<pair<int,SDL_Color>> bad_click_anime;
 	int skill = 0;
 	int stage = 0;
 	int click_effect = 0;
 	bool in_battle = false;
 	ifstream song("charts/battle1/battle1-e.jc",ifstream::in);
-	ChartPlayer chart(song);
-	auto notes = chart.getNotePositions(BEAT_DURATION);
+	ChartPlayer* chart = new ChartPlayer(song);
+	auto notes = chart->getNotePositions(BEAT_DURATION);
+	auto judge = chart->getJudgements();
+	int last_judge = 0;
+	int damage = 10;
+	int e_damage = 2;
+	double resist = 1;
+	double damage_rate[4] = {1,0.8,0.5,0.2};
+	SDL_Color accuracy[5] = {rgb(255,174,35),rgb(255,240,35),rgb(35,255,100),rgb(35,230,255),rgb(35,170,255)};
 	
 	fps.start();
 	while (!quit)
 	{
 		if (replay)
 		{
+			delete chart;
 			Mix_PlayMusic(mainBGM,0);
-			chart.start();
+			chart = new ChartPlayer(song);
+			notes = chart->getNotePositions(BEAT_DURATION);
+			judge = chart->getJudgements();
+			chart->start();
 			replay = false;
+		}
+		
+		for (int i = last_judge; i < judge.size(); i++)
+		{
+			if (judge[i] == MISS)
+			{
+				slash_anime.push_back(0);
+				Mix_PlayChannel(-1,slash_s,0);
+				hp1 -= e_damage;
+				skill = 0;
+			}
+			last_judge = judge.size();
 		}
 		
 		while(SDL_PollEvent(&e))
@@ -468,40 +500,119 @@ int main(int argc,char* args[])
     		}
     		if(e.type==SDL_KEYDOWN)
             {
-                switch(e.key.keysym.sym)
+                if (e.key.keysym.sym == SDLK_ESCAPE)
                 {
                     //ESC退出
-                    case SDLK_ESCAPE:
-                        quit=true;
-                        break;
-					case SDLK_f:
-						if (in_battle)
+                    quit=true;
+                    break;
+				}
+				else if (e.key.keysym.sym == SDLK_f || e.key.keysym.sym == SDLK_e || e.key.keysym.sym == SDLK_j || e.key.keysym.sym == SDLK_i)
+				{
+					if (in_battle)
+					{
+						chart->hit();
+						for (int i = last_judge; i < judge.size(); i++)
 						{
-							chart.hit();
-							click_effect = 1;
-							flame_anime.push_back(0);
+							if (judge[i] == MISS)
+							{
+								slash_anime.push_back(0);
+								Mix_PlayChannel(-1,slash_s,0);
+								hp1 -= e_damage;
+								skill = 0;
+							}
+							else if (judge[i] != WRONG)
+							{
+								click_effect = 1;
+								aluren_click->setColor(accuracy[i]);
+								switch (e.key.keysym.sym)
+								{
+									case SDLK_e:
+										Mix_PlayChannel(-1,flame_s,0);
+										if (judge[i] == 4)
+										{
+											bad_click_anime.push_back(make_pair(0,rgb(255,0,0)));
+											hp1 -= e_damage/2;
+											skill = 0;
+										}
+										else
+										{
+											flame_anime.push_back(0);
+											hp2 -= damage*damage_rate[i]*resist;
+											if (stage == 1)
+											{
+												if (skill == 0 || skill == 2)
+													skill++;
+												else
+													skill = 0;
+											}
+										}
+									case SDLK_f:
+										Mix_PlayChannel(-1,ice_s,0);
+										if (judge[i] == 4)
+										{
+											bad_click_anime.push_back(make_pair(0,rgb(130,245,255)));
+											hp1 -= e_damage/2;
+											skill = 0;
+										}
+										else
+										{
+											ice_anime.push_back(0);
+											hp2 -= damage*damage_rate[i]*resist;
+											if (stage == 1)
+											{
+												if (skill == 1)
+													skill++;
+												else
+													skill = 0;
+											}
+										}
+									case SDLK_i:
+										Mix_PlayChannel(-1,light_s,0);
+										if (judge[i] == 4)
+										{
+											bad_click_anime.push_back(make_pair(0,rgb(255,255,130)));
+											hp1 -= e_damage/2;
+											skill = 0;
+										}
+										else
+										{
+											light_anime.push_back(0);
+											hp2 -= damage*damage_rate[i]*resist;
+											if (stage == 1)
+											{
+												if (skill == 3)
+													skill++;
+												else
+													skill = 0;
+											}
+										}
+									case SDLK_j:
+										Mix_PlayChannel(-1,dark_s,0);
+										if (judge[i] == 4)
+										{
+											bad_click_anime.push_back(make_pair(0,rgb(70,0,115)));
+											hp1 -= e_damage/2;
+										}
+										else
+										{
+											dark_anime.push_back(0);
+											hp2 -= damage*damage_rate[i]*resist;
+											if (stage == 1)
+											{
+												if (skill == 4)
+												{
+													hp2 -= 20;
+													spear_anime.push_back(0);
+													Mix_PlayChannel(-1,spear_s,0);
+												}
+											}
+										}
+										skill = 0;
+								}
+							}
 						}
-					case SDLK_e:
-						if (in_battle)
-						{
-							chart.hit();
-							click_effect = 1;
-							ice_anime.push_back(0);
-						}
-					case SDLK_j:
-						if (in_battle)
-						{
-							chart.hit();
-							click_effect = 1;
-							dark_anime.push_back(0);
-						}
-					case SDLK_i:
-						if (in_battle)
-						{
-							chart.hit();
-							click_effect = 1;
-							light_anime.push_back(0);
-						}
+						last_judge = judge.size();
+					}
                 }
     		}
     	}
@@ -572,11 +683,11 @@ int main(int argc,char* args[])
 				if (display < 540 && cls_pos == 800)
 				{
 					display++;
-					if (display == 344)
+					if (display == 342)
 					{
 						Mix_PlayMusic(mainBGM,0);
 						Mix_HookMusicFinished(replayBGM);
-						chart.start();
+						chart->start();
 					}
 					else if (display > 480 && display <= 510)
 					{
@@ -800,6 +911,21 @@ int main(int argc,char* args[])
 				if (spear_anime.at(i) == 12)
 					spear_anime.erase(spear_anime.begin()+i);
 			}
+			for (int i = 0; i < slash_anime.size(); i++)
+			{
+				slash[slash_anime.at(i)/2]->draw(0,0);
+				slash_anime.at(i)++;
+				if (slash_anime.at(i) == 12)
+					slash_anime.erase(slash_anime.begin()+i);
+			}
+			for (int i = 0; i < bad_click_anime.size(); i++)
+			{
+				bad_click[bad_click_anime.at(i).first/2]->setColor(bad_click_anime.at(i).second);
+				bad_click[bad_click_anime.at(i).first/2]->draw(0,0);
+				bad_click_anime.at(i).first++;
+				if (bad_click_anime.at(i).first == 12)
+					bad_click_anime.erase(bad_click_anime.begin()+i);
+			}
 			/////////////////////////////////////////////////////////////////
 			if (cls_pos < 800)
 			{
@@ -822,6 +948,7 @@ int main(int argc,char* args[])
 					display = 0;
 					cls_pos = 0;
 					hp2 = 40;
+					resist = 0.1;
 				}
 				else
 				{
@@ -850,12 +977,16 @@ int main(int argc,char* args[])
 		delete light[i];
 		delete dark[i];
 		delete spear[i];
+		delete slash[i];
+		delete bad_click[i];
 	}
 	delete [] flame;
 	delete [] ice;
 	delete [] light;
 	delete [] dark;
 	delete [] spear;
+	delete [] slash;
+	delete [] bad_click;
 	delete black;
 	delete aluren;
 	delete aluren_click;
@@ -864,6 +995,7 @@ int main(int argc,char* args[])
 	delete hp_layer;
 	delete hp2_ground;
 	delete hp2_layer;
+	delete chart;
 	if (quit)
 		exit(0);
 	///////////////////////////////////////////////////////////////切回動畫畫面
