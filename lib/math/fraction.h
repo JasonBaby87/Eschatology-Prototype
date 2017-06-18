@@ -33,6 +33,7 @@ public:
 	bool operator<(const ImproperFraction<N>& n) const;
 	bool operator>(N n) const;
 	bool operator>(const ImproperFraction<N>& n) const;
+	const ImproperFraction<N> operator-() const;
 	const ImproperFraction<N> operator++(int);
 	const ImproperFraction<N> operator--(int);
 	operator N() const;
