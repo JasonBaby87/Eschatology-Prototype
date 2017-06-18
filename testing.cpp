@@ -2,6 +2,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <fstream>
+#include <vector>
 #include "lib/math/fraction.h"
 #include "lib/gameplay/chartPlayer.h"
 
@@ -47,7 +48,14 @@ int main()
 	getline(cin, s);
 	cp.hit();
 
-	cout << cp.getJudgements().size() << endl;
+	const vector<pair<BeatDuration,Note*>> notes = cp.getNotePositions(500);
+
+	cout << notes.size() << endl;
+
+	for (int i = 0; i < notes.size(); i++)
+	{
+		cout << notes[i].first << " " << notes[i].second->beat << endl;
+	}
 
 	eOP();
 }
