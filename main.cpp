@@ -456,7 +456,7 @@ int main(int argc,char* args[])
 	string battle_text3 = "組成各種元素進行攻擊";
 	string battle_text4 = "...是魔法護甲！";
 	string battle_text5 = "依序組合［火冰火光暗］施展雷槍";
-	int hp1 = 4;
+	int hp1 = 100;
 	int hp2 = 100;
 	vector<int> flame_anime;
 	vector<int> ice_anime;
