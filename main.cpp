@@ -23,6 +23,7 @@
 #include "lib/window.h"
 #include "lib/timer.h"
 #include "lib/gameplay/chartPlayer.h"
+#include "lib/global/config.h"
 
 bool replay = false;
 void replayBGM()
@@ -49,6 +50,9 @@ float rhs(float& theta2,float low,float up,float omega)
 
 int main(int argc,char* args[])
 {
+	ifstream config("data/config",ifstream::in);
+	loadConfigurations(config);
+	config.close();
     Window::initialize("Eschatology");
 
     Texture bg("img/bg.jpg");
