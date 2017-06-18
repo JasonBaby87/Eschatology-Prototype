@@ -464,10 +464,10 @@ int main(int argc,char* args[])
 	int stage = 0;
 	int click_effect = 0;
 	bool in_battle = false;
-	ifstream song("charts/battle1/battle1-e.jc",ifstream::in);
+	ifstream song("charts/battle1/battle1-E.jc",ifstream::in);
 	ChartPlayer* chart = new ChartPlayer(song);
-	auto notes = chart->getNotePositions(BEAT_DURATION);
-	auto judge = chart->getJudgements();
+	//auto notes = chart->getNotePositions(BEAT_DURATION);
+	vector<Judgement> judge = chart->getJudgements();
 	int last_judge = 0;
 	int damage = 10;
 	int e_damage = 2;
@@ -484,7 +484,7 @@ int main(int argc,char* args[])
 			delete chart;
 			Mix_PlayMusic(mainBGM,0);
 			chart = new ChartPlayer(song);
-			notes = chart->getNotePositions(BEAT_DURATION);
+			//notes = chart->getNotePositions(BEAT_DURATION);
 			judge = chart->getJudgements();
 			chart->start();
 			replay = false;
@@ -931,10 +931,10 @@ int main(int argc,char* args[])
 					click_effect = 0;
 			}
 			////////////////////////////////////////////////////////譜面顯示
-			for (int i = 0; i < notes.size() && in_battle; i++)
+			for (int i = 0; i < chart->getNotePositions(BEAT_DURATION).size() && in_battle; i++)
 			{
 				Texture temp_circle("img/circle.png");
-				int temp_r = 300*(BEAT_DURATION-notes[0].first)/BEAT_DURATION;
+				int temp_r = 300*(BEAT_DURATION-chart->getNotePositions(BEAT_DURATION)[0].first)/BEAT_DURATION;
 				temp_circle.setDstRect(temp_r,temp_r);
 				temp_circle.setPoint();
 				temp_circle.draw(240,400);
