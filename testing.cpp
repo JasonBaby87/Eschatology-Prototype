@@ -1,8 +1,10 @@
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+#include <fstream>
+#include <vector>
 #include "lib/math/fraction.h"
-#include "lib/math/fraction.cpp"
+#include "lib/gameplay/chartPlayer.h"
 
 using namespace std;
 
@@ -29,9 +31,34 @@ void eOP();
 
 int main()
 {
-	Fraction<int,int> a(2, 4, 2);
+	{
+		ifstream config("data/config");
+		loadConfigurations(config);
+	}
 
-	cout << a;
+	ifstream chart("charts/battle2/battle2-E.jc", ifstream::in);
+	ChartPlayer cp = ChartPlayer(chart);
+
+	string s;
+	getline(cin, s);
+	cp.start();
+
+	cout << cp.getJudgements().size() << endl;
+
+	for (int i = 0; i < 10; i++)
+	{
+		getline(cin, s);
+		cp.hit();
+	}
+
+	const vector<Judgement> notes = cp.getJudgements();
+
+	cout << notes.size() << endl;
+
+	for (int i = 0; i < notes.size(); i++)
+	{
+		cout << notes[i] << endl;
+	}
 
 	eOP();
 }
