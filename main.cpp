@@ -443,6 +443,7 @@ int main(int argc,char* args[])
 	Mix_PlayChannel(-1,transition_r,0);
 	
 	const double BEAT_DURATION = 4;
+	Timer attack;
 	
 	display = 0;
 	cls_pos = 0;
@@ -488,6 +489,7 @@ int main(int argc,char* args[])
 			judge = chart->getJudgements();
 			chart->start();
 			replay = false;
+			attack.restart();
 		}
 		
 		for (int i = last_judge; i < judge.size(); i++)
@@ -500,6 +502,14 @@ int main(int argc,char* args[])
 				skill = 0;
 			}
 			last_judge = judge.size();
+		}
+		
+		if (attack.ticks() > 4000)
+		{
+			slash_anime.push_back(0);
+			Mix_PlayChannel(-1,slash_s,0);
+			hp1 -= e_damage;
+			attack.restart();
 		}
 		
 		while(SDL_PollEvent(&e))
@@ -752,6 +762,7 @@ int main(int argc,char* args[])
 						Mix_PlayMusic(mainBGM,0);
 						Mix_HookMusicFinished(replayBGM);
 						chart->start();
+						attack.start();
 					}
 					else if (display > 480 && display <= 510)
 					{
@@ -1016,6 +1027,7 @@ int main(int argc,char* args[])
 				}
 				else
 				{
+					attack.stop();
 					black->setAlpha(cls_pos);
 					black->draw(0,0);
 					cls_pos += 15;
