@@ -18,4 +18,6 @@ extern vector<Nanoseconds> judgeWindows = vector<Nanoseconds>();
 
 void loadConfigurations(istream& is);
 
+#include "config.cpp"
+
 #endif // CONFIG_H_INCLUDED
