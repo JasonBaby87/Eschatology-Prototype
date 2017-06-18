@@ -45,16 +45,19 @@ int main()
 
 	cout << cp.getJudgements().size() << endl;
 
-	getline(cin, s);
-	cp.hit();
+	for (int i = 0; i < 10; i++)
+	{
+		getline(cin, s);
+		cp.hit();
+	}
 
-	const vector<pair<BeatDuration,Note*>> notes = cp.getNotePositions(500);
+	const vector<Judgement> notes = cp.getJudgements();
 
 	cout << notes.size() << endl;
 
 	for (int i = 0; i < notes.size(); i++)
 	{
-		cout << notes[i].first << " " << notes[i].second->beat << endl;
+		cout << notes[i] << endl;
 	}
 
 	eOP();

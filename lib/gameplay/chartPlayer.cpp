@@ -73,7 +73,7 @@ const vector<pair<BeatDuration,Note*>>
 
 	Nanoseconds currentTime = chrono::high_resolution_clock::now() - startTime - songOffset - visualOffset;
 	BeatDuration currentBeat = static_cast<BeatDuration>(currentTime.count()) /
-		60000000000ll * bpm;
+		1e9 * bpm / 60;
 
 	for (auto it = notes.begin(); it != notes.end(); it++)
 	{
@@ -94,8 +94,8 @@ void ChartPlayer::hit()
 {
 	registerMisses();
 
-	Time currentTime = chrono::duration_cast<chrono::nanoseconds>
-		(chrono::high_resolution_clock::now() - startTime - songOffset - globalOffset).count() * 1e9;
+	Time currentTime = chrono::duration_cast<Nanoseconds>
+		(chrono::high_resolution_clock::now() - startTime - songOffset - globalOffset).count() / 1e9;
 
 	if (notes.size() == 0)
 	{
@@ -109,7 +109,7 @@ void ChartPlayer::hit()
     for (; later != notes.end(); later++)
 	{
         earlier = later;
-		Time noteTime = static_cast<Time>((*later)->beat) / bpm * 6e10;
+		Time noteTime = static_cast<Time>((*later)->beat) / bpm * 60;
 
 		if (noteTime > currentTime)
 		{
@@ -122,8 +122,8 @@ void ChartPlayer::hit()
 		later--;
 	}
 
-	Time earlierTime = static_cast<Time>((*earlier)->beat) / bpm * 6e10;
-	Time laterTime = static_cast<Time>((*later)->beat) / bpm * 6e10;
+	Time earlierTime = static_cast<Time>((*earlier)->beat) / bpm * 60;
+	Time laterTime = static_cast<Time>((*later)->beat) / bpm * 60;
 
 	auto noteHit = earlier;
 	Time hitTime = earlierTime;
