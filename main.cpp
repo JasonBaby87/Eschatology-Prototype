@@ -394,9 +394,14 @@ int main(int argc,char* args[])
 	Texture* aluren = new Texture("img/aluren.png");
 	Texture* aluren_click = new Texture("img/aluren_click.png");
 	Texture* buttonFlame = new Texture("img/buttonFlame.png");
+	Texture* buttonFlame_p = new Texture("img/buttonFlame_p.png");
 	Texture* buttonIce = new Texture("img/buttonIce.png");
+	Texture* buttonIce_p = new Texture("img/buttonIce_p.png");
 	Texture* buttonLight = new Texture("img/buttonLight.png");
+	Texture* buttonLight_p = new Texture("img/buttonLight_p.png");
 	Texture* buttonDark = new Texture("img/buttonDark.png");
+	Texture* buttonDark_p = new Texture("img/buttonDark_p.png");
+	Texture* battle_bg = new Texture("img/battle_bg.png");
 	Texture full_hp("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
 	Texture full_hp2("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
 	Texture** flame = new Texture* [6];
@@ -469,6 +474,7 @@ int main(int argc,char* args[])
 	double resist = 1;
 	double damage_rate[4] = {1,0.8,0.5,0.2};
 	SDL_Color accuracy[5] = {rgb(255,174,35),rgb(255,240,35),rgb(35,255,100),rgb(35,230,255),rgb(35,170,255)};
+	bool pressing[4] = {false,false,false,false};
 	
 	fps.start();
 	while (!quit)
@@ -514,6 +520,21 @@ int main(int argc,char* args[])
 				{
 					if (in_battle)
 					{
+						switch (e.key.keysym.sym)
+						{
+							case SDLK_e:
+								pressing[0] = true;
+								break;
+							case SDLK_f:
+								pressing[1] = true;
+								break;
+							case SDLK_i:
+								pressing[2] = true;
+								break;
+							case SDLK_j:
+								pressing[3] = true;
+								break;
+						}
 						chart->hit();
 						for (int i = last_judge; i < judge.size(); i++)
 						{
@@ -550,6 +571,7 @@ int main(int argc,char* args[])
 													skill = 0;
 											}
 										}
+										break;
 									case SDLK_f:
 										Mix_PlayChannel(-1,ice_s,0);
 										if (judge[i] == 4)
@@ -570,6 +592,7 @@ int main(int argc,char* args[])
 													skill = 0;
 											}
 										}
+										break;
 									case SDLK_i:
 										Mix_PlayChannel(-1,light_s,0);
 										if (judge[i] == 4)
@@ -590,6 +613,7 @@ int main(int argc,char* args[])
 													skill = 0;
 											}
 										}
+										break;
 									case SDLK_j:
 										Mix_PlayChannel(-1,dark_s,0);
 										if (judge[i] == 4)
@@ -612,6 +636,7 @@ int main(int argc,char* args[])
 											}
 										}
 										skill = 0;
+										break;
 								}
 							}
 						}
@@ -619,6 +644,24 @@ int main(int argc,char* args[])
 					}
                 }
     		}
+			if(e.type==SDL_KEYUP)
+			{
+				switch (e.key.keysym.sym)
+				{
+					case SDLK_e:
+						pressing[0] = false;
+						break;
+					case SDLK_f:
+						pressing[1] = false;
+						break;
+					case SDLK_i:
+						pressing[2] = false;
+						break;
+					case SDLK_j:
+						pressing[3] = false;
+						break;
+				}
+			}
     	}
 		if (fps.ticks() > 16)
 		{
@@ -626,10 +669,23 @@ int main(int argc,char* args[])
 			Window::clear();
 			minion.draw(0,0);
 			character1->draw(0,0);
-			buttonFlame->draw(16,589);
-			buttonIce->draw(98,678);
-			buttonLight->draw(374,589);
-			buttonDark->draw(292,678);
+			battle_bg->draw(0,180);
+			if (pressing[0])
+				buttonFlame_p->draw(16,589);
+			else
+				buttonFlame->draw(16,589);
+			if (pressing[1])
+				buttonIce_p->draw(98,678);
+			else
+				buttonIce->draw(98,678);
+			if (pressing[2])
+				buttonLight_p->draw(374,589);
+			else
+				buttonLight->draw(374,589);
+			if (pressing[3])
+				buttonDark_p->draw(292,678);
+			else
+				buttonDark->draw(292,678);
 			if (stage == 0)
 			{
 				soldier.draw(280,0);
@@ -996,12 +1052,17 @@ int main(int argc,char* args[])
 	delete [] slash;
 	delete [] bad_click;
 	delete black;
+	delete battle_bg;
 	delete aluren;
 	delete aluren_click;
 	delete buttonFlame;
+	delete buttonFlame_p;
 	delete buttonIce;
+	delete buttonIce_p;
 	delete buttonLight;
+	delete buttonLight_p;
 	delete buttonDark;
+	delete buttonDark_p;
 	delete character1;
 	delete hp_ground;
 	delete hp_layer;
