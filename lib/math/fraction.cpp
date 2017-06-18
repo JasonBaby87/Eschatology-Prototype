@@ -63,13 +63,7 @@ const ImproperFraction<N> ImproperFraction<N>::operator+(const ImproperFraction<
 template <typename N>
 const ImproperFraction<N> ImproperFraction<N>::operator-(const ImproperFraction<N>& f) const
 {
-    int n, d;
-    d = lcm(denominator, f.denominator);
-
-	n = numerator * (d / denominator);
-	n -= f.numerator * (d / f.denominator);
-
-    return ImproperFraction<N>(n, d);
+    return *this + -f;
 }
 
 template <typename N>
@@ -125,6 +119,12 @@ bool ImproperFraction<N>::operator>(N n) const
 }
 
 template <typename N>
+const ImproperFraction<N> ImproperFraction<N>::operator-() const
+{
+    return ImproperFraction(-numerator, denominator);
+}
+
+template <typename N>
 const ImproperFraction<N> ImproperFraction<N>::operator++(int)
 {
 	ImproperFraction<N> result = *this;
@@ -166,11 +166,10 @@ istream& operator>>(istream& is, ImproperFraction<N>& f)
 	string token;
 	stringstream input;
 
-	for (int i = 0; i < 2; i++)
-	{
-		getline(is, token, '/');
-		input << token;
-	}
+	getline(is, token, '/');
+	input << token << " ";
+	is >> token;
+	input << token;
 
 	N numerator, denominator;
     input >> numerator >> denominator;
