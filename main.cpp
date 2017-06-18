@@ -393,6 +393,10 @@ int main(int argc,char* args[])
     Texture* hp2_layer = new Texture("img/hp2_layer.png");
 	Texture* aluren = new Texture("img/aluren.png");
 	Texture* aluren_click = new Texture("img/aluren_click.png");
+	Texture* buttonFlame = new Texture("img/buttonFlame.png");
+	Texture* buttonIce = new Texture("img/buttonIce.png");
+	Texture* buttonLight = new Texture("img/buttonLight.png");
+	Texture* buttonDark = new Texture("img/buttonDark.png");
 	Texture full_hp("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
 	Texture full_hp2("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
 	Texture** flame = new Texture* [6];
@@ -622,6 +626,10 @@ int main(int argc,char* args[])
 			Window::clear();
 			minion.draw(0,0);
 			character1->draw(0,0);
+			buttonFlame->draw(16,589);
+			buttonIce->draw(98,678);
+			buttonLight->draw(374,589);
+			buttonDark->draw(292,678);
 			if (stage == 0)
 			{
 				soldier.draw(280,0);
@@ -990,6 +998,10 @@ int main(int argc,char* args[])
 	delete black;
 	delete aluren;
 	delete aluren_click;
+	delete buttonFlame;
+	delete buttonIce;
+	delete buttonLight;
+	delete buttonDark;
 	delete character1;
 	delete hp_ground;
 	delete hp_layer;
