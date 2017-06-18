@@ -33,7 +33,7 @@ void ChartPlayer::registerMisses()
 
 		if (timeDifference >= chrono::duration_cast<chrono::duration<Time>>(-judgeWindows.back()).count())
 		{
-			break;
+			return;
 		}
 
         judgements.push_back(MISS);
