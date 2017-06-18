@@ -487,18 +487,19 @@ int main(int argc,char* args[])
 		if (replay)
 		{
 			delete chart;
+			song.clear();
+			song.seekg(0,ios::beg);
 			Mix_PlayMusic(mainBGM,0);
 			chart = new ChartPlayer(song);
 			//notes = chart->getNotePositions(BEAT_DURATION);
 			judge = chart->getJudgements();
 			chart->start();
 			replay = false;
-			attack.restart();
 		}
 		
 		for (int i = last_judge; i < judge.size(); i++)
 		{
-			if (judge[i] == MISS)
+			if (judge[i] == MISS && in_battle)
 			{
 				slash_anime.push_back(0);
 				Mix_PlayChannel(-1,slash_s,0);
@@ -508,7 +509,7 @@ int main(int argc,char* args[])
 			last_judge = judge.size();
 		}
 		
-		if (attack.ticks() > 4000)
+		if (attack.ticks() > 4000 && in_battle)
 		{
 			slash_anime.push_back(0);
 			Mix_PlayChannel(-1,slash_s,0);
@@ -761,7 +762,7 @@ int main(int argc,char* args[])
 				if (display < 540 && cls_pos == 800)
 				{
 					display++;
-					if (display == 342)
+					if (display == 334)
 					{
 						Mix_PlayMusic(mainBGM,0);
 						Mix_HookMusicFinished(replayBGM);
@@ -796,12 +797,13 @@ int main(int argc,char* args[])
 					hp_layer->draw(hp1*240/100-240,180);
 					hp2_layer->draw(480-hp2*240/100,180);
 					stringstream ss;
+					stringstream ss2;
 					string temp_hp;
 					ss << hp1;
 					ss >> temp_hp;
 					Texture* hp1_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
-					ss << hp2;
-					ss >> temp_hp;
+					ss2 << hp2;
+					ss2 >> temp_hp;
 					Texture* hp2_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
 					hp1_t->draw(15,195);
 					hp2_t->draw(465-hp2_t->getWidth(),195);
@@ -840,12 +842,13 @@ int main(int argc,char* args[])
 						hp_layer->draw(hp1*240/100-240,180);
 						hp2_layer->draw(480-(display-30)*4,180);
 						stringstream ss;
+						stringstream ss2;
 						string temp_hp;
 						ss << hp1;
 						ss >> temp_hp;
 						Texture* hp1_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
-						ss << hp2;
-						ss >> temp_hp;
+						ss2 << hp2;
+						ss2 >> temp_hp;
 						Texture* hp2_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
 						hp1_t->draw(15,195);
 						hp2_t->draw(465-hp2_t->getWidth(),195);
@@ -925,12 +928,13 @@ int main(int argc,char* args[])
 					hp_layer->draw(hp1*240/100-240,180);
 					hp2_layer->draw(480-hp2*240/100,180);
 					stringstream ss;
+					stringstream ss2;
 					string temp_hp;
 					ss << hp1;
 					ss >> temp_hp;
 					Texture* hp1_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
-					ss << hp2;
-					ss >> temp_hp;
+					ss2 << hp2;
+					ss2 >> temp_hp;
 					Texture* hp2_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
 					hp1_t->draw(15,195);
 					hp2_t->draw(465-hp2_t->getWidth(),195);
