@@ -473,10 +473,10 @@ int main(int argc,char* args[])
 	ChartPlayer* chart = new ChartPlayer(song);
 	vector<Judgement> judge;
 	int last_judge = 0;
-	int damage = 10;
+	int damage = 1000;
 	int e_damage = 2;
 	double resist = 1;
-	double damage_rate[4] = {1,0.8,0.5,0.2};
+	double damage_rate[4] = {1,0.9,0.7,0.4};
 	SDL_Color accuracy[5] = {rgb(255,174,35),rgb(255,240,35),rgb(35,255,100),rgb(35,230,255),rgb(35,170,255)};
 	bool pressing[4] = {false,false,false,false};
 	
@@ -491,18 +491,21 @@ int main(int argc,char* args[])
 			Mix_PlayMusic(mainBGM,0);
 			chart = new ChartPlayer(song);
 			chart->start();
-			judge = chart->getJudgements();
 			replay = false;
 		}
 		
-		for (int i = last_judge; i < judge.size(); i++)
+		if (in_battle)
 		{
-			if (judge[i] == MISS && in_battle)
+			judge = chart->getJudgements();
+			for (int i = last_judge; i < judge.size(); i++)
 			{
-				slash_anime.push_back(0);
-				Mix_PlayChannel(-1,slash_s,0);
-				hp1 -= e_damage;
-				skill = 0;
+				if (judge[i] == MISS)
+				{
+					slash_anime.push_back(0);
+					Mix_PlayChannel(-1,slash_s,0);
+					hp1 -= e_damage;
+					skill = 0;
+				}
 			}
 			last_judge = judge.size();
 		}
@@ -549,6 +552,7 @@ int main(int argc,char* args[])
 								break;
 						}
 						chart->hit();
+						judge = chart->getJudgements();
 						for (int i = last_judge; i < judge.size(); i++)
 						{
 							if (judge[i] == MISS)
@@ -765,7 +769,6 @@ int main(int argc,char* args[])
 						Mix_PlayMusic(mainBGM,0);
 						Mix_HookMusicFinished(replayBGM);
 						chart->start();
-						judge = chart->getJudgements();
 						attack.start();
 					}
 					else if (display > 480 && display <= 510)
@@ -894,7 +897,7 @@ int main(int argc,char* args[])
 							temp->setDstRect(0,0,temp->setPoint());
 							if (display > 450)
 								temp->setAlpha(240-(display-450)*8);
-							temp->draw(240,336);
+							temp->draw(240,300);
 							delete temp;
 							if (display < 96)
 							{
@@ -946,7 +949,7 @@ int main(int argc,char* args[])
 			if (click_effect > 0)
 			{
 				aluren_click->setAlpha(255-17*click_effect);
-				aluren_click->draw(85,265);
+				aluren_click->draw(80,260);
 				click_effect++;
 				if (click_effect == 15)
 					click_effect = 0;
@@ -1217,12 +1220,14 @@ int main(int argc,char* args[])
 			if (shake_times == 28)
 			{
 				talk = 2;
+				bg4.draw(0,0);
+				Window::present();
 				SDL_Delay(3000);
 				while (SDL_PollEvent(&trash_e));
 				continue;
 			}
 			bg4.draw(shake,0);
-			big_fire[shake_times/4]->draw(shake,0);
+			big_fire[shake_times/5]->draw(shake,0);
 		}
 		///////////////////////////////////////////表情
 		if (talk == 0 || talk == 2)
