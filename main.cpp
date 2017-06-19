@@ -475,7 +475,7 @@ int main(int argc,char* args[])
 	ChartPlayer* chart = new ChartPlayer(song);
 	vector<Judgement> judge;
 	int last_judge = 0;
-	int damage = 10;
+	int damage = 100;
 	int e_damage = 1;
 	double resist = 1;
 	double damage_rate[4] = {1,0.9,0.7,0.4};
@@ -1768,6 +1768,7 @@ int main(int argc,char* args[])
     mainBGM = Mix_LoadMUS("sounds/herius.ogg");
 	fire = Mix_LoadWAV("sounds/fire.wav");
 	light_s = Mix_LoadWAV("sounds/light.wav");
+	Mix_Chunk *last = Mix_LoadWAV("sounds/last.wav");
     Mix_PlayMusic(mainBGM,-1);
 	
 	talking2[0] = "呃！";
@@ -1785,6 +1786,7 @@ int main(int argc,char* args[])
 	display = 0;
 	shake_times = 0;
 	cls_pos = 0;
+	cls_pos2 = 0;
 	while (!quit)
 	{
 		fps.start();
@@ -1824,12 +1826,13 @@ int main(int argc,char* args[])
 				}
 				else
 				{
-					if (talk < 10)
+					if (talk < 9)
 						talk++;
 					if (talk == 5)
 						Mix_PlayChannel(-1,light_s,0);
-					else if (talk == 10 && cls_pos == 0)
+					else if (talk == 9 && cls_pos2 == 0)
 					{
+						Mix_PlayChannel(-1,last,0);
 						Mix_FadeOutMusic(3000);
 					}
 					display = 0;
@@ -1858,7 +1861,7 @@ int main(int argc,char* args[])
 			if (talk != 5)
 			{
 				bg5.draw(0,0);
-				if (talk != 10)
+				if (talk != 9)
 					chat->draw(0,320);
 			}
 			else
@@ -1882,7 +1885,7 @@ int main(int argc,char* args[])
 				face1_3.draw(0,320);
 			else if (talk == 3 || talk == 4 || talk == 6 || talk == 7)
 				face4->draw(0,320);
-			else if (talk == 9)
+			else if (talk == 8)
 				face5.draw(0,320);
 			///////////////////////////////////////////表情
 			if (talk < 9)
@@ -1894,12 +1897,13 @@ int main(int argc,char* args[])
 			}
 			else if (talk == 9)
 			{
-				cls_pos += 20;
-				black_w->draw(-800+cls_pos,0);
-				if (cls_pos == 820)
+				cls_pos2 += 1;
+				white.setAlpha(cls_pos+15);
+				white.draw(0,0);
+				if (cls_pos2 == 240)
 				{
-					SDL_Delay(200);
-					cls_pos = 0;
+					SDL_Delay(5000);
+					cls_pos2 = 0;
 					break;
 				}
 			}
