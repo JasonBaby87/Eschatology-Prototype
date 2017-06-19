@@ -450,7 +450,7 @@ int main(int argc,char* args[])
 		SDL_Delay(500);
 		Mix_PlayChannel(-1,transition_r,0);
 		
-		const double BEAT_DURATION = 8;
+		const double BEAT_DURATION = 4;
 		Timer attack;
 		
 		display = 0;
@@ -644,7 +644,6 @@ int main(int argc,char* args[])
 											}
 											else
 											{
-												dark_anime.push_back(0);
 												hp2 -= damage*damage_rate[judge[i]]*resist;
 												if (stage == 1)
 												{
@@ -654,6 +653,8 @@ int main(int argc,char* args[])
 														spear_anime.push_back(0);
 														Mix_PlayChannel(-1,spear_s,0);
 													}
+													else
+														dark_anime.push_back(0);
 												}
 											}
 											skill = 0;
@@ -961,7 +962,7 @@ int main(int argc,char* args[])
 				////////////////////////////////////////////////////////譜面顯示
 				for (int t = 0; t < 1 && in_battle; t++)
 				{
-					auto temp_chart = chart->getNotePositions();
+					auto temp_chart = chart->getNotePositions(BEAT_DURATION);
 					for (int i = 0; i < temp_chart.size(); i++)
 					{
 						Texture temp_circle("img/circle.png");
@@ -1501,7 +1502,6 @@ int main(int argc,char* args[])
 											}
 											else
 											{
-												dark_anime.push_back(0);
 												hp2 -= damage*damage_rate[judge[i]]*resist;
 												if (skill == 4)
 												{
@@ -1509,6 +1509,8 @@ int main(int argc,char* args[])
 													spear_anime.push_back(0);
 													Mix_PlayChannel(-1,spear_s,0);
 												}
+												else
+													dark_anime.push_back(0);
 											}
 											skill = 0;
 											break;
@@ -1660,6 +1662,19 @@ int main(int argc,char* args[])
 				{
 					black->draw(0,cls_pos);
 					cls_pos += 20;
+					display += 6;
+					hp_layer->draw(-240+display,180);
+					hp2_layer->draw(480-display,180);
+					Texture* hp1_t = new Texture("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+					Texture* hp2_t = new Texture("1200/1200","font/freeWing.ttf",rgb(255, 255, 255),16);
+					hp1_t->setAlpha(display+15);
+					hp1_t->draw(15,195);
+					hp2_t->setAlpha(display+15);
+					hp2_t->draw(465-hp2_t->getWidth(),195);
+					aluren->setAlpha(display+15);
+					aluren->draw(90,270);
+					delete hp1_t;
+					delete hp2_t;
 					if (cls_pos == 800)
 					{
 						in_battle = true;
@@ -1771,6 +1786,7 @@ int main(int argc,char* args[])
 		fire = Mix_LoadWAV("sounds/fire.wav");
 		light_s = Mix_LoadWAV("sounds/light.wav");
 		Mix_Chunk *last = Mix_LoadWAV("sounds/last.wav");
+		Mix_VolumeMusic(64);
 		Mix_PlayMusic(mainBGM,-1);
 		
 		talking2[0] = "呃！";
@@ -1833,10 +1849,7 @@ int main(int argc,char* args[])
 						if (talk == 5)
 							Mix_PlayChannel(-1,light_s,0);
 						else if (talk == 9 && cls_pos2 == 0)
-						{
 							Mix_PlayChannel(-1,last,0);
-							Mix_FadeOutMusic(3000);
-						}
 						display = 0;
 					}
 				}
@@ -1922,6 +1935,8 @@ int main(int argc,char* args[])
 					}
 					if (cls_pos2 >= 600)
 					{
+						if (cls_pos2 == 600)
+							Mix_FadeOutMusic(2000);
 						black_w->setAlpha(cls_pos2-585);
 						black_w->draw(0,0);
 						if (cls_pos2 == 840)
@@ -1947,5 +1962,6 @@ int main(int argc,char* args[])
 		delete flash;
 		if (quit)
 			exit(0);
+		SDL_Delay(1000);
 	}
 }
