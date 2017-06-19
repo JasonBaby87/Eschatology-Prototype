@@ -6,7 +6,7 @@
 	如果在閱讀過程有任何不適
 	請立即停止閱讀行為
 	並找一些療育的貓咪影片之類的來看
-	
+
 	因為閱讀這份code導致的任何身心理創傷
 	或是周圍物品的意外損毀
 	我方一律不負責相關責任
@@ -34,21 +34,23 @@ void replayBGM()
 const int FPS=60;
 /**
 *   簡諧運動
-*   @return cos(傳入theta2後成長一個omega的角度)作為比例，回傳上下限中的該比例對應的值
-*   @param &theta2用來記錄現在在虛擬圓的哪個角度，並會直接以omega遞增/減該值
+*   @return cos(傳入alurensAlphaTheta後成長一個omega的角度)作為比例，回傳上下限中的該比例對應的值
+*   @param &alurensAlphaTheta用來記錄現在在虛擬圓的哪個角度，並會直接以omega遞增/減該值
 *   @param low簡諧運動下限
 *   @param up簡諧運動上限
 *   @param omega虛擬圓角速度
 */
-float rhs(float& theta2,float low,float up,float omega)
+float rhs(float& theta,float low,float up,float omega,bool loop=false)
 {
-    if(theta2>6.28)
-        theta2=0;
-    theta2+=omega;
-    return (up+low)/2+(up-low)/2*cos(theta2);
+	if((!loop && theta<=3.14) || loop) //如果他不要loop，那theta到pi之後就不要再加了；如果他要loop那就一直放心加吧
+		theta+=omega;
+	if(theta>6.28 && loop) //他如果要loop才需要在2pi的時候歸零
+		theta=0;
+
+    return (up+low)/2+(up-low)/2*cos(theta);
 }
 
-bool quit=false;
+bool quit=false,skip=false;
 int main(int argc,char* args[])
 {
 	while (!quit)
@@ -56,10 +58,11 @@ int main(int argc,char* args[])
 		ifstream config("data/config",ifstream::in);
 		loadConfigurations(config);
 		config.close();
+
 		Window::initialize("Eschatology");
 
 		Texture bg("img/bg.jpg");
-		Texture* black = new Texture("img/black.png"); //國防布
+		Texture* black = new Texture("img/black.png"); //國防布，因為texture根據renderer繪物件，所以若要跨視窗用，就必須用指標
 
 		bg.setDstRect(0,Window::state().h); //讓它填滿螢幕(長填滿，寬依比例縮放)，錨點設為左上
 		Texture alurens("img/alurens.png");
@@ -78,25 +81,22 @@ int main(int argc,char* args[])
 
 		Timer fps;
 
-		int numKey=-1; //用來紀錄現在的數字鍵值，-1代表按的是數字鍵以外的鍵
-		float theta1=0,theta2=0,theta3=0; //用來記錄角度
-		//theta1用來
+		int alurenNum=0; //用來紀錄現在的數字鍵值，-1代表按的是數字鍵以外的鍵
+		int twinkle=1; //用來當alurens切換子圖的延遲計數器
+		float alurensAngle=0,alurensAlphaTheta=0,alurensColorTheta=0.01,titleAlphaTheta=0,title2AlphaTheta=0; //用來記錄角度
+		//alurensAngle用來
 
 		SDL_Event e;
 		SDL_Event trash_e;
 
-		bool slide = false;
-		int slide_down = 0;
+		bool slide = false,fadeInOut=true,first=true; //後者記錄alurens的變子圓的淡出淡入
+		float slide_down = 0;
 		int fade_out = 0;
 		Mix_PlayMusic( mainBGM, -1 ); //-1是loop次數，在此是loop到halt(stop)為止
 		////////////////////////////////////////////////////////////////////迴圈開始
-		while (!quit)
+		while (!quit && !skip)
 		{
 			fps.start();
-			if (slide_down < 180)
-				slide_down++;
-			if (slide_down == 179)
-				numKey = 2;
 
 			while(SDL_PollEvent(&e) && !slide)
 			{
@@ -104,7 +104,7 @@ int main(int argc,char* args[])
 				{
 					quit=true;
 				}
-				if(e.type==SDL_KEYDOWN && slide_down==180)
+				if(e.type==SDL_KEYDOWN)
 				{
 					switch(e.key.keysym.sym)
 					{
@@ -112,27 +112,86 @@ int main(int argc,char* args[])
 						case SDLK_ESCAPE:
 							quit=true;
 							break;
+						case SDLK_SPACE:
+							skip=true;
+							break;
 					}
 				}
-				if(e.type==SDL_MOUSEBUTTONUP && slide_down==180 )
+				if(e.type==SDL_MOUSEBUTTONUP && slide_down>3.14 )
 				{
 					Mix_FadeOutMusic(1200);
 					slide = true;
 				}
-				if(e.type==SDL_MOUSEMOTION && slide_down==180 ) //滑鼠移動
-					theta1+=e.motion.xrel+e.motion.yrel;
+				if(e.type==SDL_MOUSEMOTION && slide_down>3.14 ) //滑鼠移動
+					alurensAngle+=e.motion.xrel+e.motion.yrel;
 			}
 
 			Window::clear();
 
-			bg.draw(-120,-360+slide_down);
-			alurensColor[numKey-1].b=rhs(theta3,128,240,0.1);
-			alurens.setColor(alurensColor[numKey-1]);
-			if (slide_down == 180)
-				alurens.draw(Window::state().w/2,Window::state().h/2+80,numKey-1,theta1); //繪製在螢幕正中間，切換到相對應的子圖，旋轉theta1度
-			title.setAlpha(rhs(theta2,0,255,0.01)); //透明度的簡諧運動
-			title2.setAlpha(rhs(theta2,0,255,0.01));
-			alurens.setAlpha(rhs(theta2,80,255,0.01));
+			bg.draw(-120,rhs(slide_down,-360,-180,0.01));
+
+			if (slide_down>3.14) //畫魔法陣
+			{
+				if(first)
+				{
+					alurens.setAlpha(rhs(alurensAlphaTheta,255,0,0.04));
+					if(alurensAlphaTheta>3.14)
+					{
+						alurensAlphaTheta=0;
+						first=false;
+					}
+				}
+				else
+				{
+					if(alurensColorTheta==0)
+					{
+						twinkle++;
+						alurensColorTheta=0.01;
+					}
+
+					if(twinkle%3==0)
+					{
+						if(fadeInOut)
+						{
+							if(alurensAlphaTheta>3.14)
+							{
+								if(alurenNum<3)
+									alurenNum++;
+								else
+									alurenNum=0;
+
+								alurensAlphaTheta=0;
+								fadeInOut=false;
+							}
+							else
+							{
+								alurens.setAlpha(rhs(alurensAlphaTheta,0,255,0.04));
+							}
+						}
+						else
+						{
+							alurens.setAlpha(rhs(alurensAlphaTheta,255,0,0.04));
+							if(alurensAlphaTheta>3.14)
+							{
+								alurensAlphaTheta=0;
+								fadeInOut=true;
+								twinkle++;
+							}
+						}
+					}
+					else
+						alurensColor[alurenNum].b=rhs(alurensColorTheta,128,240,0.1,true);
+				}
+				alurens.setColor(alurensColor[alurenNum]);
+				alurens.draw(Window::state().w/2,Window::state().h/2+80,alurenNum,alurensAngle); //繪製在螢幕正中間，切換到相對應的子圖，旋轉alurensAngle度
+			}
+
+			title.setAlpha(rhs(titleAlphaTheta,255,0,0.005)); //透明度的簡諧運動
+			if(slide_down>1.57)
+				title2.setAlpha(rhs(title2AlphaTheta,255,0,0.005));
+			else
+				title2.setAlpha(0);
+
 			title.draw(Window::state().w/2,180);
 			title2.draw(Window::state().w/2,244);
 
@@ -148,8 +207,7 @@ int main(int argc,char* args[])
 					Mix_PlayChannel(-1,rain_drop,0);
 				else if (fade_out == 85)
 				{
-					fade_out = 0;
-					SDL_Delay(3000);
+					SDL_Delay(1000);
 					break;
 				}
 			}
@@ -160,6 +218,7 @@ int main(int argc,char* args[])
 		delete black;
 		if (quit)
 			exit(0);
+		skip=false;
 		///////////////////////////////////////////////切換橫視窗
 		slide = false;
 		Window::initialize_wide("Eschatology");
@@ -179,7 +238,7 @@ int main(int argc,char* args[])
 		Mix_Chunk *blow = Mix_LoadWAV("sounds/blow.wav");
 		Mix_Chunk *transition = Mix_LoadWAV("sounds/transition.wav");
 		Mix_PlayMusic(mainBGM,-1);
-		
+
 		string talking[39];
 		talking[0] = "報告，已經確認黑盒子反應";
 		talking[1] = "目標，奪取黑盒子並消滅目擊相關人士";
@@ -207,8 +266,8 @@ int main(int argc,char* args[])
 		talking[23] = "１！";
 		talking[24] = "發動，地獄業火！";
 		talking[25] = "";
-		talking[26] = "這種程度的攻擊性魔法...敵人究竟有多少人？";
-		talking[27] = "沒時間管那麼多了，羅雷，帶著黑盒子快跑！";
+		talking[26] = "這種程度的攻擊魔法...敵人究竟有多少？";
+		talking[27] = "別管那麼多了，羅雷，帶著黑盒子快跑！";
 		talking[28] = "跑？去哪裡？那你呢？";
 		talking[29] = "往南邊跑！米亞姊會去接應你的。我留下來拖延他們的腳步";
 		talking[30] = "別開玩笑了！我怎麼可能眼睜睜看著你...";
@@ -220,7 +279,7 @@ int main(int argc,char* args[])
 		talking[36] = "可惡！";
 		talking[37] = "我打開藏著黑盒子的暗門，帶著黑盒子從後門跑出去，身後敵人源源不絕的湧上來";
 		talking[38] = "黑盒子在那個少年身上，別讓他跑了！";
-		int word_count[39] = {12,17,6,2,3,2,3,2,3,2,3,9,2,3,11,15,7,3,18,8,7,2,2,2,8,0,20,20,10,26,18,7,17,3,4,2,3,36,17};
+		int word_count[39] = {12,17,6,2,3,2,3,2,3,2,3,9,2,3,11,15,7,3,18,8,7,2,2,2,8,0,18,18,10,26,18,7,17,3,4,2,3,36,17};
 
 		int talk = 0;
 		int display = 0;
@@ -230,10 +289,10 @@ int main(int argc,char* args[])
 		int shake_times = 0;
 		int alpha = 0;
 		int cls_pos = 0;
-		while (!quit)
+		while (!quit && !skip)
 		{
 			fps.start();
-			
+
 			if (talk < 39)
 			{
 				display_end = false;
@@ -257,6 +316,9 @@ int main(int argc,char* args[])
 						//ESC退出
 						case SDLK_ESCAPE:
 							quit=true;
+							break;
+						case SDLK_SPACE:
+							skip=true;
 							break;
 					}
 				}
@@ -300,18 +362,18 @@ int main(int argc,char* args[])
 			}
 			else if (talk == 25)
 			{
-				shake += direction * 15;
+				shake += direction * 30;
 				shake_times++;
 				if (shake == -30)
 					direction = 1;
 				if (shake == 30)
 					direction = -1;
-				if (shake_times == 28)
+				if (shake_times == 48)
 				{
 					talk = 26;
 					bg2.draw(0,0);
 					Window::present();
-					SDL_Delay(3000);
+					SDL_Delay(2000);
 					while (SDL_PollEvent(&trash_e));
 					continue;
 				}
@@ -321,7 +383,7 @@ int main(int argc,char* args[])
 				bg2.draw(0,0);
 			else if (talk >= 37)
 				bg3.draw(0,0);
-			
+
 			if (talk >= 13 && talk != 21 && talk != 22 && talk != 23 && talk != 24)
 				chat->draw(0,320);
 			////////////////////////////////////////表情
@@ -375,7 +437,7 @@ int main(int argc,char* args[])
 					break;
 				}
 			}
-			
+
 			if (fps.ticks()*FPS<1000)
 				SDL_Delay((1000/FPS)- fps.ticks());
 			Window::present();
@@ -387,9 +449,10 @@ int main(int argc,char* args[])
 		delete face1_2;
 		if (quit)
 			exit(0);
+		skip=false;
 		///////////////////////////////////////////////切換戰鬥畫面
 		Window::initialize("Eschatology");
-		
+
 		black = new Texture("img/black.png");
 		Texture minion("img/minion.png");
 		Texture* character1 = new Texture("img/character1.png");
@@ -449,10 +512,10 @@ int main(int argc,char* args[])
 		mainBGM = Mix_LoadMUS("sounds/battle1.ogg");
 		SDL_Delay(500);
 		Mix_PlayChannel(-1,transition_r,0);
-		
+
 		const double BEAT_DURATION = 4;
 		Timer attack;
-		
+
 		display = 0;
 		cls_pos = 0;
 		string battle_text = "一些士兵擋住了去路";
@@ -485,7 +548,7 @@ int main(int argc,char* args[])
 		bool pressing[4] = {false,false,false,false};
 		Mix_PlayChannel(-1,spear_s,0);
 		fps.start();
-		while (!quit)
+		while (!quit && !skip)
 		{
 			if (replay)
 			{
@@ -497,7 +560,7 @@ int main(int argc,char* args[])
 				chart->start();
 				replay = false;
 			}
-			
+
 			if (in_battle)
 			{
 				judge = chart->getJudgements();
@@ -513,7 +576,7 @@ int main(int argc,char* args[])
 				}
 				last_judge = judge.size();
 			}
-			
+
 			if (attack.ticks() > 8000 && in_battle)
 			{
 				slash_anime.push_back(0);
@@ -521,7 +584,7 @@ int main(int argc,char* args[])
 				hp1 -= e_damage;
 				attack.restart();
 			}
-			
+
 			while(SDL_PollEvent(&e))
 			{
 				if(e.type==SDL_QUIT) //單擊右上角的X
@@ -534,6 +597,11 @@ int main(int argc,char* args[])
 					{
 						//ESC退出
 						quit=true;
+						break;
+					}
+					else if(e.key.keysym.sym == SDLK_SPACE)
+					{
+						skip=true;
 						break;
 					}
 					else if (e.key.keysym.sym == SDLK_f || e.key.keysym.sym == SDLK_e || e.key.keysym.sym == SDLK_j || e.key.keysym.sym == SDLK_i)
@@ -765,7 +833,7 @@ int main(int argc,char* args[])
 						delete temp2;
 						delete temp3;
 					}
-					
+
 					if (display < 540 && cls_pos == 800)
 					{
 						display++;
@@ -1072,7 +1140,7 @@ int main(int argc,char* args[])
 						}
 					}
 				}
-				
+
 				Window::present();
 			}
 		}
@@ -1115,9 +1183,10 @@ int main(int argc,char* args[])
 		delete chart;
 		if (quit)
 			exit(0);
+		skip=false;
 		///////////////////////////////////////////////////////////////切回動畫畫面
 		Window::initialize_wide("Eschatology");
-		
+
 		Texture bg4("img/bg4.png");
 		chat = new Texture("img/chat.png");
 		black_w = new Texture("img/black_w.png");
@@ -1131,12 +1200,12 @@ int main(int argc,char* args[])
 		face1 = new Texture("img/face1.png");
 		face1_2 = new Texture("img/face1_2.png");
 		Texture* face4 = new Texture("img/face4.png");
-		
+
 		mainBGM = Mix_LoadMUS("sounds/herius.ogg");
 		transition = Mix_LoadWAV("sounds/transition.wav");
 		Mix_Chunk *fire = Mix_LoadWAV("sounds/fire.wav");
 		Mix_PlayMusic(mainBGM,-1);
-		
+
 		string talking2[9];
 		talking2[0] = "前面就是森林了，應該可以甩掉他們！";
 		talking2[1] = "";
@@ -1146,19 +1215,19 @@ int main(int argc,char* args[])
 		talking2[5] = "呀，原來我這麼出名嗎？";
 		talking2[6] = "嘛，總之請你把黑盒子交給我吧，不然我會很困擾的";
 		talking2[7] = "......要是在這裡交給你的話，過去人們的努力不就白費了";
-		talking2[8] = "哎呀...看來只能用強硬的方式讓你交給我呢";
-		int word_count2[9] = {17,0,3,16,14,11,23,25,19};
-		
+		talking2[8] = "哎呀...看來只能用強硬的方式讓你交來了";
+		int word_count2[9] = {17,0,3,16,14,11,23,25,18};
+
 		talk = 0;
 		display = 0;
 		shake = 0;
 		shake_times = 0;
 		direction = -1;
 		cls_pos = 0;
-		while (!quit)
+		while (!quit && !skip)
 		{
 			fps.start();
-			
+
 			if (talk < 9)
 			{
 				display_end = false;
@@ -1182,6 +1251,9 @@ int main(int argc,char* args[])
 						//ESC退出
 						case SDLK_ESCAPE:
 							quit=true;
+							break;
+						case SDLK_SPACE:
+							skip=true;
 							break;
 					}
 				}
@@ -1208,7 +1280,7 @@ int main(int argc,char* args[])
 				}
 			}
 			Window::clear();
-			
+
 			if (talk != 1)
 			{
 				bg4.draw(0,0);
@@ -1274,7 +1346,7 @@ int main(int argc,char* args[])
 					break;
 				}
 			}
-			
+
 			if (fps.ticks()*FPS<1000)
 				SDL_Delay((1000/FPS)- fps.ticks());
 			Window::present();
@@ -1289,9 +1361,10 @@ int main(int argc,char* args[])
 		delete big_fire;
 		if (quit)
 			exit(0);
+		skip=false;
 		//////////////////////////////////////////////////切換戰鬥畫面
 		Window::initialize("Eschatology");
-		
+
 		black = new Texture("img/black.png");
 		Texture boss("img/boss.png");
 		character1 = new Texture("img/character1.png");
@@ -1346,7 +1419,7 @@ int main(int argc,char* args[])
 		mainBGM = Mix_LoadMUS("sounds/battle2.ogg");
 		SDL_Delay(500);
 		Mix_PlayChannel(-1,transition_r,0);
-		
+
 		display = 0;
 		cls_pos = 0;
 		hp1 = 100;
@@ -1361,9 +1434,9 @@ int main(int argc,char* args[])
 		resist = 0.6;
 		replay = false;
 		int cls_pos2 = 0;
-		
+
 		fps.start();
-		while (!quit)
+		while (!quit && !skip)
 		{
 			if (in_battle)
 			{
@@ -1380,7 +1453,7 @@ int main(int argc,char* args[])
 				}
 				last_judge = judge.size();
 			}
-			
+
 			if (attack.ticks() > 4000 && in_battle)
 			{
 				slash_anime.push_back(0);
@@ -1388,7 +1461,7 @@ int main(int argc,char* args[])
 				hp1 -= e_damage;
 				attack.restart();
 			}
-			
+
 			while(SDL_PollEvent(&e))
 			{
 				if(e.type==SDL_QUIT) //單擊右上角的X
@@ -1401,6 +1474,11 @@ int main(int argc,char* args[])
 					{
 						//ESC退出
 						quit=true;
+						break;
+					}
+					else if(e.key.keysym.sym == SDLK_SPACE)
+					{
+						skip=true;
 						break;
 					}
 					else if (e.key.keysym.sym == SDLK_f || e.key.keysym.sym == SDLK_e || e.key.keysym.sym == SDLK_j || e.key.keysym.sym == SDLK_i)
@@ -1564,7 +1642,7 @@ int main(int argc,char* args[])
 					buttonDark_p->draw(292,678);
 				else
 					buttonDark->draw(292,678);
-				
+
 				if (in_battle)
 				{
 					hp_ground->draw(0,180);
@@ -1714,7 +1792,7 @@ int main(int argc,char* args[])
 						break;
 					}
 				}
-				
+
 				Window::present();
 			}
 		}
@@ -1758,9 +1836,10 @@ int main(int argc,char* args[])
 		delete face4;
 		if (quit)
 			exit(0);
+		skip=false;
 		///////////////////////////////////////////////////////////////切回動畫畫面
 		Window::initialize_wide("Eschatology");
-		
+
 		Texture bg5("img/bg5.png");
 		chat = new Texture("img/chat.png");
 		black_w = new Texture("img/black_w.png");
@@ -1781,14 +1860,14 @@ int main(int argc,char* args[])
 		flash[0] = new Texture("img/flash1.png");
 		flash[1] = new Texture("img/flash2.png");
 		flash[2] = new Texture("img/flash3.png");
-		
+
 		mainBGM = Mix_LoadMUS("sounds/last_bgm.ogg");
 		fire = Mix_LoadWAV("sounds/fire.wav");
 		light_s = Mix_LoadWAV("sounds/light.wav");
 		Mix_Chunk *last = Mix_LoadWAV("sounds/last.wav");
 		Mix_VolumeMusic(64);
 		Mix_PlayMusic(mainBGM,-1);
-		
+
 		talking2[0] = "呃！";
 		talking2[1] = "不...行......";
 		talking2[2] = "（倒）";
@@ -1799,16 +1878,16 @@ int main(int argc,char* args[])
 		talking2[7] = "反叛軍幹部，聖靈之光．米亞";
 		talking2[8] = "不會讓你們得逞的";
 		int word_count3[9] = {2,5,3,15,9,0,15,13,8};
-		
+
 		talk = -1;
 		display = 0;
 		shake_times = 0;
 		cls_pos = 0;
 		cls_pos2 = 0;
-		while (!quit)
+		while (!quit && !skip)
 		{
 			fps.start();
-			
+
 			if (talk < 9)
 			{
 				display_end = false;
@@ -1833,6 +1912,9 @@ int main(int argc,char* args[])
 						case SDLK_ESCAPE:
 							quit=true;
 							break;
+						case SDLK_SPACE:
+							skip=true;
+							break;
 					}
 				}
 				if(e.type==SDL_MOUSEBUTTONUP && talk != 5 && talk != -1)
@@ -1855,7 +1937,7 @@ int main(int argc,char* args[])
 				}
 			}
 			Window::clear();
-			
+
 			if (talk == -1)
 			{
 				bg5.draw(0,0);
@@ -1944,7 +2026,7 @@ int main(int argc,char* args[])
 					}
 				}
 			}
-			
+
 			if (fps.ticks()*FPS<1000)
 				SDL_Delay((1000/FPS)- fps.ticks());
 			Window::present();
@@ -1962,6 +2044,6 @@ int main(int argc,char* args[])
 		delete flash;
 		if (quit)
 			exit(0);
-		SDL_Delay(1000);
+		skip=false;
 	}
 }

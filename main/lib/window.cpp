@@ -4,6 +4,8 @@ SDL_Window* Window::window;
 SDL_Renderer* Window::renderer;
 SDL_Rect Window::box;
 
+SDL_Surface* icon=IMG_Load("img/icon.png");
+
 void Window::initialize(std::string title)
 {
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -22,6 +24,8 @@ void Window::initialize(std::string title)
     //渲染器，參數-1代表讓SDL自動幫你選最適合的(後面我指定選項)的驅動
     //SDL_RENDERER_ACCELERATED，使用硬件加速的renderer=利用顯卡的力量
     // SDL_RENDERER_PRESENTVSYNC，使用SDL_RendererPresent這個函數，他會以顯示器的刷新率來更新畫面
+
+    SDL_SetWindowIcon(Window::window,icon);
 }
 
 void Window::initialize_wide(std::string title)
@@ -42,6 +46,8 @@ void Window::initialize_wide(std::string title)
     //渲染器，參數-1代表讓SDL自動幫你選最適合的(後面我指定選項)的驅動
     //SDL_RENDERER_ACCELERATED，使用硬件加速的renderer=利用顯卡的力量
     // SDL_RENDERER_PRESENTVSYNC，使用SDL_RendererPresent這個函數，他會以顯示器的刷新率來更新畫面
+
+    SDL_SetWindowIcon(Window::window,icon);
 }
 
 SDL_Rect Window::state()
