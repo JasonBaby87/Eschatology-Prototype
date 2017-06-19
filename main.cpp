@@ -476,12 +476,12 @@ int main(int argc,char* args[])
 	vector<Judgement> judge;
 	int last_judge = 0;
 	int damage = 10;
-	int e_damage = 2;
+	int e_damage = 1;
 	double resist = 1;
 	double damage_rate[4] = {1,0.9,0.7,0.4};
 	SDL_Color accuracy[5] = {rgb(255,174,35),rgb(255,240,35),rgb(35,255,100),rgb(35,230,255),rgb(35,170,255)};
 	bool pressing[4] = {false,false,false,false};
-	
+	Mix_PlayChannel(-1,spear_s,0);
 	fps.start();
 	while (!quit)
 	{
@@ -567,7 +567,7 @@ int main(int argc,char* args[])
 							else if (judge[i] != WRONG)
 							{
 								click_effect = 1;
-								aluren_click->setColor(accuracy[i]);
+								aluren_click->setColor(accuracy[judge[i]]);
 								switch (e.key.keysym.sym)
 								{
 									case SDLK_e:
@@ -1742,4 +1742,176 @@ int main(int argc,char* args[])
 	if (quit)
 		exit(0);
 	///////////////////////////////////////////////////////////////切回動畫畫面
+	Window::initialize_wide("Eschatology");
+	
+    Texture bg5("img/bg5.png");
+	chat = new Texture("img/chat.png");
+	black_w = new Texture("img/black_w.png");
+	Texture** big_fire = new Texture* [6];
+	for (int i = 0; i < 6; i++)
+	{
+		string temp_name;
+		temp_name = "img/anime/fire"+anime_frame[i];
+		big_fire[i] = new Texture(temp_name);
+	}
+	face1 = new Texture("img/face1.png");
+    Texture face1_3("img/face1_3.png");
+	Texture face4("img/face4.png");
+	
+    mainBGM = Mix_LoadMUS("sounds/herius.ogg");
+	transition = Mix_LoadWAV("sounds/transition.wav");
+	fire = Mix_LoadWAV("sounds/fire.wav");
+    Mix_PlayMusic(mainBGM,-1);
+	
+	talking2[0] = "呃！";
+	talking2[1] = "不...行......";
+	talking2[2] = "（倒）";
+	talking2[3] = "嘛嘛，堅持到現在也真是辛苦你了";
+	talking2[4] = "黑盒子我就拿走......";
+	talking2[5] = "";
+	talking2[6] = "哎呀哎呀，來了個不簡單的人物呢";
+	talking2[7] = "反叛軍幹部，聖靈之光．米亞";
+	talking2[8] = "不會讓你們得逞的";
+	int word_count2[9] = {2,5,3,15,14,11,23,25,19};
+	
+	talk = 0;
+	display = 0;
+	shake = 0;
+	shake_times = 0;
+	direction = -1;
+	cls_pos = 0;
+	while (!quit)
+	{
+		fps.start();
+		
+		if (talk < 9)
+		{
+			display_end = false;
+			display++;
+			if (display > word_count2[talk] * 3)
+			{
+				display = word_count2[talk] * 3;
+				display_end = true;
+			}
+		}
+		while(SDL_PollEvent(&e))
+		{
+			if(e.type==SDL_QUIT) //單擊右上角的X
+            {
+    			quit=true;
+    		}
+    		if(e.type==SDL_KEYDOWN)
+            {
+                switch(e.key.keysym.sym)
+                {
+                    //ESC退出
+                    case SDLK_ESCAPE:
+                        quit=true;
+                        break;
+                }
+    		}
+			if(e.type==SDL_MOUSEBUTTONUP && talk != 1)
+			{
+				if (!display_end)
+				{
+					display = word_count2[talk] * 3;
+					display_end = true;
+				}
+				else
+				{
+					if (talk < 9)
+						talk++;
+					if (talk == 1)
+						Mix_PlayChannel(-1,fire,0);
+					else if (talk == 9 && cls_pos == 0)
+					{
+						Mix_PlayChannel(-1,transition,0);
+						Mix_FadeOutMusic(600);
+					}
+					display = 0;
+				}
+			}
+		}
+        Window::clear();
+		
+		if (talk != 1)
+		{
+			bg4.draw(0,0);
+			chat->draw(0,320);
+		}
+		else
+		{
+			shake += direction * 15;
+			shake_times++;
+			if (shake == -30)
+				direction = 1;
+			if (shake == 30)
+				direction = -1;
+			if (shake_times == 28)
+			{
+				talk = 2;
+				bg4.draw(0,0);
+				Window::present();
+				SDL_Delay(3000);
+				while (SDL_PollEvent(&trash_e));
+				continue;
+			}
+			bg4.draw(shake,0);
+			big_fire[shake_times/5]->draw(shake,0);
+		}
+		///////////////////////////////////////////表情
+		if (talk == 0 || talk == 2)
+			face1->draw(0,320);
+		else if (talk == 4 || talk == 7)
+			face1_2->draw(0,320);
+		else if (talk != 1)
+			face4.draw(0,320);
+		///////////////////////////////////////////表情
+		if (talk < 9)
+		{
+			if (display <= 54)
+			{
+				Texture* temp = new Texture(talking2[talk].substr(0,(display/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+				temp->setDstRect(0,0,temp->setPoint());
+				temp->draw(460,400);
+				delete temp;
+			}
+			else
+			{
+				Texture* temp = new Texture(talking2[talk].substr(0,54),"font/freeWing.ttf",rgb(255, 255, 255),24);
+				temp->setDstRect(0,0,temp->setPoint());
+				temp->draw(460,376);
+				Texture* temp2 = new Texture(talking2[talk].substr(54,(display/3)*3-54),"font/freeWing.ttf",rgb(255, 255, 255),24);
+				temp2->setDstRect(0,0,temp2->setPoint());
+				temp2->draw(460,424);
+				delete temp;
+				delete temp2;
+			}
+		}
+		else if (talk == 9)
+		{
+			cls_pos += 20;
+			black_w->draw(-800+cls_pos,0);
+			if (cls_pos == 820)
+			{
+				SDL_Delay(200);
+				cls_pos = 0;
+				break;
+			}
+		}
+		
+        if (fps.ticks()*FPS<1000)
+            SDL_Delay((1000/FPS)- fps.ticks());
+        Window::present();
+    }
+    Window::quit();
+	delete chat;
+	delete black_w;
+	delete face1;
+	delete face1_2;
+	for (int i = 0; i < 6; i++)
+		delete big_fire[i];
+	delete big_fire;
+	if (quit)
+		exit(0);
 }
