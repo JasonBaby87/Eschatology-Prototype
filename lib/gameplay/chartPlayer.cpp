@@ -108,7 +108,7 @@ void ChartPlayer::hit()
     auto earlier = notes.begin();
     auto later = earlier;
 
-    for (; later != notes.end(); earlier = later, later++)
+    for (; later != notes.end(); earlier = later++)
 	{
 		Time noteTime = static_cast<Time>((*later)->beat) / bpm * 60;
 
