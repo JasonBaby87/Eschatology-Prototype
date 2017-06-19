@@ -10,6 +10,8 @@
 #include "chartPlayer.h"
 #include "../global/exception.h"
 
+using namespace std;
+
 Note::Note(Beat b): beat(b)
 {
 
