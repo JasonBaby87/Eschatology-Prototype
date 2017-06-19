@@ -1,10 +1,20 @@
+/**
+	Author:			Kuo, Tai-Yuan
+	Student ID#:	B05705031
+	Date:			[insert date]
+	File Name:		[insert file name]
+	Description:	[insert description]
+*/
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+<<<<<<< HEAD
+=======
 #include <fstream>
 #include <vector>
 #include "lib/math/fraction.h"
 #include "lib/gameplay/chartPlayer.h"
+>>>>>>> refs/remotes/origin/Music
 
 using namespace std;
 
@@ -31,6 +41,9 @@ void eOP();
 
 int main()
 {
+<<<<<<< HEAD
+	// TODO insert your program here
+=======
 	{
 		ifstream config("data/config");
 		loadConfigurations(config);
@@ -59,6 +72,7 @@ int main()
 	{
 		cout << notes[i] << endl;
 	}
+>>>>>>> refs/remotes/origin/Music
 
 	eOP();
 }
