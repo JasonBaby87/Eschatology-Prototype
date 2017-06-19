@@ -329,6 +329,8 @@ int main(int argc,char* args[])
 			face1_2->draw(0,320);
 		else if (talk == 20 || talk == 27 || talk == 29 || talk == 31 || talk == 32 || talk == 34)
 			face2.draw(0,320);
+		else if (talk == 38)
+			face3.draw(0,320);
 		////////////////////////////////////////表情
 		if (talk < 39)
 		{
@@ -473,7 +475,7 @@ int main(int argc,char* args[])
 	ChartPlayer* chart = new ChartPlayer(song);
 	vector<Judgement> judge;
 	int last_judge = 0;
-	int damage = 1000;
+	int damage = 10;
 	int e_damage = 2;
 	double resist = 1;
 	double damage_rate[4] = {1,0.9,0.7,0.4};
@@ -579,7 +581,7 @@ int main(int argc,char* args[])
 										else
 										{
 											flame_anime.push_back(0);
-											hp2 -= damage*damage_rate[i]*resist;
+											hp2 -= damage*damage_rate[judge[i]]*resist;
 											if (stage == 1)
 											{
 												if (skill == 0 || skill == 2)
@@ -600,7 +602,7 @@ int main(int argc,char* args[])
 										else
 										{
 											ice_anime.push_back(0);
-											hp2 -= damage*damage_rate[i]*resist;
+											hp2 -= damage*damage_rate[judge[i]]*resist;
 											if (stage == 1)
 											{
 												if (skill == 1)
@@ -621,7 +623,7 @@ int main(int argc,char* args[])
 										else
 										{
 											light_anime.push_back(0);
-											hp2 -= damage*damage_rate[i]*resist;
+											hp2 -= damage*damage_rate[judge[i]]*resist;
 											if (stage == 1)
 											{
 												if (skill == 3)
@@ -641,7 +643,7 @@ int main(int argc,char* args[])
 										else
 										{
 											dark_anime.push_back(0);
-											hp2 -= damage*damage_rate[i]*resist;
+											hp2 -= damage*damage_rate[judge[i]]*resist;
 											if (stage == 1)
 											{
 												if (skill == 4)
@@ -705,7 +707,7 @@ int main(int argc,char* args[])
 				buttonDark->draw(292,678);
 			if (stage == 0)
 			{
-				soldier.draw(280,0);
+				soldier.draw(240,0);
 				if (display <= 27)
 				{
 					Texture* temp = new Texture(battle_text.substr(0,(display/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
@@ -823,7 +825,7 @@ int main(int argc,char* args[])
 					if (display < 30)
 					{
 						soldier.setAlpha(240-display*8);
-						soldier.draw(280,0);
+						soldier.draw(240,0);
 						aluren->setAlpha(240-display*8);
 						aluren->draw(90,270);
 						hp_ground->draw(0,180);
@@ -841,7 +843,7 @@ int main(int argc,char* args[])
 					else if (display < 90)
 					{
 						hp2++;
-						soldier2.draw(460-(display-30)*3,0);
+						soldier2.draw(600-(display-30)*6,0);
 						hp_ground->draw(0,180);
 						hp2_ground->draw(240,180);
 						hp_layer->draw(hp1*240/100-240,180);
@@ -878,7 +880,7 @@ int main(int argc,char* args[])
 					}
 					else if (display >= 90)
 					{
-						soldier2.draw(280,0);
+						soldier2.draw(240,0);
 						hp_ground->draw(0,180);
 						hp2_ground->draw(240,180);
 						hp_layer->draw(hp1*240/100-240,180);
@@ -927,7 +929,7 @@ int main(int argc,char* args[])
 				}
 				else if (display == 510)
 				{
-					soldier2.draw(280,0);
+					soldier2.draw(240,0);
 					hp_ground->draw(0,180);
 					hp2_ground->draw(240,180);
 					hp_layer->draw(hp1*240/100-240,180);
@@ -955,10 +957,10 @@ int main(int argc,char* args[])
 					click_effect = 0;
 			}
 			////////////////////////////////////////////////////////譜面顯示
-			for (int t = 0; t < 1; t++)
+			for (int t = 0; t < 1 && in_battle; t++)
 			{
 				auto temp_chart = chart->getNotePositions();
-				for (int i = 0; i < temp_chart.size() && in_battle; i++)
+				for (int i = 0; i < temp_chart.size(); i++)
 				{
 					Texture temp_circle("img/circle.png");
 					int temp_r = 300*(BEAT_DURATION-temp_chart.at(i).first)/BEAT_DURATION;
@@ -1288,23 +1290,31 @@ int main(int argc,char* args[])
 	Window::initialize("Eschatology");
 	
 	black = new Texture("img/black.png");
-    Texture bg5("img/bg5.png");
     Texture boss("img/boss.png");
-    Texture flash1("img/flash1.png");
-    Texture flash2("img/flash2.png");
-    Texture flash3("img/flash3.png");
     character1 = new Texture("img/character1.png");
+	Texture character4("img/character4.png");
     hp_ground = new Texture("img/hp_ground.png");
     hp_layer = new Texture("img/hp_layer.png");
     hp2_ground = new Texture("img/hp2_ground.png");
     hp2_layer = new Texture("img/hp2_layer.png");
 	aluren = new Texture("img/aluren.png");
 	aluren_click = new Texture("img/aluren_click.png");
+	buttonFlame = new Texture("img/buttonFlame.png");
+	buttonFlame_p = new Texture("img/buttonFlame_p.png");
+	buttonIce = new Texture("img/buttonIce.png");
+	buttonIce_p = new Texture("img/buttonIce_p.png");
+	buttonLight = new Texture("img/buttonLight.png");
+	buttonLight_p = new Texture("img/buttonLight_p.png");
+	buttonDark = new Texture("img/buttonDark.png");
+	buttonDark_p = new Texture("img/buttonDark_p.png");
+	battle_bg = new Texture("img/battle_bg.png");
 	flame = new Texture* [6];
 	ice = new Texture* [6];
 	light = new Texture* [6];
 	dark = new Texture* [6];
 	spear = new Texture* [6];
+	slash = new Texture* [6];
+	bad_click = new Texture* [6];
 	for (int i = 0; i < 6; i++)
 	{
 		string temp_name;
@@ -1318,20 +1328,418 @@ int main(int argc,char* args[])
 		dark[i] = new Texture(temp_name);
 		temp_name = "img/anime/spear"+anime_frame[i];
 		spear[i] = new Texture(temp_name);
+		temp_name = "img/anime/flame"+anime_frame[i];
+		slash[i] = new Texture(temp_name);
+		temp_name = "img/anime/bad_click"+anime_frame[i];
+		bad_click[i] = new Texture(temp_name);
 	}
-	
 	transition_r = Mix_LoadWAV("sounds/transition_r.wav");
 	flame_s = Mix_LoadWAV("sounds/flame.wav");
 	ice_s = Mix_LoadWAV("sounds/ice.wav");
 	light_s = Mix_LoadWAV("sounds/light.wav");
 	dark_s = Mix_LoadWAV("sounds/dark.wav");
 	spear_s = Mix_LoadWAV("sounds/spear.wav");
+	slash_s = Mix_LoadWAV("sounds/flame.wav");
 	mainBGM = Mix_LoadMUS("sounds/battle2.ogg");
 	SDL_Delay(500);
 	Mix_PlayChannel(-1,transition_r,0);
 	
+	display = 0;
 	cls_pos = 0;
 	hp1 = 100;
-	hp2 = 200;
-    return 0;
+	hp2 = 1200;
+	skill = 0;
+	click_effect = 0;
+	in_battle = false;
+	ifstream song2("charts/battle2/battle2-E.jc",ifstream::in);
+	chart = new ChartPlayer(song2);
+	last_judge = 0;
+	e_damage = 2;
+	resist = 0.6;
+	replay = false;
+	int cls_pos2 = 0;
+	
+	fps.start();
+	while (!quit)
+	{
+		if (in_battle)
+		{
+			judge = chart->getJudgements();
+			for (int i = last_judge; i < judge.size(); i++)
+			{
+				if (judge[i] == MISS)
+				{
+					slash_anime.push_back(0);
+					Mix_PlayChannel(-1,slash_s,0);
+					hp1 -= e_damage;
+					skill = 0;
+				}
+			}
+			last_judge = judge.size();
+		}
+		
+		if (attack.ticks() > 4000 && in_battle)
+		{
+			slash_anime.push_back(0);
+			Mix_PlayChannel(-1,slash_s,0);
+			hp1 -= e_damage;
+			attack.restart();
+		}
+		
+		while(SDL_PollEvent(&e))
+        {
+            if(e.type==SDL_QUIT) //單擊右上角的X
+            {
+    			quit=true;
+    		}
+    		if(e.type==SDL_KEYDOWN)
+            {
+                if (e.key.keysym.sym == SDLK_ESCAPE)
+                {
+                    //ESC退出
+                    quit=true;
+                    break;
+				}
+				else if (e.key.keysym.sym == SDLK_f || e.key.keysym.sym == SDLK_e || e.key.keysym.sym == SDLK_j || e.key.keysym.sym == SDLK_i)
+				{
+					if (in_battle)
+					{
+						switch (e.key.keysym.sym)
+						{
+							case SDLK_e:
+								pressing[0] = true;
+								break;
+							case SDLK_f:
+								pressing[1] = true;
+								break;
+							case SDLK_i:
+								pressing[2] = true;
+								break;
+							case SDLK_j:
+								pressing[3] = true;
+								break;
+						}
+						chart->hit();
+						judge = chart->getJudgements();
+						for (int i = last_judge; i < judge.size(); i++)
+						{
+							if (judge[i] == MISS)
+							{
+								slash_anime.push_back(0);
+								Mix_PlayChannel(-1,slash_s,0);
+								hp1 -= e_damage;
+								skill = 0;
+							}
+							else if (judge[i] != WRONG)
+							{
+								click_effect = 1;
+								aluren_click->setColor(accuracy[i]);
+								switch (e.key.keysym.sym)
+								{
+									case SDLK_e:
+										Mix_PlayChannel(-1,flame_s,0);
+										if (judge[i] == 4)
+										{
+											bad_click_anime.push_back(make_pair(0,rgb(255,0,0)));
+											hp1 -= e_damage/2;
+											skill = 0;
+										}
+										else
+										{
+											flame_anime.push_back(0);
+											hp2 -= damage*damage_rate[judge[i]]*resist;
+											if (skill == 0 || skill == 2)
+												skill++;
+											else
+												skill = 0;
+										}
+										break;
+									case SDLK_f:
+										Mix_PlayChannel(-1,ice_s,0);
+										if (judge[i] == 4)
+										{
+											bad_click_anime.push_back(make_pair(0,rgb(130,245,255)));
+											hp1 -= e_damage/2;
+											skill = 0;
+										}
+										else
+										{
+											ice_anime.push_back(0);
+											hp2 -= damage*damage_rate[judge[i]]*resist;
+											if (skill == 1)
+												skill++;
+											else
+												skill = 0;
+										}
+										break;
+									case SDLK_i:
+										Mix_PlayChannel(-1,light_s,0);
+										if (judge[i] == 4)
+										{
+											bad_click_anime.push_back(make_pair(0,rgb(255,255,130)));
+											hp1 -= e_damage/2;
+											skill = 0;
+										}
+										else
+										{
+											light_anime.push_back(0);
+											hp2 -= damage*damage_rate[judge[i]]*resist;
+											if (skill == 3)
+												skill++;
+											else
+												skill = 0;
+										}
+										break;
+									case SDLK_j:
+										Mix_PlayChannel(-1,dark_s,0);
+										if (judge[i] == 4)
+										{
+											bad_click_anime.push_back(make_pair(0,rgb(70,0,115)));
+											hp1 -= e_damage/2;
+										}
+										else
+										{
+											dark_anime.push_back(0);
+											hp2 -= damage*damage_rate[judge[i]]*resist;
+											if (skill == 4)
+											{
+												hp2 -= 20;
+												spear_anime.push_back(0);
+												Mix_PlayChannel(-1,spear_s,0);
+											}
+										}
+										skill = 0;
+										break;
+								}
+							}
+						}
+						last_judge = judge.size();
+					}
+                }
+    		}
+			if(e.type==SDL_KEYUP)
+			{
+				switch (e.key.keysym.sym)
+				{
+					case SDLK_e:
+						pressing[0] = false;
+						break;
+					case SDLK_f:
+						pressing[1] = false;
+						break;
+					case SDLK_i:
+						pressing[2] = false;
+						break;
+					case SDLK_j:
+						pressing[3] = false;
+						break;
+				}
+			}
+    	}
+		if (fps.ticks() > 16)
+		{
+			fps.restart();
+			Window::clear();
+			boss.draw(0,0);
+			character1->draw(0,0);
+			character4.draw(280,0);
+			battle_bg->draw(0,180);
+			if (pressing[0])
+				buttonFlame_p->draw(16,589);
+			else
+				buttonFlame->draw(16,589);
+			if (pressing[1])
+				buttonIce_p->draw(98,678);
+			else
+				buttonIce->draw(98,678);
+			if (pressing[2])
+				buttonLight_p->draw(374,589);
+			else
+				buttonLight->draw(374,589);
+			if (pressing[3])
+				buttonDark_p->draw(292,678);
+			else
+				buttonDark->draw(292,678);
+			
+			if (in_battle)
+			{
+				hp_ground->draw(0,180);
+				hp2_ground->draw(240,180);
+				hp_layer->draw(hp1*240/100-240,180);
+				hp2_layer->draw(480-hp2*240/1200,180);
+				stringstream ss;
+				stringstream ss2;
+				string temp_hp;
+				ss << hp1;
+				ss >> temp_hp;
+				Texture* hp1_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+				ss2 << hp2;
+				ss2 >> temp_hp;
+				cout << temp_hp << '\n';
+				Texture* hp2_t = new Texture(temp_hp+"/1200","font/freeWing.ttf",rgb(255, 255, 255),16);
+				hp1_t->draw(15,195);
+				hp2_t->draw(465-hp2_t->getWidth(),195);
+				aluren->draw(90,270);
+			}
+			if (click_effect > 0)
+			{
+				aluren_click->setAlpha(255-17*click_effect);
+				aluren_click->draw(80,260);
+				click_effect++;
+				if (click_effect == 15)
+					click_effect = 0;
+			}
+			////////////////////////////////////////////////////////譜面顯示
+			for (int t = 0; t < 1 && in_battle; t++)
+			{
+				auto temp_chart = chart->getNotePositions();
+				for (int i = 0; i < temp_chart.size(); i++)
+				{
+					Texture temp_circle("img/circle.png");
+					int temp_r = 300*(BEAT_DURATION-temp_chart.at(i).first)/BEAT_DURATION;
+					if (temp_r == 0)
+						temp_r = 2;
+					temp_circle.setDstRect(temp_r,temp_r);
+					temp_circle.draw(240-temp_r/2,420-temp_r/2);
+				}
+			}
+			////////////////////////////////////////////////////////動畫表現
+			for (int i = 0; i < flame_anime.size(); i++)
+			{
+				flame[flame_anime.at(i)/2]->draw(280,0);
+				flame_anime.at(i)++;
+				if (flame_anime.at(i) == 12)
+					flame_anime.erase(flame_anime.begin()+i);
+			}
+			for (int i = 0; i < ice_anime.size(); i++)
+			{
+				ice[ice_anime.at(i)/2]->draw(280,0);
+				ice_anime.at(i)++;
+				if (ice_anime.at(i) == 12)
+					ice_anime.erase(ice_anime.begin()+i);
+			}
+			for (int i = 0; i < light_anime.size(); i++)
+			{
+				light[light_anime.at(i)/2]->draw(280,0);
+				light_anime.at(i)++;
+				if (light_anime.at(i) == 12)
+					light_anime.erase(light_anime.begin()+i);
+			}
+			for (int i = 0; i < dark_anime.size(); i++)
+			{
+				dark[dark_anime.at(i)/2]->draw(280,0);
+				dark_anime.at(i)++;
+				if (dark_anime.at(i) == 12)
+					dark_anime.erase(dark_anime.begin()+i);
+			}
+			for (int i = 0; i < spear_anime.size(); i++)
+			{
+				spear[spear_anime.at(i)/2]->draw(280,0);
+				spear_anime.at(i)++;
+				if (spear_anime.at(i) == 12)
+					spear_anime.erase(spear_anime.begin()+i);
+			}
+			for (int i = 0; i < slash_anime.size(); i++)
+			{
+				slash[slash_anime.at(i)/2]->draw(0,0);
+				slash_anime.at(i)++;
+				if (slash_anime.at(i) == 12)
+					slash_anime.erase(slash_anime.begin()+i);
+			}
+			for (int i = 0; i < bad_click_anime.size(); i++)
+			{
+				bad_click[bad_click_anime.at(i).first/2]->setColor(bad_click_anime.at(i).second);
+				bad_click[bad_click_anime.at(i).first/2]->draw(0,0);
+				bad_click_anime.at(i).first++;
+				if (bad_click_anime.at(i).first == 12)
+					bad_click_anime.erase(bad_click_anime.begin()+i);
+			}
+			/////////////////////////////////////////////////////////////////
+			if (cls_pos < 800)
+			{
+				black->draw(0,cls_pos);
+				cls_pos += 20;
+				if (cls_pos == 800)
+				{
+					in_battle = true;
+					Mix_PlayMusic(mainBGM,0);
+					Mix_HookMusicFinished(replayBGM);
+					chart->start();
+					attack.start();
+				}
+			}
+			if (hp1 <= 0)
+			{
+				in_battle = false;
+				black->setAlpha(cls_pos2);
+				black->draw(0,0);
+				cls_pos2 += 15;
+				if (cls_pos2 == 15)
+					Mix_FadeOutMusic(500);
+				else if (cls_pos2 == 270)
+				{
+					quit = true;
+					break;
+				}
+			}
+			if (replay)
+			{
+				in_battle = false;
+				attack.stop();
+				black->setAlpha(cls_pos2);
+				black->draw(0,0);
+				cls_pos2 += 15;
+				if (cls_pos2 == 15)
+					Mix_FadeOutMusic(500);
+				else if (cls_pos2 == 270)
+				{
+					replay = false;
+					SDL_Delay(500);
+					break;
+				}
+			}
+			
+			Window::present();
+		}
+	}
+    Window::quit();
+	song2.close();
+	for (int i = 0; i < 6; i++)
+	{
+		delete flame[i];
+		delete ice[i];
+		delete light[i];
+		delete dark[i];
+		delete spear[i];
+		delete slash[i];
+		delete bad_click[i];
+	}
+	delete [] flame;
+	delete [] ice;
+	delete [] light;
+	delete [] dark;
+	delete [] spear;
+	delete [] slash;
+	delete [] bad_click;
+	delete black;
+	delete battle_bg;
+	delete aluren;
+	delete aluren_click;
+	delete buttonFlame;
+	delete buttonFlame_p;
+	delete buttonIce;
+	delete buttonIce_p;
+	delete buttonLight;
+	delete buttonLight_p;
+	delete buttonDark;
+	delete buttonDark_p;
+	delete character1;
+	delete hp_ground;
+	delete hp_layer;
+	delete hp2_ground;
+	delete hp2_layer;
+	delete chart;
+	if (quit)
+		exit(0);
+	///////////////////////////////////////////////////////////////切回動畫畫面
 }
