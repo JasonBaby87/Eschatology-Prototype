@@ -446,7 +446,7 @@ int main(int argc,char* args[])
 	SDL_Delay(500);
 	Mix_PlayChannel(-1,transition_r,0);
 	
-	const double BEAT_DURATION = 4;
+	const double BEAT_DURATION = 8;
 	Timer attack;
 	
 	display = 0;
@@ -471,8 +471,7 @@ int main(int argc,char* args[])
 	bool in_battle = false;
 	ifstream song("charts/battle1/battle1-E.jc",ifstream::in);
 	ChartPlayer* chart = new ChartPlayer(song);
-	//auto notes = chart->getNotePositions(BEAT_DURATION);
-	vector<Judgement> judge = chart->getJudgements();
+	vector<Judgement> judge;
 	int last_judge = 0;
 	int damage = 10;
 	int e_damage = 2;
@@ -491,9 +490,8 @@ int main(int argc,char* args[])
 			song.seekg(0,ios::beg);
 			Mix_PlayMusic(mainBGM,0);
 			chart = new ChartPlayer(song);
-			//notes = chart->getNotePositions(BEAT_DURATION);
-			judge = chart->getJudgements();
 			chart->start();
+			judge = chart->getJudgements();
 			replay = false;
 		}
 		
@@ -509,7 +507,7 @@ int main(int argc,char* args[])
 			last_judge = judge.size();
 		}
 		
-		if (attack.ticks() > 4000 && in_battle)
+		if (attack.ticks() > 8000 && in_battle)
 		{
 			slash_anime.push_back(0);
 			Mix_PlayChannel(-1,slash_s,0);
@@ -767,6 +765,7 @@ int main(int argc,char* args[])
 						Mix_PlayMusic(mainBGM,0);
 						Mix_HookMusicFinished(replayBGM);
 						chart->start();
+						judge = chart->getJudgements();
 						attack.start();
 					}
 					else if (display > 480 && display <= 510)
@@ -947,19 +946,24 @@ int main(int argc,char* args[])
 			if (click_effect > 0)
 			{
 				aluren_click->setAlpha(255-17*click_effect);
-				aluren_click->draw(235,395);
+				aluren_click->draw(85,265);
 				click_effect++;
 				if (click_effect == 15)
 					click_effect = 0;
 			}
 			////////////////////////////////////////////////////////譜面顯示
-			for (int i = 0; i < chart->getNotePositions(BEAT_DURATION).size() && in_battle; i++)
+			for (int t = 0; t < 1; t++)
 			{
-				Texture temp_circle("img/circle.png");
-				int temp_r = 300*(BEAT_DURATION-chart->getNotePositions(BEAT_DURATION)[0].first)/BEAT_DURATION;
-				temp_circle.setDstRect(temp_r,temp_r);
-				temp_circle.setPoint();
-				temp_circle.draw(240,400);
+				auto temp_chart = chart->getNotePositions();
+				for (int i = 0; i < temp_chart.size() && in_battle; i++)
+				{
+					Texture temp_circle("img/circle.png");
+					int temp_r = 300*(BEAT_DURATION-temp_chart.at(i).first)/BEAT_DURATION;
+					if (temp_r == 0)
+						temp_r = 2;
+					temp_circle.setDstRect(temp_r,temp_r);
+					temp_circle.draw(240-temp_r/2,420-temp_r/2);
+				}
 			}
 			////////////////////////////////////////////////////////動畫表現
 			for (int i = 0; i < flame_anime.size(); i++)
