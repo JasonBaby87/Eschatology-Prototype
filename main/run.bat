@@ -1,2 +1,3 @@
 cd main
-Eschatology
+start Eschatology.exe
+exit
