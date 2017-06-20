@@ -50,6 +50,7 @@ float rhs(float& theta,float low,float up,float omega,bool loop=false)
     return (up+low)/2+(up-low)/2*cos(theta);
 }
 
+int level=1;
 bool quit=false,skip=false;
 int main(int argc,char* args[])
 {
@@ -115,7 +116,16 @@ int main(int argc,char* args[])
 						case SDLK_SPACE:
 							skip=true;
 							break;
-					}
+						case SDLK_1:
+							level=1;
+							break;
+						case SDLK_2:
+							level=2;
+							break;
+						case SDLK_3:
+							level=3;
+							break;
+						}
 				}
 				if(e.type==SDL_MOUSEBUTTONUP && slide_down>3.14 )
 				{
@@ -1460,7 +1470,8 @@ int main(int argc,char* args[])
 		skill = 0;
 		click_effect = 0;
 		in_battle = false;
-		ifstream song2("charts/battle2/battle2-E.jc",ifstream::in);
+		string levelWord[3]={"E","H","X"};
+		ifstream song2("charts/battle2/battle2-"+levelWord[level-1]+".jc",ifstream::in); //依照一開始按的數字鍵決定難度
 		chart = new ChartPlayer(song2);
 		last_judge = 0;
 		e_damage = 2;
