@@ -540,7 +540,7 @@ int main(int argc,char* args[])
 		SDL_Delay(500);
 		Mix_PlayChannel(-1,transition_r,0);
 
-		const double BEAT_DURATION = 4;
+		const BeatDuration BEAT_DURATION = displayedBeats;
 		Timer attack;
 
 		display = 0;
