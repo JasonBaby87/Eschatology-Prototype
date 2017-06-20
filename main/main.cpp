@@ -89,7 +89,7 @@ int main(int argc,char* args[])
 		SDL_Event e;
 		SDL_Event trash_e;
 
-		bool slide = false,fadeInOut=true,first=true; //後者記錄alurens的變子圓的淡出淡入
+		bool slide = false,fadeInOut=true,first=true,firstTitle=true; //後者記錄alurens的變子圓的淡出淡入
 		float slide_down = 0;
 		int fade_out = 0;
 		Mix_PlayMusic( mainBGM, -1 ); //-1是loop次數，在此是loop到halt(stop)為止
@@ -186,11 +186,21 @@ int main(int argc,char* args[])
 				alurens.draw(Window::state().w/2,Window::state().h/2+80,alurenNum,alurensAngle); //繪製在螢幕正中間，切換到相對應的子圖，旋轉alurensAngle度
 			}
 
-			title.setAlpha(rhs(titleAlphaTheta,255,0,0.005)); //透明度的簡諧運動
-			if(slide_down>1.57)
-				title2.setAlpha(rhs(title2AlphaTheta,255,0,0.005));
+			if(firstTitle)
+			{
+				title.setAlpha(rhs(titleAlphaTheta,255,0,0.007)); //透明度的簡諧運動
+				if(slide_down>1.57)
+					title2.setAlpha(rhs(title2AlphaTheta,255,0,0.01));
+				else
+					title2.setAlpha(0);
+				if(title2AlphaTheta>3.14)
+					firstTitle=false;
+			}
 			else
-				title2.setAlpha(0);
+			{
+				title.setAlpha(rhs(titleAlphaTheta,255,80,0.02,true)); //兩者統一
+				title2.setAlpha(rhs(titleAlphaTheta,255,80,0.02,true));
+			}
 
 			title.draw(Window::state().w/2,180);
 			title2.draw(Window::state().w/2,244);
