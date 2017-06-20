@@ -4,7 +4,7 @@
 #include <vector>
 #include <istream>
 #include "type.h"
-#include "chartPlayer.h"
+#include "..\gameplay\chartPlayer.h"
 
 using namespace std;
 
