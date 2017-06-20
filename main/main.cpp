@@ -704,7 +704,11 @@ int main(int argc,char* args[])
 											}
 											break;
 										case SDLK_j:
-											Mix_PlayChannel(-1,dark_s,0);
+											if(stage==0)
+											{
+												Mix_PlayChannel(-1,dark_s,0);
+												dark_anime.push_back(0);
+											}
 											if (judge[i] == 4)
 											{
 												bad_click_anime.push_back(make_pair(0,rgb(70,0,115)));
@@ -722,7 +726,10 @@ int main(int argc,char* args[])
 														Mix_PlayChannel(-1,spear_s,0);
 													}
 													else
+													{
+														Mix_PlayChannel(-1,dark_s,0);
 														dark_anime.push_back(0);
+													}
 												}
 											}
 											skill = 0;
@@ -1572,7 +1579,11 @@ int main(int argc,char* args[])
 											}
 											break;
 										case SDLK_j:
-											Mix_PlayChannel(-1,dark_s,0);
+											if(stage==0)
+											{
+												Mix_PlayChannel(-1,dark_s,0);
+												dark_anime.push_back(0);
+											}
 											if (judge[i] == 4)
 											{
 												bad_click_anime.push_back(make_pair(0,rgb(70,0,115)));
@@ -1588,7 +1599,10 @@ int main(int argc,char* args[])
 													Mix_PlayChannel(-1,spear_s,0);
 												}
 												else
+												{
+													Mix_PlayChannel(-1,dark_s,0);
 													dark_anime.push_back(0);
+												}
 											}
 											skill = 0;
 											break;
@@ -1865,7 +1879,7 @@ int main(int argc,char* args[])
 		fire = Mix_LoadWAV("sounds/fire.wav");
 		light_s = Mix_LoadWAV("sounds/light.wav");
 		Mix_Chunk *last = Mix_LoadWAV("sounds/last.wav");
-		Mix_VolumeMusic(64);
+
 		Mix_PlayMusic(mainBGM,-1);
 
 		talking2[0] = "呃！";
