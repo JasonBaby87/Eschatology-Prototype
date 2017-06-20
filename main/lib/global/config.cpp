@@ -30,6 +30,8 @@ void loadConfigurations(istream& is)
 		judgeWindow = Nanoseconds(llround(doubleTime * 1e9));
         judgeWindows.push_back(judgeWindow);
 	}
+
+	is >> displayedBeats;
 }
 
 #endif // CONFIG_CPP_INCLUDED
