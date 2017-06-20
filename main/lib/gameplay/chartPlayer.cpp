@@ -7,7 +7,6 @@
 #include <chrono>
 #include <algorithm>
 #include <cmath>
-#include "chartPlayer.h"
 #include "../global/exception.h"
 
 using namespace std;

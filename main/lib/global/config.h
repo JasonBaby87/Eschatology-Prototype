@@ -4,7 +4,6 @@
 #include <vector>
 #include <istream>
 #include "type.h"
-#include "..\gameplay\chartPlayer.h"
 
 using namespace std;
 
@@ -17,7 +16,7 @@ extern Milliseconds visualOffset = Milliseconds();
 	<p>The smaller the indices the stricter it is. */
 extern vector<Nanoseconds> judgeWindows = vector<Nanoseconds>();
 
-extern BeatDuration displayedBeats = 8;
+extern double displayedBeats = 8;
 
 void loadConfigurations(istream& is);
 
