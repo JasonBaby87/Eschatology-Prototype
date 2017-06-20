@@ -18,14 +18,17 @@ void Window::initialize(std::string title)
     box.w=480;
     box.h=800;
 
-    window=SDL_CreateWindow(title.c_str(),box.x,box.y,box.w,box.h,SDL_WINDOW_SHOWN);
-    //創立視窗，參數分別是標題、x、y、長、寬，最後的參數是我設定他一執行就彈出
+    window=SDL_CreateWindow(title.c_str(),box.x,box.y,box.w,box.h,0);
+    //創立視窗，參數分別是標題、x、y、長、寬
     renderer=SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
     //渲染器，參數-1代表讓SDL自動幫你選最適合的(後面我指定選項)的驅動
     //SDL_RENDERER_ACCELERATED，使用硬件加速的renderer=利用顯卡的力量
     // SDL_RENDERER_PRESENTVSYNC，使用SDL_RendererPresent這個函數，他會以顯示器的刷新率來更新畫面
+    SDL_SetRenderDrawColor(renderer,0,0,0,255); // 視窗設為黑色
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
 
-    SDL_SetWindowIcon(Window::window,icon);
+    SDL_SetWindowIcon(Window::window,icon); //icon
 }
 
 void Window::initialize_wide(std::string title)
@@ -40,14 +43,17 @@ void Window::initialize_wide(std::string title)
     box.w=800;
     box.h=480;
 
-    window=SDL_CreateWindow(title.c_str(),box.x,box.y,box.w,box.h,SDL_WINDOW_SHOWN);
-    //創立視窗，參數分別是標題、x、y、長、寬，最後的參數是我設定他一執行就彈出
+    window=SDL_CreateWindow(title.c_str(),box.x,box.y,box.w,box.h,0);
+    //創立視窗，參數分別是標題、x、y、長、寬
     renderer=SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
     //渲染器，參數-1代表讓SDL自動幫你選最適合的(後面我指定選項)的驅動
     //SDL_RENDERER_ACCELERATED，使用硬件加速的renderer=利用顯卡的力量
     // SDL_RENDERER_PRESENTVSYNC，使用SDL_RendererPresent這個函數，他會以顯示器的刷新率來更新畫面
+    SDL_SetRenderDrawColor(renderer,0,0,0,255); // 視窗設為黑色
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
 
-    SDL_SetWindowIcon(Window::window,icon);
+    SDL_SetWindowIcon(Window::window,icon); //icon
 }
 
 SDL_Rect Window::state()

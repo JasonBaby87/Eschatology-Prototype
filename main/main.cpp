@@ -123,9 +123,9 @@ int main(int argc,char* args[])
 					slide = true;
 				}
 				if(e.type==SDL_MOUSEMOTION && slide_down>3.14 ) //滑鼠移動
-					alurensAngle+=e.motion.xrel+e.motion.yrel;
+					alurensAngle+=e.motion.xrel*0.1+e.motion.yrel*0.1;
 			}
-
+			alurensAngle+=0.25;
 			Window::clear();
 
 			bg.draw(-120,rhs(slide_down,-360,-180,0.01));
@@ -180,7 +180,23 @@ int main(int argc,char* args[])
 						}
 					}
 					else
-						alurensColor[alurenNum].b=rhs(alurensColorTheta,128,240,0.1,true);
+					{
+						switch(alurenNum)
+			            {
+			                case 0:
+								alurensColor[alurenNum].g=rhs(alurensColorTheta,160,128,0.05,true);
+	                    		break;
+                			case 1:
+								alurensColor[alurenNum].b=rhs(alurensColorTheta,240,128,0.05,true);
+								break;
+                			case 2:
+								alurensColor[alurenNum].r=rhs(alurensColorTheta,164,211,0.05,true);
+                    			break;
+                			case 3:
+								alurensColor[alurenNum].r=rhs(alurensColorTheta,240,176,0.05,true);
+                    			break;
+            			}
+					}
 				}
 				alurens.setColor(alurensColor[alurenNum]);
 				alurens.draw(Window::state().w/2,Window::state().h/2+80,alurenNum,alurensAngle); //繪製在螢幕正中間，切換到相對應的子圖，旋轉alurensAngle度
@@ -243,6 +259,7 @@ int main(int argc,char* args[])
 		Texture face2("img/face2.png");
 		Texture face3("img/face3.png");
 		Texture bg_flare("img/bg_flare.png");
+		bg_flare.setDstRect(0,0,{20,0});
 
 		mainBGM = Mix_LoadMUS("sounds/starting.ogg");
 		Mix_Chunk *blow = Mix_LoadWAV("sounds/blow.wav");
@@ -251,7 +268,7 @@ int main(int argc,char* args[])
 
 		string talking[39];
 		talking[0] = "報告，已經確認黑盒子反應";
-		talking[1] = "目標，奪取黑盒子並消滅目擊相關人士";
+		talking[1] = "目標：奪取黑盒子並消滅目擊相關人士";
 		talking[2] = "進行最後確認";
 		talking[3] = "北方";
 		talking[4] = "無異狀";
@@ -261,8 +278,8 @@ int main(int argc,char* args[])
 		talking[8] = "無異狀";
 		talking[9] = "西方";
 		talking[10] = "無異狀";
-		talking[11] = "確認完畢，倒數10秒";
-		talking[12] = "10！";
+		talking[11] = "確認完畢，倒數十秒";
+		talking[12] = " 10！";
 		talking[13] = "！！！";
 		talking[14] = "居然不知不覺睡著了......";
 		talking[15] = "已經很晚了啊，不知道爸睡了沒？";
@@ -372,13 +389,13 @@ int main(int argc,char* args[])
 			}
 			else if (talk == 25)
 			{
-				shake += direction * 30;
+				shake += direction * 20;
 				shake_times++;
-				if (shake == -30)
+				if (shake == -20)
 					direction = 1;
-				if (shake == 30)
+				if (shake == 20)
 					direction = -1;
-				if (shake_times == 48)
+				if (shake_times == 35)
 				{
 					talk = 26;
 					bg2.draw(0,0);
@@ -558,6 +575,7 @@ int main(int argc,char* args[])
 		bool pressing[4] = {false,false,false,false};
 		Mix_PlayChannel(-1,spear_s,0);
 		fps.start();
+		replay = false;
 		while (!quit && !skip)
 		{
 			if (replay)
@@ -717,7 +735,8 @@ int main(int argc,char* args[])
 											if(stage==0)
 											{
 												Mix_PlayChannel(-1,dark_s,0);
-												dark_anime.push_back(0);
+												if (judge[i] != 4)
+													dark_anime.push_back(0);
 											}
 											if (judge[i] == 4)
 											{
@@ -829,7 +848,7 @@ int main(int argc,char* args[])
 						delete temp2;
 						delete temp3;
 					}
-					else if (display > 78 && display < 510)
+					else if (display > 78 && display < 310)
 					{
 						Texture* temp = new Texture(battle_text,"font/freeWing.ttf",rgb(255, 255, 255),24);
 						Texture* temp2 = new Texture(battle_text2,"font/freeWing.ttf",rgb(255, 255, 255),24);
@@ -837,11 +856,11 @@ int main(int argc,char* args[])
 						temp->setDstRect(0,0,temp->setPoint());
 						temp2->setDstRect(0,0,temp2->setPoint());
 						temp3->setDstRect(0,0,temp3->setPoint());
-						if (display > 480)
+						if (display > 280)
 						{
-							temp->setAlpha(240-(display-480)*8);
-							temp2->setAlpha(240-(display-480)*8);
-							temp3->setAlpha(240-(display-480)*8);
+							temp->setAlpha(240-(display-280)*8);
+							temp2->setAlpha(240-(display-280)*8);
+							temp3->setAlpha(240-(display-280)*8);
 						}
 						temp->draw(240,300);
 						temp2->draw(240,336);
@@ -851,7 +870,7 @@ int main(int argc,char* args[])
 						delete temp3;
 					}
 
-					if (display < 540 && cls_pos == 800)
+					if (display < 340 && cls_pos == 800)
 					{
 						display++;
 						if (display == 334)
@@ -861,32 +880,29 @@ int main(int argc,char* args[])
 							chart->start();
 							attack.start();
 						}
-						else if (display > 480 && display <= 510)
+						if (display > 280 && display <= 310)
 						{
-							hp_layer->draw((display-480)*8-240,180);
-							hp2_layer->draw(480-(display-480)*8,180);
-							full_hp.setAlpha((display-480)*8+15);
-							full_hp2.setAlpha((display-480)*8+15);
+							hp_layer->draw((display-280)*8-240,180);
+							hp2_layer->draw(480-(display-280)*8,180);
+							full_hp.setAlpha((display-280)*8+15);
+							full_hp2.setAlpha((display-280)*8+15);
 							full_hp.draw(15,195);
 							full_hp2.draw(465-full_hp2.getWidth(),195);
 						}
-						else if (display > 510)
+						else if (display > 310 && display < 340)
 						{
 							hp_layer->draw(0,180);
 							hp2_layer->draw(240,180);
 							full_hp.draw(15,195);
 							full_hp2.draw(465-full_hp2.getWidth(),195);
-							aluren->setAlpha((display-510)*8+15);
+							aluren->setAlpha((display-310)*8+15);
 							aluren->draw(90,270);
 						}
-						if (display == 540)
-						{
-							in_battle = true;
-							cls_pos = 0;
-						}
 					}
-					if (display == 540)
+					if (display == 340)
 					{
+						in_battle = true;
+						cls_pos = 0;
 						hp_ground->draw(0,180);
 						hp2_ground->draw(240,180);
 						hp_layer->draw(hp1*240/100-240,180);
@@ -1589,13 +1605,9 @@ int main(int argc,char* args[])
 											}
 											break;
 										case SDLK_j:
-											if(stage==0)
-											{
-												Mix_PlayChannel(-1,dark_s,0);
-												dark_anime.push_back(0);
-											}
 											if (judge[i] == 4)
 											{
+												Mix_PlayChannel(-1,dark_s,0);
 												bad_click_anime.push_back(make_pair(0,rgb(70,0,115)));
 												hp1 -= e_damage/2;
 											}
