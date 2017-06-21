@@ -501,6 +501,7 @@ int main(int argc,char* args[])
 		Texture* hp2_layer = new Texture("img/hp2_layer.png");
 		Texture* aluren = new Texture("img/aluren.png");
 		Texture* aluren_click = new Texture("img/aluren_click.png");
+		Texture* temp_circle = new Texture("img/circle.png");
 		Texture* buttonFlame = new Texture("img/buttonFlame.png");
 		Texture* buttonFlame_p = new Texture("img/buttonFlame_p.png");
 		Texture* buttonIce = new Texture("img/buttonIce.png");
@@ -1076,12 +1077,11 @@ int main(int argc,char* args[])
 					auto temp_chart = chart->getNotePositions(BEAT_DURATION);
 					for (int i = 0; i < temp_chart.size(); i++)
 					{
-						Texture temp_circle("img/circle.png");
 						int temp_r = 300*(BEAT_DURATION-temp_chart.at(i).first)/BEAT_DURATION;
 						if (temp_r == 0)
 							temp_r = 2;
-						temp_circle.setDstRect(temp_r,temp_r);
-						temp_circle.draw(240-temp_r/2,420-temp_r/2);
+						temp_circle->setDstRect(temp_r,temp_r);
+						temp_circle->draw(240-temp_r/2,420-temp_r/2);
 					}
 				}
 				////////////////////////////////////////////////////////動畫表現
@@ -1210,6 +1210,7 @@ int main(int argc,char* args[])
 		delete battle_bg;
 		delete aluren;
 		delete aluren_click;
+		delete temp_circle;
 		delete buttonFlame;
 		delete buttonFlame_p;
 		delete buttonIce;
@@ -1427,6 +1428,7 @@ int main(int argc,char* args[])
 		buttonDark = new Texture("img/buttonDark.png");
 		buttonDark_p = new Texture("img/buttonDark_p.png");
 		battle_bg = new Texture("img/battle_bg.png");
+		temp_circle = new Texture("img/circle.png");
 		flame = new Texture* [6];
 		ice = new Texture* [6];
 		light = new Texture* [6];
@@ -1466,7 +1468,13 @@ int main(int argc,char* args[])
 		display = 0;
 		cls_pos = 0;
 		hp1 = 100;
-		hp2 = 1200;
+		int hp2_base;
+		if(level==1)
+			hp2_base = 1200;
+		if(level==2 || level==3)
+			hp2_base = 6000;
+		hp2=hp2_base;
+
 		skill = 0;
 		click_effect = 0;
 		in_battle = false;
@@ -1695,7 +1703,7 @@ int main(int argc,char* args[])
 					hp_ground->draw(0,180);
 					hp2_ground->draw(240,180);
 					hp_layer->draw(hp1*240/100-240,180);
-					hp2_layer->draw(480-hp2*240/1200,180);
+					hp2_layer->draw(480-hp2*240/hp2_base,180);
 					stringstream ss;
 					stringstream ss2;
 					string temp_hp;
@@ -1704,7 +1712,7 @@ int main(int argc,char* args[])
 					Texture* hp1_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
 					ss2 << hp2;
 					ss2 >> temp_hp;
-					Texture* hp2_t = new Texture(temp_hp+"/1200","font/freeWing.ttf",rgb(255, 255, 255),16);
+					Texture* hp2_t = new Texture(temp_hp+"/"+to_string(hp2_base),"font/freeWing.ttf",rgb(255, 255, 255),16);
 					hp1_t->draw(15,195);
 					hp2_t->draw(465-hp2_t->getWidth(),195);
 					aluren->draw(90,270);
@@ -1723,12 +1731,11 @@ int main(int argc,char* args[])
 					auto temp_chart = chart->getNotePositions();
 					for (int i = 0; i < temp_chart.size(); i++)
 					{
-						Texture temp_circle("img/circle.png");
 						int temp_r = 300*(BEAT_DURATION-temp_chart.at(i).first)/BEAT_DURATION;
 						if (temp_r == 0)
 							temp_r = 2;
-						temp_circle.setDstRect(temp_r,temp_r);
-						temp_circle.draw(240-temp_r/2,420-temp_r/2);
+						temp_circle->setDstRect(temp_r,temp_r);
+						temp_circle->draw(240-temp_r/2,420-temp_r/2);
 					}
 				}
 				////////////////////////////////////////////////////////動畫表現
@@ -1791,7 +1798,7 @@ int main(int argc,char* args[])
 					hp_layer->draw(-240+display,180);
 					hp2_layer->draw(480-display,180);
 					Texture* hp1_t = new Texture("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
-					Texture* hp2_t = new Texture("1200/1200","font/freeWing.ttf",rgb(255, 255, 255),16);
+					Texture* hp2_t = new Texture(to_string(hp2_base)+"/"+to_string(hp2_base),"font/freeWing.ttf",rgb(255, 255, 255),16);
 					hp1_t->setAlpha(display+15);
 					hp1_t->draw(15,195);
 					hp2_t->setAlpha(display+15);
@@ -1866,6 +1873,7 @@ int main(int argc,char* args[])
 		delete battle_bg;
 		delete aluren;
 		delete aluren_click;
+		delete temp_circle;
 		delete buttonFlame;
 		delete buttonFlame_p;
 		delete buttonIce;
