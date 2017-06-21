@@ -51,7 +51,7 @@ float rhs(float& theta,float low,float up,float omega,bool loop=false)
 }
 
 int level=1;
-bool quit=false,skip=false,finished=true;
+bool quit=false,skip=false,finished=false;
 int main(int argc,char* args[])
 {
 	while (!quit)
