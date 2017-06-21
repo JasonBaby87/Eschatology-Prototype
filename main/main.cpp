@@ -1728,7 +1728,7 @@ int main(int argc,char* args[])
 				////////////////////////////////////////////////////////譜面顯示
 				for (int t = 0; t < 1 && in_battle; t++)
 				{
-					auto temp_chart = chart->getNotePositions();
+					auto temp_chart = chart->getNotePositions(BEAT_DURATION);
 					for (int i = 0; i < temp_chart.size(); i++)
 					{
 						int temp_r = 300*(BEAT_DURATION-temp_chart.at(i).first)/BEAT_DURATION;
