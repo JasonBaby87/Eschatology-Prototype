@@ -51,7 +51,7 @@ float rhs(float& theta,float low,float up,float omega,bool loop=false)
 }
 
 int level=1;
-bool quit=false,skip=false;
+bool quit=false,skip=false,finished=true;
 int main(int argc,char* args[])
 {
 	while (!quit)
@@ -72,6 +72,10 @@ int main(int argc,char* args[])
 
 		Texture title("Eschatology","font/freeWing.ttf",rgb(255, 255, 255),64);
 		Texture title2("pre-demo","font/freeWing.ttf",rgb(255, 255, 255),32);
+		Texture egg("空白鍵跳過場景","font/freeWing.ttf",rgb(255, 255, 255),16);
+		egg.setAlpha(0);
+		Texture egg2("數字鍵1~3切換難度","font/freeWing.ttf",rgb(255, 255, 255),16);
+		egg2.setAlpha(0);
 		title.setDstRect(0,0,title.setPoint()); //長寬為原材質長寬，錨點為中心
 		title2.setDstRect(0,0,title2.setPoint());
 
@@ -84,8 +88,8 @@ int main(int argc,char* args[])
 
 		int alurenNum=0; //用來紀錄現在的數字鍵值，-1代表按的是數字鍵以外的鍵
 		int twinkle=1; //用來當alurens切換子圖的延遲計數器
-		float alurensAngle=0,alurensAlphaTheta=0,alurensColorTheta=0.01,titleAlphaTheta=0,title2AlphaTheta=0; //用來記錄角度
-		//alurensAngle用來
+		float alurensAngle=0; //用來記錄角度
+		float alurensAlphaTheta=0,alurensColorTheta=0.01,titleAlphaTheta=0,title2AlphaTheta=0,eggTheta=0; //用來控制rhs
 
 		SDL_Event e;
 		SDL_Event trash_e;
@@ -215,6 +219,11 @@ int main(int argc,char* args[])
 			if(firstTitle)
 			{
 				title.setAlpha(rhs(titleAlphaTheta,255,0,0.007)); //透明度的簡諧運動
+				if (finished && slide_down>1.57)
+				{
+					egg.setAlpha(rhs(eggTheta,255,0,0.005));
+					egg2.setAlpha(rhs(eggTheta,255,0,0.005));
+				}
 				if(slide_down>1.57)
 					title2.setAlpha(rhs(title2AlphaTheta,255,0,0.01));
 				else
@@ -226,10 +235,20 @@ int main(int argc,char* args[])
 			{
 				title.setAlpha(rhs(titleAlphaTheta,255,80,0.02,true)); //兩者統一
 				title2.setAlpha(rhs(titleAlphaTheta,255,80,0.02,true));
+				if (finished)
+				{
+					egg.setAlpha(rhs(eggTheta,255,80,0.02,true));
+					egg2.setAlpha(rhs(eggTheta,255,80,0.02,true));
+				}
 			}
 
 			title.draw(Window::state().w/2,180);
 			title2.draw(Window::state().w/2,244);
+			if (finished)
+			{
+				egg.draw(475-egg.getWidth(),752);
+				egg2.draw(475-egg2.getWidth(),775);
+			}
 
 			if(fps.ticks()*FPS<1000)
 				SDL_Delay((1000/FPS)- fps.ticks());
@@ -1472,7 +1491,7 @@ int main(int argc,char* args[])
 		if(level==1)
 			hp2_base = 1200;
 		if(level==2 || level==3)
-			hp2_base = 6000;
+			hp2_base = 4000;
 		hp2=hp2_base;
 
 		skill = 0;
@@ -2100,5 +2119,6 @@ int main(int argc,char* args[])
 		if (quit)
 			exit(0);
 		skip=false;
+		finished=true;
 	}
 }
