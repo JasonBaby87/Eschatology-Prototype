@@ -72,12 +72,15 @@ int main(int argc,char* args[])
 
 		Texture title("Eschatology",rgb(255, 255, 255),64);
 		Texture title2("pre-demo",rgb(255, 255, 255),32);
-		Texture egg("空白鍵跳過場景",rgb(255, 255, 255),16);
+		Texture tips("Tap To Start",rgb(255, 255, 255),16);
+		tips.setAlpha(0);
+		Texture egg("TAB鍵跳過場景",rgb(255, 255, 255),16);
 		egg.setAlpha(0);
-		Texture egg2("數字鍵1~3切換難度",rgb(255, 255, 255),16);
+		Texture egg2("在此按下數字鍵1~3切換難度",rgb(255, 255, 255),16);
 		egg2.setAlpha(0);
 		title.setDstRect(0,0,title.setPoint()); //長寬為原材質長寬，錨點為中心
 		title2.setDstRect(0,0,title2.setPoint());
+		tips.setDstRect(0,0,tips.setPoint());
 
 		SDL_Color alurensColor[4]={rgb(255, 128, 128),rgb(255, 255, 128),rgb(211, 128, 255),rgb(176, 255, 255)};
 
@@ -89,7 +92,7 @@ int main(int argc,char* args[])
 		int alurenNum=0; //用來紀錄現在的數字鍵值，-1代表按的是數字鍵以外的鍵
 		int twinkle=1; //用來當alurens切換子圖的延遲計數器
 		float alurensAngle=0; //用來記錄角度
-		float alurensAlphaTheta=0,alurensColorTheta=0.01,titleAlphaTheta=0,title2AlphaTheta=0,eggTheta=0; //用來控制SHM
+		float alurensAlphaTheta=0,alurensColorTheta=0.02,titleAlphaTheta=0,title2AlphaTheta=0,eggTheta=0,tipsAlphaTheta=0; //用來控制SHM
 
 		SDL_Event e;
 		SDL_Event trash_e;
@@ -117,7 +120,7 @@ int main(int argc,char* args[])
 						case SDLK_ESCAPE:
 							quit=true;
 							break;
-						case SDLK_SPACE:
+						case SDLK_TAB:
 							skip=true;
 							break;
 						case SDLK_1:
@@ -144,50 +147,56 @@ int main(int argc,char* args[])
 
 			bg.draw(-120,SHM(slide_down,-360,-180,0.01));
 
-			if (slide_down>3.14) //畫魔法陣
+			if (slide_down>2.75) //畫魔法陣
 			{
 				if(first)
 				{
-					alurens.setAlpha(SHM(alurensAlphaTheta,255,0,0.04));
+					alurens.setAlpha(SHM(alurensAlphaTheta,255,0,0.016));
+					tips.setAlpha(SHM(tipsAlphaTheta,255,0,0.016));
 					if(alurensAlphaTheta>3.14)
 					{
 						alurensAlphaTheta=0;
+						tipsAlphaTheta=0.01;
 						first=false;
 					}
 				}
 				else
 				{
-					if(alurensColorTheta==0)
+					if(tipsAlphaTheta==0)
 					{
 						twinkle++;
-						alurensColorTheta=0.01;
+						alurensColorTheta+=0.02;
 					}
 
 					if(twinkle%3==0)
 					{
 						if(fadeInOut)
 						{
-							if(alurensAlphaTheta>3.14)
+							if(alurensAlphaTheta>3.14) //趁完全fade out的時候趕快換色換圖騰
 							{
 								if(alurenNum<3)
 									alurenNum++;
 								else
 									alurenNum=0;
 
-								alurensAlphaTheta=0;
+								alurensAlphaTheta=0; //給接下來的單程SHM fade in用
+								tipsAlphaTheta=0.01;
 								fadeInOut=false;
 							}
 							else
 							{
 								alurens.setAlpha(SHM(alurensAlphaTheta,0,255,0.04));
+								tips.setAlpha(SHM(tipsAlphaTheta,0,255,0.04));
 							}
 						}
-						else
+						else //fade in
 						{
 							alurens.setAlpha(SHM(alurensAlphaTheta,255,0,0.04));
+							tips.setAlpha(SHM(tipsAlphaTheta,255,0,0.04));
 							if(alurensAlphaTheta>3.14)
 							{
 								alurensAlphaTheta=0;
+								tipsAlphaTheta=0.01;
 								fadeInOut=true;
 								twinkle++;
 							}
@@ -195,34 +204,37 @@ int main(int argc,char* args[])
 					}
 					else
 					{
+						tips.setAlpha(SHM(tipsAlphaTheta,80,255,0.04,true));
 						switch(alurenNum)
 			            {
 			                case 0:
-								alurensColor[alurenNum].g=SHM(alurensColorTheta,160,128,0.05,true);
+								alurensColor[alurenNum].g=SHM(alurensColorTheta,160,128,0.04,true);
 	                    		break;
                 			case 1:
-								alurensColor[alurenNum].b=SHM(alurensColorTheta,240,128,0.05,true);
+								alurensColor[alurenNum].b=SHM(alurensColorTheta,240,128,0.04,true);
 								break;
                 			case 2:
-								alurensColor[alurenNum].r=SHM(alurensColorTheta,164,211,0.05,true);
+								alurensColor[alurenNum].r=SHM(alurensColorTheta,164,211,0.04,true);
                     			break;
                 			case 3:
-								alurensColor[alurenNum].r=SHM(alurensColorTheta,240,176,0.05,true);
+								alurensColor[alurenNum].r=SHM(alurensColorTheta,240,176,0.04,true);
                     			break;
             			}
 					}
 				}
 				alurens.setColor(alurensColor[alurenNum]);
+				tips.setColor(alurensColor[alurenNum]);
+				tips.draw(Window::state().w/2,644);
 				alurens.draw(Window::state().w/2,Window::state().h/2+80,alurenNum,alurensAngle); //繪製在螢幕正中間，切換到相對應的子圖，旋轉alurensAngle度
 			}
 
 			if(firstTitle)
 			{
 				title.setAlpha(SHM(titleAlphaTheta,255,0,0.007)); //透明度的簡諧運動
-				if (finished && slide_down>1.57)
+				if (finished && slide_down>3.14)
 				{
-					egg.setAlpha(SHM(eggTheta,255,0,0.005));
-					egg2.setAlpha(SHM(eggTheta,255,0,0.005));
+					egg.setAlpha(SHM(eggTheta,255,0,0.01));
+					egg2.setAlpha(SHM(eggTheta,255,0,0.01));
 				}
 				if(slide_down>1.57)
 					title2.setAlpha(SHM(title2AlphaTheta,255,0,0.01));
@@ -373,7 +385,7 @@ int main(int argc,char* args[])
 						case SDLK_ESCAPE:
 							quit=true;
 							break;
-						case SDLK_SPACE:
+						case SDLK_TAB:
 							skip=true;
 							break;
 					}
@@ -577,7 +589,8 @@ int main(int argc,char* args[])
 		cls_pos = 0;
 		string battle_text = "一些士兵擋住了去路";
 		string battle_text2 = "抓準魔力的流動";
-		string battle_text3 = "組成各種元素進行攻擊";
+		string battle_text3_1 = "利用按鍵 E F I J ";
+		string battle_text3_2="對應四種元素進行攻擊";
 		string battle_text4 = "...是魔法護甲！";
 		string battle_text5 = "依序組合［火冰火光暗］施展雷槍";
 		int hp1 = 100;
@@ -657,7 +670,7 @@ int main(int argc,char* args[])
 						quit=true;
 						break;
 					}
-					else if(e.key.keysym.sym == SDLK_SPACE)
+					else if(e.key.keysym.sym == SDLK_TAB)
 					{
 						skip=true;
 						break;
@@ -863,11 +876,11 @@ int main(int argc,char* args[])
 						delete temp;
 						delete temp2;
 					}
-					else if (display <= 78)
+					else if (display <= 69)
 					{
 						Texture* temp = new Texture(battle_text,rgb(255, 255, 255),24);
 						Texture* temp2 = new Texture(battle_text2,rgb(255, 255, 255),24);
-						Texture* temp3 = new Texture(battle_text3.substr(0,((display-48)/3)*3),rgb(255, 255, 255),24);
+						Texture* temp3 = new Texture(battle_text3_1.substr(0,((display-48)/3)*3),rgb(255, 255, 255),24);
 						temp->setDstRect(0,0,temp->setPoint());
 						temp2->setDstRect(0,0,temp2->setPoint());
 						temp3->setDstRect(0,0,temp3->setPoint());
@@ -878,29 +891,52 @@ int main(int argc,char* args[])
 						delete temp2;
 						delete temp3;
 					}
-					else if (display > 78 && display < 310)
+					else if (display <= 99)
 					{
 						Texture* temp = new Texture(battle_text,rgb(255, 255, 255),24);
 						Texture* temp2 = new Texture(battle_text2,rgb(255, 255, 255),24);
-						Texture* temp3 = new Texture(battle_text3,rgb(255, 255, 255),24);
+						Texture* temp3 = new Texture(battle_text3_1,rgb(255, 255, 255),24);
+						Texture* temp4 = new Texture(battle_text3_2.substr(0,((display-69)/3)*3),rgb(255, 255, 255),24);
 						temp->setDstRect(0,0,temp->setPoint());
 						temp2->setDstRect(0,0,temp2->setPoint());
 						temp3->setDstRect(0,0,temp3->setPoint());
-						if (display > 280)
+						temp4->setDstRect(0,0,temp4->setPoint());
+						temp->draw(240,300);
+						temp2->draw(240,336);
+						temp3->draw(240,372);
+						temp4->draw(240,408);
+						delete temp;
+						delete temp2;
+						delete temp3;
+						delete temp4;
+					}
+					else if (display > 99 && display < 410)
+					{
+						Texture* temp = new Texture(battle_text,rgb(255, 255, 255),24);
+						Texture* temp2 = new Texture(battle_text2,rgb(255, 255, 255),24);
+						Texture* temp3 = new Texture(battle_text3_1,rgb(255, 255, 255),24);
+						Texture* temp4 = new Texture(battle_text3_2,rgb(255, 255, 255),24);
+						temp->setDstRect(0,0,temp->setPoint());
+						temp2->setDstRect(0,0,temp2->setPoint());
+						temp3->setDstRect(0,0,temp3->setPoint());
+						temp4->setDstRect(0,0,temp4->setPoint());
+						if (display > 380)
 						{
-							temp->setAlpha(240-(display-280)*8);
-							temp2->setAlpha(240-(display-280)*8);
-							temp3->setAlpha(240-(display-280)*8);
+							temp->setAlpha(240-(display-380)*8);
+							temp2->setAlpha(240-(display-380)*8);
+							temp3->setAlpha(240-(display-380)*8);
+							temp4->setAlpha(240-(display-380)*8);
 						}
 						temp->draw(240,300);
 						temp2->draw(240,336);
 						temp3->draw(240,372);
+						temp4->draw(240,408);
 						delete temp;
 						delete temp2;
 						delete temp3;
 					}
 
-					if (display < 340 && cls_pos == 800)
+					if (display < 440 && cls_pos == 800)
 					{
 						display++;
 						if (display == 334)
@@ -910,26 +946,26 @@ int main(int argc,char* args[])
 							chart->start();
 							attack.start();
 						}
-						if (display > 280 && display <= 310)
+						if (display > 380 && display <= 410)
 						{
-							hp_layer->draw((display-280)*8-240,180);
-							hp2_layer->draw(480-(display-280)*8,180);
-							full_hp.setAlpha((display-280)*8+15);
-							full_hp2.setAlpha((display-280)*8+15);
+							hp_layer->draw((display-380)*8-240,180);
+							hp2_layer->draw(480-(display-380)*8,180);
+							full_hp.setAlpha((display-380)*8+15);
+							full_hp2.setAlpha((display-380)*8+15);
 							full_hp.draw(15,195);
 							full_hp2.draw(465-full_hp2.getWidth(),195);
 						}
-						else if (display > 310 && display < 340)
+						else if (display > 410 && display < 440)
 						{
 							hp_layer->draw(0,180);
 							hp2_layer->draw(240,180);
 							full_hp.draw(15,195);
 							full_hp2.draw(465-full_hp2.getWidth(),195);
-							aluren->setAlpha((display-310)*8+15);
+							aluren->setAlpha((display-410)*8+15);
 							aluren->draw(90,270);
 						}
 					}
-					if (display == 340)
+					if (display == 440)
 					{
 						in_battle = true;
 						cls_pos = 0;
@@ -1315,7 +1351,7 @@ int main(int argc,char* args[])
 						case SDLK_ESCAPE:
 							quit=true;
 							break;
-						case SDLK_SPACE:
+						case SDLK_TAB:
 							skip=true;
 							break;
 					}
@@ -1507,6 +1543,7 @@ int main(int argc,char* args[])
 		int cls_pos2 = 0;
 
 		fps.start();
+		bad_click_anime.push_back(make_pair(0,rgb(255,0,0)));
 		while (!quit && !skip)
 		{
 			if (in_battle)
@@ -1547,7 +1584,7 @@ int main(int argc,char* args[])
 						quit=true;
 						break;
 					}
-					else if(e.key.keysym.sym == SDLK_SPACE)
+					else if(e.key.keysym.sym == SDLK_TAB)
 					{
 						skip=true;
 						break;
@@ -1592,7 +1629,6 @@ int main(int argc,char* args[])
 											Mix_PlayChannel(-1,flame_s,0);
 											if (judge[i] == 4)
 											{
-												bad_click_anime.push_back(make_pair(0,rgb(255,0,0)));
 												hp1 -= e_damage/2;
 												skill = 0;
 											}
@@ -1986,7 +2022,7 @@ int main(int argc,char* args[])
 						case SDLK_ESCAPE:
 							quit=true;
 							break;
-						case SDLK_SPACE:
+						case SDLK_TAB:
 							skip=true;
 							break;
 					}
