@@ -40,7 +40,7 @@ const int FPS=60;
 *   @param up簡諧運動上限
 *   @param omega虛擬圓角速度
 */
-float rhs(float& theta,float low,float up,float omega,bool loop=false)
+float SHM(float& theta,float low,float up,float omega,bool loop=false)
 {
 	if((!loop && theta<=3.14) || loop) //如果他不要loop，那theta到pi之後就不要再加了；如果他要loop那就一直放心加吧
 		theta+=omega;
@@ -70,11 +70,11 @@ int main(int argc,char* args[])
 		alurens.setDstRect(0,0,alurens.setPoint()); //長寬為原材質長寬，錨點為中心
 		alurens.setClipRect(2,2);   //分割成2x2
 
-		Texture title("Eschatology","font/freeWing.ttf",rgb(255, 255, 255),64);
-		Texture title2("pre-demo","font/freeWing.ttf",rgb(255, 255, 255),32);
-		Texture egg("空白鍵跳過場景","font/freeWing.ttf",rgb(255, 255, 255),16);
+		Texture title("Eschatology",rgb(255, 255, 255),64);
+		Texture title2("pre-demo",rgb(255, 255, 255),32);
+		Texture egg("空白鍵跳過場景",rgb(255, 255, 255),16);
 		egg.setAlpha(0);
-		Texture egg2("數字鍵1~3切換難度","font/freeWing.ttf",rgb(255, 255, 255),16);
+		Texture egg2("數字鍵1~3切換難度",rgb(255, 255, 255),16);
 		egg2.setAlpha(0);
 		title.setDstRect(0,0,title.setPoint()); //長寬為原材質長寬，錨點為中心
 		title2.setDstRect(0,0,title2.setPoint());
@@ -89,7 +89,7 @@ int main(int argc,char* args[])
 		int alurenNum=0; //用來紀錄現在的數字鍵值，-1代表按的是數字鍵以外的鍵
 		int twinkle=1; //用來當alurens切換子圖的延遲計數器
 		float alurensAngle=0; //用來記錄角度
-		float alurensAlphaTheta=0,alurensColorTheta=0.01,titleAlphaTheta=0,title2AlphaTheta=0,eggTheta=0; //用來控制rhs
+		float alurensAlphaTheta=0,alurensColorTheta=0.01,titleAlphaTheta=0,title2AlphaTheta=0,eggTheta=0; //用來控制SHM
 
 		SDL_Event e;
 		SDL_Event trash_e;
@@ -142,13 +142,13 @@ int main(int argc,char* args[])
 			alurensAngle+=0.25;
 			Window::clear();
 
-			bg.draw(-120,rhs(slide_down,-360,-180,0.01));
+			bg.draw(-120,SHM(slide_down,-360,-180,0.01));
 
 			if (slide_down>3.14) //畫魔法陣
 			{
 				if(first)
 				{
-					alurens.setAlpha(rhs(alurensAlphaTheta,255,0,0.04));
+					alurens.setAlpha(SHM(alurensAlphaTheta,255,0,0.04));
 					if(alurensAlphaTheta>3.14)
 					{
 						alurensAlphaTheta=0;
@@ -179,12 +179,12 @@ int main(int argc,char* args[])
 							}
 							else
 							{
-								alurens.setAlpha(rhs(alurensAlphaTheta,0,255,0.04));
+								alurens.setAlpha(SHM(alurensAlphaTheta,0,255,0.04));
 							}
 						}
 						else
 						{
-							alurens.setAlpha(rhs(alurensAlphaTheta,255,0,0.04));
+							alurens.setAlpha(SHM(alurensAlphaTheta,255,0,0.04));
 							if(alurensAlphaTheta>3.14)
 							{
 								alurensAlphaTheta=0;
@@ -198,16 +198,16 @@ int main(int argc,char* args[])
 						switch(alurenNum)
 			            {
 			                case 0:
-								alurensColor[alurenNum].g=rhs(alurensColorTheta,160,128,0.05,true);
+								alurensColor[alurenNum].g=SHM(alurensColorTheta,160,128,0.05,true);
 	                    		break;
                 			case 1:
-								alurensColor[alurenNum].b=rhs(alurensColorTheta,240,128,0.05,true);
+								alurensColor[alurenNum].b=SHM(alurensColorTheta,240,128,0.05,true);
 								break;
                 			case 2:
-								alurensColor[alurenNum].r=rhs(alurensColorTheta,164,211,0.05,true);
+								alurensColor[alurenNum].r=SHM(alurensColorTheta,164,211,0.05,true);
                     			break;
                 			case 3:
-								alurensColor[alurenNum].r=rhs(alurensColorTheta,240,176,0.05,true);
+								alurensColor[alurenNum].r=SHM(alurensColorTheta,240,176,0.05,true);
                     			break;
             			}
 					}
@@ -218,14 +218,14 @@ int main(int argc,char* args[])
 
 			if(firstTitle)
 			{
-				title.setAlpha(rhs(titleAlphaTheta,255,0,0.007)); //透明度的簡諧運動
+				title.setAlpha(SHM(titleAlphaTheta,255,0,0.007)); //透明度的簡諧運動
 				if (finished && slide_down>1.57)
 				{
-					egg.setAlpha(rhs(eggTheta,255,0,0.005));
-					egg2.setAlpha(rhs(eggTheta,255,0,0.005));
+					egg.setAlpha(SHM(eggTheta,255,0,0.005));
+					egg2.setAlpha(SHM(eggTheta,255,0,0.005));
 				}
 				if(slide_down>1.57)
-					title2.setAlpha(rhs(title2AlphaTheta,255,0,0.01));
+					title2.setAlpha(SHM(title2AlphaTheta,255,0,0.01));
 				else
 					title2.setAlpha(0);
 				if(title2AlphaTheta>3.14)
@@ -233,12 +233,12 @@ int main(int argc,char* args[])
 			}
 			else
 			{
-				title.setAlpha(rhs(titleAlphaTheta,255,80,0.02,true)); //兩者統一
-				title2.setAlpha(rhs(titleAlphaTheta,255,80,0.02,true));
+				title.setAlpha(SHM(titleAlphaTheta,255,80,0.02,true)); //兩者統一
+				title2.setAlpha(SHM(titleAlphaTheta,255,80,0.02,true));
 				if (finished)
 				{
-					egg.setAlpha(rhs(eggTheta,255,80,0.02,true));
-					egg2.setAlpha(rhs(eggTheta,255,80,0.02,true));
+					egg.setAlpha(SHM(eggTheta,255,80,0.02,true));
+					egg2.setAlpha(SHM(eggTheta,255,80,0.02,true));
 				}
 			}
 
@@ -456,7 +456,7 @@ int main(int argc,char* args[])
 			{
 				if (display <= 54)
 				{
-					Texture* temp = new Texture(talking[talk].substr(0,(display/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+					Texture* temp = new Texture(talking[talk].substr(0,(display/3)*3),rgb(255, 255, 255),24);
 					temp->setDstRect(0,0,temp->setPoint());
 					if (talk < 13 || talk == 21 || talk == 22 || talk == 23 || talk == 24 || talk == 37)
 						temp->draw(400,400);
@@ -466,13 +466,13 @@ int main(int argc,char* args[])
 				}
 				else
 				{
-					Texture* temp = new Texture(talking[talk].substr(0,54),"font/freeWing.ttf",rgb(255, 255, 255),24);
+					Texture* temp = new Texture(talking[talk].substr(0,54),rgb(255, 255, 255),24);
 					temp->setDstRect(0,0,temp->setPoint());
 					if (talk < 13 || talk == 21 || talk == 22 || talk == 23 || talk == 24 || talk == 37)
 						temp->draw(400,376);
 					else
 						temp->draw(460,376);
-					Texture* temp2 = new Texture(talking[talk].substr(54,(display/3)*3-54),"font/freeWing.ttf",rgb(255, 255, 255),24);
+					Texture* temp2 = new Texture(talking[talk].substr(54,(display/3)*3-54),rgb(255, 255, 255),24);
 					temp2->setDstRect(0,0,temp2->setPoint());
 					if (talk < 13 || talk == 21 || talk == 22 || talk == 23 || talk == 24 || talk == 37)
 						temp2->draw(400,424);
@@ -530,8 +530,8 @@ int main(int argc,char* args[])
 		Texture* buttonDark = new Texture("img/buttonDark.png");
 		Texture* buttonDark_p = new Texture("img/buttonDark_p.png");
 		Texture* battle_bg = new Texture("img/battle_bg.png");
-		Texture full_hp("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
-		Texture full_hp2("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+		Texture full_hp("100/100",rgb(255, 255, 255),16);
+		Texture full_hp2("100/100",rgb(255, 255, 255),16);
 		Texture** flame = new Texture* [6];
 		Texture** ice = new Texture* [6];
 		Texture** light = new Texture* [6];
@@ -847,15 +847,15 @@ int main(int argc,char* args[])
 					soldier.draw(240,0);
 					if (display <= 27)
 					{
-						Texture* temp = new Texture(battle_text.substr(0,(display/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+						Texture* temp = new Texture(battle_text.substr(0,(display/3)*3),rgb(255, 255, 255),24);
 						temp->setDstRect(0,0,temp->setPoint());
 						temp->draw(240,300);
 						delete temp;
 					}
 					else if (display <= 48)
 					{
-						Texture* temp = new Texture(battle_text,"font/freeWing.ttf",rgb(255, 255, 255),24);
-						Texture* temp2 = new Texture(battle_text2.substr(0,((display-27)/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+						Texture* temp = new Texture(battle_text,rgb(255, 255, 255),24);
+						Texture* temp2 = new Texture(battle_text2.substr(0,((display-27)/3)*3),rgb(255, 255, 255),24);
 						temp->setDstRect(0,0,temp->setPoint());
 						temp2->setDstRect(0,0,temp2->setPoint());
 						temp->draw(240,300);
@@ -865,9 +865,9 @@ int main(int argc,char* args[])
 					}
 					else if (display <= 78)
 					{
-						Texture* temp = new Texture(battle_text,"font/freeWing.ttf",rgb(255, 255, 255),24);
-						Texture* temp2 = new Texture(battle_text2,"font/freeWing.ttf",rgb(255, 255, 255),24);
-						Texture* temp3 = new Texture(battle_text3.substr(0,((display-48)/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+						Texture* temp = new Texture(battle_text,rgb(255, 255, 255),24);
+						Texture* temp2 = new Texture(battle_text2,rgb(255, 255, 255),24);
+						Texture* temp3 = new Texture(battle_text3.substr(0,((display-48)/3)*3),rgb(255, 255, 255),24);
 						temp->setDstRect(0,0,temp->setPoint());
 						temp2->setDstRect(0,0,temp2->setPoint());
 						temp3->setDstRect(0,0,temp3->setPoint());
@@ -880,9 +880,9 @@ int main(int argc,char* args[])
 					}
 					else if (display > 78 && display < 310)
 					{
-						Texture* temp = new Texture(battle_text,"font/freeWing.ttf",rgb(255, 255, 255),24);
-						Texture* temp2 = new Texture(battle_text2,"font/freeWing.ttf",rgb(255, 255, 255),24);
-						Texture* temp3 = new Texture(battle_text3,"font/freeWing.ttf",rgb(255, 255, 255),24);
+						Texture* temp = new Texture(battle_text,rgb(255, 255, 255),24);
+						Texture* temp2 = new Texture(battle_text2,rgb(255, 255, 255),24);
+						Texture* temp3 = new Texture(battle_text3,rgb(255, 255, 255),24);
 						temp->setDstRect(0,0,temp->setPoint());
 						temp2->setDstRect(0,0,temp2->setPoint());
 						temp3->setDstRect(0,0,temp3->setPoint());
@@ -942,10 +942,10 @@ int main(int argc,char* args[])
 						string temp_hp;
 						ss << hp1;
 						ss >> temp_hp;
-						Texture* hp1_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+						Texture* hp1_t = new Texture(temp_hp+"/100",rgb(255, 255, 255),16);
 						ss2 << hp2;
 						ss2 >> temp_hp;
-						Texture* hp2_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+						Texture* hp2_t = new Texture(temp_hp+"/100",rgb(255, 255, 255),16);
 						hp1_t->draw(15,195);
 						hp2_t->draw(465-hp2_t->getWidth(),195);
 						aluren->draw(90,270);
@@ -969,8 +969,8 @@ int main(int argc,char* args[])
 							string temp_hp;
 							ss << hp1;
 							ss >> temp_hp;
-							Texture* hp1_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
-							Texture* hp2_t = new Texture("0/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+							Texture* hp1_t = new Texture(temp_hp+"/100",rgb(255, 255, 255),16);
+							Texture* hp2_t = new Texture("0/100",rgb(255, 255, 255),16);
 							hp1_t->draw(15,195);
 							hp2_t->draw(465-hp2_t->getWidth(),195);
 						}
@@ -987,25 +987,25 @@ int main(int argc,char* args[])
 							string temp_hp;
 							ss << hp1;
 							ss >> temp_hp;
-							Texture* hp1_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+							Texture* hp1_t = new Texture(temp_hp+"/100",rgb(255, 255, 255),16);
 							ss2 << hp2;
 							ss2 >> temp_hp;
-							Texture* hp2_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+							Texture* hp2_t = new Texture(temp_hp+"/100",rgb(255, 255, 255),16);
 							hp1_t->draw(15,195);
 							hp2_t->draw(465-hp2_t->getWidth(),195);
 							if (display <= 51)
 							{
-								Texture* temp = new Texture(battle_text.substr(0,((display-30)/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+								Texture* temp = new Texture(battle_text.substr(0,((display-30)/3)*3),rgb(255, 255, 255),24);
 								temp->setDstRect(0,0,temp->setPoint());
 								temp->draw(240,300);
 								delete temp;
 							}
 							else if (display < 90)
 							{
-								Texture* temp = new Texture(battle_text4.substr(0,21),"font/freeWing.ttf",rgb(255, 255, 255),24);
+								Texture* temp = new Texture(battle_text4.substr(0,21),rgb(255, 255, 255),24);
 								temp->setDstRect(0,0,temp->setPoint());
 								temp->draw(240,300);
-								Texture* temp2 = new Texture(battle_text5.substr(0,((display-51)/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+								Texture* temp2 = new Texture(battle_text5.substr(0,((display-51)/3)*3),rgb(255, 255, 255),24);
 								temp2->setDstRect(0,0,temp2->setPoint());
 								temp2->draw(240,336);
 								delete temp;
@@ -1023,13 +1023,13 @@ int main(int argc,char* args[])
 							string temp_hp;
 							ss << hp1;
 							ss >> temp_hp;
-							Texture* hp1_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
-							Texture* hp2_t = new Texture("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+							Texture* hp1_t = new Texture(temp_hp+"/100",rgb(255, 255, 255),16);
+							Texture* hp2_t = new Texture("100/100",rgb(255, 255, 255),16);
 							hp1_t->draw(15,195);
 							hp2_t->draw(465-hp2_t->getWidth(),195);
 							if (display < 480)
 							{
-								Texture* temp = new Texture(battle_text4.substr(0,21),"font/freeWing.ttf",rgb(255, 255, 255),24);
+								Texture* temp = new Texture(battle_text4.substr(0,21),rgb(255, 255, 255),24);
 								temp->setDstRect(0,0,temp->setPoint());
 								if (display > 450)
 									temp->setAlpha(240-(display-450)*8);
@@ -1037,14 +1037,14 @@ int main(int argc,char* args[])
 								delete temp;
 								if (display < 96)
 								{
-									Texture* temp2 = new Texture(battle_text5.substr(0,((display-51)/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+									Texture* temp2 = new Texture(battle_text5.substr(0,((display-51)/3)*3),rgb(255, 255, 255),24);
 									temp2->setDstRect(0,0,temp2->setPoint());
 									temp2->draw(240,336);
 									delete temp2;
 								}
 								else
 								{
-									Texture* temp2 = new Texture(battle_text5.substr(0,45),"font/freeWing.ttf",rgb(255, 255, 255),24);
+									Texture* temp2 = new Texture(battle_text5.substr(0,45),rgb(255, 255, 255),24);
 									temp2->setDstRect(0,0,temp2->setPoint());
 									if (display > 450)
 										temp2->setAlpha(240-(display-450)*8);
@@ -1073,10 +1073,10 @@ int main(int argc,char* args[])
 						string temp_hp;
 						ss << hp1;
 						ss >> temp_hp;
-						Texture* hp1_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+						Texture* hp1_t = new Texture(temp_hp+"/100",rgb(255, 255, 255),16);
 						ss2 << hp2;
 						ss2 >> temp_hp;
-						Texture* hp2_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+						Texture* hp2_t = new Texture(temp_hp+"/100",rgb(255, 255, 255),16);
 						hp1_t->draw(15,195);
 						hp2_t->draw(465-hp2_t->getWidth(),195);
 						aluren->draw(90,270);
@@ -1381,17 +1381,17 @@ int main(int argc,char* args[])
 			{
 				if (display <= 54)
 				{
-					Texture* temp = new Texture(talking2[talk].substr(0,(display/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+					Texture* temp = new Texture(talking2[talk].substr(0,(display/3)*3),rgb(255, 255, 255),24);
 					temp->setDstRect(0,0,temp->setPoint());
 					temp->draw(460,400);
 					delete temp;
 				}
 				else
 				{
-					Texture* temp = new Texture(talking2[talk].substr(0,54),"font/freeWing.ttf",rgb(255, 255, 255),24);
+					Texture* temp = new Texture(talking2[talk].substr(0,54),rgb(255, 255, 255),24);
 					temp->setDstRect(0,0,temp->setPoint());
 					temp->draw(460,376);
-					Texture* temp2 = new Texture(talking2[talk].substr(54,(display/3)*3-54),"font/freeWing.ttf",rgb(255, 255, 255),24);
+					Texture* temp2 = new Texture(talking2[talk].substr(54,(display/3)*3-54),rgb(255, 255, 255),24);
 					temp2->setDstRect(0,0,temp2->setPoint());
 					temp2->draw(460,424);
 					delete temp;
@@ -1728,10 +1728,10 @@ int main(int argc,char* args[])
 					string temp_hp;
 					ss << hp1;
 					ss >> temp_hp;
-					Texture* hp1_t = new Texture(temp_hp+"/100","font/freeWing.ttf",rgb(255, 255, 255),16);
+					Texture* hp1_t = new Texture(temp_hp+"/100",rgb(255, 255, 255),16);
 					ss2 << hp2;
 					ss2 >> temp_hp;
-					Texture* hp2_t = new Texture(temp_hp+"/"+to_string(hp2_base),"font/freeWing.ttf",rgb(255, 255, 255),16);
+					Texture* hp2_t = new Texture(temp_hp+"/"+to_string(hp2_base),rgb(255, 255, 255),16);
 					hp1_t->draw(15,195);
 					hp2_t->draw(465-hp2_t->getWidth(),195);
 					aluren->draw(90,270);
@@ -1816,8 +1816,8 @@ int main(int argc,char* args[])
 					display += 6;
 					hp_layer->draw(-240+display,180);
 					hp2_layer->draw(480-display,180);
-					Texture* hp1_t = new Texture("100/100","font/freeWing.ttf",rgb(255, 255, 255),16);
-					Texture* hp2_t = new Texture(to_string(hp2_base)+"/"+to_string(hp2_base),"font/freeWing.ttf",rgb(255, 255, 255),16);
+					Texture* hp1_t = new Texture("100/100",rgb(255, 255, 255),16);
+					Texture* hp2_t = new Texture(to_string(hp2_base)+"/"+to_string(hp2_base),rgb(255, 255, 255),16);
 					hp1_t->setAlpha(display+15);
 					hp1_t->draw(15,195);
 					hp2_t->setAlpha(display+15);
@@ -2062,7 +2062,7 @@ int main(int argc,char* args[])
 				///////////////////////////////////////////表情
 				if (talk < 9)
 				{
-					Texture* temp = new Texture(talking2[talk].substr(0,(display/3)*3),"font/freeWing.ttf",rgb(255, 255, 255),24);
+					Texture* temp = new Texture(talking2[talk].substr(0,(display/3)*3),rgb(255, 255, 255),24);
 					temp->setDstRect(0,0,temp->setPoint());
 					temp->draw(460,400);
 					delete temp;

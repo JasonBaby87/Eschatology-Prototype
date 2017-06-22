@@ -89,7 +89,7 @@ Texture::Texture(const string& file)
     initialize();
 }
 
-Texture::Texture(const string& message,const string& fontFile,SDL_Color color,int fontSize)
+Texture::Texture(const string& message,SDL_Color color,int fontSize,const string& fontFile)
 {
     /**
     *   SDL_CreateTextureFromSurface:把surface轉成Texture
