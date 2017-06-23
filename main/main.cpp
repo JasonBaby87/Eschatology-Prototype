@@ -1543,7 +1543,7 @@ int main(int argc,char* args[])
 		int cls_pos2 = 0;
 
 		fps.start();
-		bad_click_anime.push_back(make_pair(0,rgb(255,0,0)));
+
 		while (!quit && !skip)
 		{
 			if (in_battle)
@@ -1629,6 +1629,7 @@ int main(int argc,char* args[])
 											Mix_PlayChannel(-1,flame_s,0);
 											if (judge[i] == 4)
 											{
+												bad_click_anime.push_back(make_pair(0,rgb(255,0,0)));
 												hp1 -= e_damage/2;
 												skill = 0;
 											}
