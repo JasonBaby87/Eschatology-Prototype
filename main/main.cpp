@@ -76,7 +76,7 @@ int main(int argc,char* args[])
 		tips.setAlpha(0);
 		Texture egg("TAB鍵跳過場景",rgb(255, 255, 255),16);
 		egg.setAlpha(0);
-		Texture egg2("在此按下數字鍵1~3切換難度",rgb(255, 255, 255),16);
+		Texture egg2("在此按下數字鍵1~3切換 赫里厄斯 難度",rgb(255, 255, 255),16);
 		egg2.setAlpha(0);
 		title.setDstRect(0,0,title.setPoint()); //長寬為原材質長寬，錨點為中心
 		title2.setDstRect(0,0,title2.setPoint());
@@ -125,12 +125,15 @@ int main(int argc,char* args[])
 							break;
 						case SDLK_1:
 							level=1;
+							skip=true;
 							break;
 						case SDLK_2:
 							level=2;
+							skip=true;
 							break;
 						case SDLK_3:
 							level=3;
+							skip=true;
 							break;
 						}
 				}
@@ -588,9 +591,15 @@ int main(int argc,char* args[])
 		display = 0;
 		cls_pos = 0;
 		string battle_text = "一些士兵擋住了去路";
-		string battle_text2 = "抓準魔力的流動";
-		string battle_text3_1 = "利用按鍵 E F I J ";
-		string battle_text3_2="對應四種元素進行攻擊";
+		string battle_text1_1 = "隨著節奏抓準魔力的流動";
+		string battle_text1_2 = "定時或漏掉魔法波時你會遭受攻擊";
+		string battle_text2_1 = "自由使用按鍵 E F I J ";
+		string battle_text2_2 = "對應「火冰光闇」進行攻擊";
+		string battle_text2_3 = "波到達魔法陣邊緣時就是最佳時機";
+		string battle_text2_4 = "依精準度亮起白、黃、綠、靛";
+		string battle_text3_1 = "你的攻擊力隨著精準度提升";
+		string battle_text3_2 = "不精準導致亮起暗紫時，你將遭魔法反嗜";
+
 		string battle_text4 = "...是魔法護甲！";
 		string battle_text5 = "依序組合［火冰火光暗］施展雷槍";
 		int hp1 = 100;
@@ -614,7 +623,7 @@ int main(int argc,char* args[])
 		int e_damage = 1;
 		double resist = 1;
 		double damage_rate[4] = {1,0.9,0.7,0.4};
-		SDL_Color accuracy[5] = {rgb(255,174,35),rgb(255,240,35),rgb(35,255,100),rgb(35,230,255),rgb(35,170,255)};
+		SDL_Color accuracy[5] = {rgb(255, 255, 255),rgb(255, 255, 0),rgb(128, 255, 128),rgb(0, 196, 196),rgb(0, 0, 128)};
 		bool pressing[4] = {false,false,false,false};
 		Mix_PlayChannel(-1,spear_s,0);
 		fps.start();
@@ -865,10 +874,10 @@ int main(int argc,char* args[])
 						temp->draw(240,300);
 						delete temp;
 					}
-					else if (display <= 48)
+					else if (display <= 60)
 					{
 						Texture* temp = new Texture(battle_text,rgb(255, 255, 255),24);
-						Texture* temp2 = new Texture(battle_text2.substr(0,((display-27)/3)*3),rgb(255, 255, 255),24);
+						Texture* temp2 = new Texture(battle_text1_1.substr(0,((display-27)/3)*3),rgb(255, 255, 255),24);
 						temp->setDstRect(0,0,temp->setPoint());
 						temp2->setDstRect(0,0,temp2->setPoint());
 						temp->draw(240,300);
@@ -876,11 +885,11 @@ int main(int argc,char* args[])
 						delete temp;
 						delete temp2;
 					}
-					else if (display <= 69)
+					else if (display <= 105)
 					{
 						Texture* temp = new Texture(battle_text,rgb(255, 255, 255),24);
-						Texture* temp2 = new Texture(battle_text2,rgb(255, 255, 255),24);
-						Texture* temp3 = new Texture(battle_text3_1.substr(0,((display-48)/3)*3),rgb(255, 255, 255),24);
+						Texture* temp2 = new Texture(battle_text1_1,rgb(255, 255, 255),24);
+						Texture* temp3 = new Texture(battle_text1_2.substr(0,((display-60)/3)*3),rgb(255, 255, 255),24);
 						temp->setDstRect(0,0,temp->setPoint());
 						temp2->setDstRect(0,0,temp2->setPoint());
 						temp3->setDstRect(0,0,temp3->setPoint());
@@ -891,12 +900,61 @@ int main(int argc,char* args[])
 						delete temp2;
 						delete temp3;
 					}
-					else if (display <= 99)
+					else if (display > 105 && display < 180)
 					{
 						Texture* temp = new Texture(battle_text,rgb(255, 255, 255),24);
-						Texture* temp2 = new Texture(battle_text2,rgb(255, 255, 255),24);
-						Texture* temp3 = new Texture(battle_text3_1,rgb(255, 255, 255),24);
-						Texture* temp4 = new Texture(battle_text3_2.substr(0,((display-69)/3)*3),rgb(255, 255, 255),24);
+						Texture* temp2 = new Texture(battle_text1_1,rgb(255, 255, 255),24);
+						Texture* temp3 = new Texture(battle_text1_2,rgb(255, 255, 255),24);
+						temp->setDstRect(0,0,temp->setPoint());
+						temp2->setDstRect(0,0,temp2->setPoint());
+						temp3->setDstRect(0,0,temp3->setPoint());
+
+						temp->draw(240,300);
+						temp2->draw(240,336);
+						temp3->draw(240,372);
+						delete temp;
+						delete temp2;
+						delete temp3;
+					}
+					else if (display <= 207)
+					{
+						Texture* temp = new Texture(battle_text2_1.substr(0,((display-180)/3)*3),rgb(255, 255, 255),24);
+						temp->setDstRect(0,0,temp->setPoint());
+						temp->draw(240,300);
+						delete temp;
+					}
+					else if (display <= 243)
+					{
+						Texture* temp = new Texture(battle_text2_1,rgb(255, 255, 255),24);
+						Texture* temp2 = new Texture(battle_text2_2.substr(0,((display-207)/3)*3),rgb(255, 255, 255),24);
+						temp->setDstRect(0,0,temp->setPoint());
+						temp2->setDstRect(0,0,temp2->setPoint());
+						temp->draw(240,300);
+						temp2->draw(240,336);
+						delete temp;
+						delete temp2;
+					}
+					else if (display <= 288)
+					{
+						Texture* temp = new Texture(battle_text2_1,rgb(255, 255, 255),24);
+						Texture* temp2 = new Texture(battle_text2_2,rgb(255, 255, 255),24);
+						Texture* temp3 = new Texture(battle_text2_3.substr(0,((display-243)/3)*3),rgb(255, 255, 255),24);
+						temp->setDstRect(0,0,temp->setPoint());
+						temp2->setDstRect(0,0,temp2->setPoint());
+						temp3->setDstRect(0,0,temp3->setPoint());
+						temp->draw(240,300);
+						temp2->draw(240,336);
+						temp3->draw(240,372);
+						delete temp;
+						delete temp2;
+						delete temp3;
+					}
+					else if (display <= 327)
+					{
+						Texture* temp = new Texture(battle_text2_1,rgb(255, 255, 255),24);
+						Texture* temp2 = new Texture(battle_text2_2,rgb(255, 255, 255),24);
+						Texture* temp3 = new Texture(battle_text2_3,rgb(255, 255, 255),24);
+						Texture* temp4 = new Texture(battle_text2_4.substr(0,((display-288)/3)*3),rgb(255, 255, 255),24);
 						temp->setDstRect(0,0,temp->setPoint());
 						temp2->setDstRect(0,0,temp2->setPoint());
 						temp3->setDstRect(0,0,temp3->setPoint());
@@ -910,23 +968,20 @@ int main(int argc,char* args[])
 						delete temp3;
 						delete temp4;
 					}
-					else if (display > 99 && display < 410)
+					else if (display > 327 && display < 417)
 					{
-						Texture* temp = new Texture(battle_text,rgb(255, 255, 255),24);
-						Texture* temp2 = new Texture(battle_text2,rgb(255, 255, 255),24);
-						Texture* temp3 = new Texture(battle_text3_1,rgb(255, 255, 255),24);
-						Texture* temp4 = new Texture(battle_text3_2,rgb(255, 255, 255),24);
+						Texture* temp = new Texture(battle_text2_1,rgb(255, 255, 255),24);
+						Texture* temp2 = new Texture(battle_text2_2,rgb(255, 255, 255),24);
+						Texture* temp3 = new Texture(battle_text2_3,rgb(255, 255, 255),24);
+						Texture* temp4 = new Texture(battle_text2_4,rgb(255, 255, 255),24);
 						temp->setDstRect(0,0,temp->setPoint());
 						temp2->setDstRect(0,0,temp2->setPoint());
 						temp3->setDstRect(0,0,temp3->setPoint());
 						temp4->setDstRect(0,0,temp4->setPoint());
-						if (display > 380)
-						{
-							temp->setAlpha(240-(display-380)*8);
-							temp2->setAlpha(240-(display-380)*8);
-							temp3->setAlpha(240-(display-380)*8);
-							temp4->setAlpha(240-(display-380)*8);
-						}
+						//temp->setAlpha(240-(display-282)*8);
+						//temp2->setAlpha(240-(display-282)*8);
+						//temp3->setAlpha(240-(display-282)*8);
+						//temp4->setAlpha(240-(display-282)*8);
 						temp->draw(240,300);
 						temp2->draw(240,336);
 						temp3->draw(240,372);
@@ -934,9 +989,44 @@ int main(int argc,char* args[])
 						delete temp;
 						delete temp2;
 						delete temp3;
+						delete temp4;
+					}
+					else if (display <= 453)
+					{
+						Texture* temp = new Texture(battle_text3_1.substr(0,((display-417)/3)*3),rgb(255, 255, 255),24);
+						temp->setDstRect(0,0,temp->setPoint());
+						temp->draw(240,300);
+						delete temp;
+					}
+					else if (display <= 507)
+					{
+						Texture* temp = new Texture(battle_text3_1,rgb(255, 255, 255),24);
+						Texture* temp2 = new Texture(battle_text3_2.substr(0,((display-453)/3)*3),rgb(255, 255, 255),24);
+						temp->setDstRect(0,0,temp->setPoint());
+						temp2->setDstRect(0,0,temp2->setPoint());
+						temp->draw(240,300);
+						temp2->draw(240,336);
+						delete temp;
+						delete temp2;
+					}
+					else if (display > 507 && display < 600)
+					{
+						Texture* temp = new Texture(battle_text3_1,rgb(255, 255, 255),24);
+						Texture* temp2 = new Texture(battle_text3_2,rgb(255, 255, 255),24);
+						temp->setDstRect(0,0,temp->setPoint());
+						temp2->setDstRect(0,0,temp2->setPoint());
+						if(display > 570)
+						{
+							temp->setAlpha(240-(display-570)*8);
+							temp2->setAlpha(240-(display-570)*8);
+						}
+						temp->draw(240,300);
+						temp2->draw(240,336);
+						delete temp;
+						delete temp2;
 					}
 
-					if (display < 440 && cls_pos == 800)
+					if (display < 600 && cls_pos == 800)
 					{
 						display++;
 						if (display == 334)
@@ -946,26 +1036,26 @@ int main(int argc,char* args[])
 							chart->start();
 							attack.start();
 						}
-						if (display > 380 && display <= 410)
+						if (display > 540 && display <= 570)
 						{
-							hp_layer->draw((display-380)*8-240,180);
-							hp2_layer->draw(480-(display-380)*8,180);
-							full_hp.setAlpha((display-380)*8+15);
-							full_hp2.setAlpha((display-380)*8+15);
+							hp_layer->draw((display-540)*8-240,180);
+							hp2_layer->draw(480-(display-540)*8,180);
+							full_hp.setAlpha((display-540)*8+15);
+							full_hp2.setAlpha((display-540)*8+15);
 							full_hp.draw(15,195);
 							full_hp2.draw(465-full_hp2.getWidth(),195);
 						}
-						else if (display > 410 && display < 440)
+						else if (display > 570 && display < 600)
 						{
 							hp_layer->draw(0,180);
 							hp2_layer->draw(240,180);
 							full_hp.draw(15,195);
 							full_hp2.draw(465-full_hp2.getWidth(),195);
-							aluren->setAlpha((display-410)*8+15);
+							aluren->setAlpha((display-570)*8+15);
 							aluren->draw(90,270);
 						}
 					}
-					if (display == 440)
+					if (display == 600)
 					{
 						in_battle = true;
 						cls_pos = 0;
@@ -1031,7 +1121,7 @@ int main(int argc,char* args[])
 							hp2_t->draw(465-hp2_t->getWidth(),195);
 							if (display <= 51)
 							{
-								Texture* temp = new Texture(battle_text.substr(0,((display-30)/3)*3),rgb(255, 255, 255),24);
+								Texture* temp = new Texture(battle_text4.substr(0,((display-30)/3)*3),rgb(255, 255, 255),24);
 								temp->setDstRect(0,0,temp->setPoint());
 								temp->draw(240,300);
 								delete temp;
