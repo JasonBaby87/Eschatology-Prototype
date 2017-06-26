@@ -50,7 +50,7 @@ public:
     *   @param color:RGB{0,0,0}(黑)~{255,255,255}(白)
     *   @param fontsize:字體大小
     */
-    Texture(const string& message,const string& fontfile,SDL_Color color,int fontsize);
+    Texture(const string& message,SDL_Color color,int fontsize,const string& fontfile="font/freeWing.ttf");
     //初始化除了tex以外所有私有成員
     void initialize();
     //清除texture
